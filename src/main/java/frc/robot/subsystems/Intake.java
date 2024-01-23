@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -9,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.kDrivetrain;
 
 public class Intake extends SubsystemBase {
 
@@ -26,8 +28,8 @@ public class Intake extends SubsystemBase {
         outerRoller = new CANSparkMax(0, MotorType.kBrushed);
         innerRoller = new CANSparkMax(0, MotorType.kBrushed);
 
-        configMotor(outerRoller, true);
-        configMotor(innerRoller, true);
+        configMotor(outerRoller, false);
+        configMotor(innerRoller, false);
 
         // Laser sensor
         laserSensor = new DigitalInput(0);
@@ -40,7 +42,15 @@ public class Intake extends SubsystemBase {
         return instance;
     }
 
-    private void config
+    private void configMotor(CANSparkMax motor, boolean isInverted) {
+        motor.restoreFactoryDefaults();
+        motor.setInverted(isInverted);
+        motor.setIdleMode(IdleMode.kBrake);
+        motor.setSmartCurrentLimit(kDrivetrain.kCurrentLimit);
+        motor.setClosedLoopRampRate(kDrivetrain.kClosedLoopRampRate);
+
+        motor.burnFlash();
+    }
 
     public boolean getSensorValue() {
         return laserSensor.get();
@@ -56,7 +66,10 @@ public class Intake extends SubsystemBase {
         else innerRoller.set(output);
     }
 
-
+    public void stopAllMotors() {
+        outerRoller.setVoltage(0);
+        innerRoller.setVoltage(0);
+    }
 
     @Override
     public void periodic() {

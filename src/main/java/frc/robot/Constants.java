@@ -16,4 +16,19 @@ public final class Constants {
     public static class OperatorConstants {
         public static final int kDriverControllerPort = 0;
     }
+
+    public static final class kCANID {
+        public static final int OuterRollerID = 0;
+        public static final int InnerRollerID = 1;
+    }
+
+    public static final class kDIO {
+        public static final int LaserSensorCHNL = 0;
+    }
+
+    public static final class kDrivetrain {
+        public static final int kCurrentLimit = 30;
+        
+        public static final double kClosedLoopRampRate = 0.1;
+    }
 }
