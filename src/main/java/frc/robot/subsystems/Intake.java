@@ -1,0 +1,73 @@
+package frc.robot.subsystems;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+
+// 5409: The Chargers
+// http://github.com/FRC5409
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Intake extends SubsystemBase {
+
+    private static Intake instance = null;
+
+    // Motors
+    private final CANSparkMax outerRoller;
+    private final CANSparkMax innerRoller;
+
+    // Proximity sensor
+    private final DigitalInput laserSensor;
+
+    private Intake() {
+        // Motors
+        outerRoller = new CANSparkMax(0, MotorType.kBrushed);
+        innerRoller = new CANSparkMax(0, MotorType.kBrushed);
+
+        configMotor(outerRoller, true);
+        configMotor(innerRoller, true);
+
+        // Laser sensor
+        laserSensor = new DigitalInput(0);
+    }
+
+    // Get subsystem
+    public static Intake getInstance() {
+        if (instance == null) instance = new Intake();
+
+        return instance;
+    }
+
+    private void config
+
+    public boolean getSensorValue() {
+        return laserSensor.get();
+    }
+
+    public void setOuterRoller(double output, boolean isVoltage) {
+        if (isVoltage) outerRoller.setVoltage(output);
+        else outerRoller.set(output);
+    }
+
+    public void setInnerRoller(double output, boolean isVoltage) {
+        if (isVoltage) innerRoller.setVoltage(output);
+        else innerRoller.set(output);
+    }
+
+
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+        
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run during simulation
+        
+    }
+
+}
