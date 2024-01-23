@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.StoreNote;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -18,10 +20,22 @@ import frc.robot.Constants.OperatorConstants;
 public class RobotContainer {
     private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+    // Subsystems
+    private final Intake sys_intake;
+
+    // Commands
+    private final StoreNote cmd_storeNote;
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        // Subsystems
+        sys_intake = Intake.getInstance();
+
+        // Commands
+        cmd_storeNote = new StoreNote();
+
         // Configure the trigger bindings
         configureBindings();
     }
@@ -36,10 +50,9 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
-        // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-        // cancelling on release.
+        m_driverController.x().onTrue(
+            cmd_storeNote
+        );
     }
 
     /**
