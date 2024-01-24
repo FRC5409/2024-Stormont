@@ -1,86 +1,100 @@
 package frc.robot.subsystems;
 
+import java.util.HashMap;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kDrivetrain;
+import frc.robot.shuffleboard.ShuffleboardManager;
 
 public class Intake extends SubsystemBase {
 
-    private static Intake instance = null;
+	private static Intake instance = null;
 
-    // Motors
-    private final CANSparkMax outerRoller;
-    private final CANSparkMax innerRoller;
+	// Motors
+	private final CANSparkMax outerRoller;
+	private final CANSparkMax innerRoller;
 
-    // Proximity sensor
-    private final DigitalInput laserSensor;
+	// Proximity sensor
+	private final DigitalInput laserSensor;
 
-    private Intake() {
-        // Motors
-        outerRoller = new CANSparkMax(0, MotorType.kBrushed);
-        innerRoller = new CANSparkMax(0, MotorType.kBrushed);
+	// Shuffleboard
+	private final ShuffleboardManager sb;
 
-        configMotor(outerRoller, false);
-        configMotor(innerRoller, false);
+	private Intake() {
+		// Motors
+		outerRoller = new CANSparkMax(0, MotorType.kBrushed);
+		innerRoller = new CANSparkMax(0, MotorType.kBrushed);
 
-        // Laser sensor
-        laserSensor = new DigitalInput(0);
-    }
+		configMotor(outerRoller, false);
+		configMotor(innerRoller, false);
 
-    // Get subsystem
-    public static Intake getInstance() {
-        if (instance == null) instance = new Intake();
+		// Laser sensor
+		laserSensor = new DigitalInput(0);
 
-        return instance;
-    }
+		// Shuffleboard
+		sb = new ShuffleboardManager("Intake");
+		sb.addEntry("Outer Roller Speed", () -> outerRoller.getEncoder().getVelocity());
+		sb.addEntry("Inner Roller Speed", () -> innerRoller.getEncoder().getVelocity());
+	}
 
-    private void configMotor(CANSparkMax motor, boolean isInverted) {
-        motor.restoreFactoryDefaults();
-        motor.setInverted(isInverted);
-        motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(kDrivetrain.kCurrentLimit);
-        motor.setClosedLoopRampRate(kDrivetrain.kClosedLoopRampRate);
+	// Get subsystem
+	public static Intake getInstance() {
+		if (instance == null) instance = new Intake();
 
-        motor.burnFlash();
-    }
+		return instance;
+	}
 
-    public boolean getSensorValue() {
-        return laserSensor.get();
-    }
+	private void configMotor(CANSparkMax motor, boolean isInverted) {
+		motor.restoreFactoryDefaults();
+		motor.setInverted(isInverted);
+		motor.setIdleMode(IdleMode.kBrake);
+		motor.setSmartCurrentLimit(kDrivetrain.kCurrentLimit);
+		motor.setClosedLoopRampRate(kDrivetrain.kClosedLoopRampRate);
 
-    public void setOuterRoller(double output, boolean isVoltage) {
-        if (isVoltage) outerRoller.setVoltage(output);
-        else outerRoller.set(output);
-    }
+		motor.burnFlash();
+	}
 
-    public void setInnerRoller(double output, boolean isVoltage) {
-        if (isVoltage) innerRoller.setVoltage(output);
-        else innerRoller.set(output);
-    }
+	public boolean getSensorValue() {
+		return laserSensor.get();
+	}
 
-    public void stopAllMotors() {
-        outerRoller.setVoltage(0);
-        innerRoller.setVoltage(0);
-    }
+	public void setOuterRoller(double output, boolean isVoltage) {
+		if (isVoltage) outerRoller.setVoltage(output);
+		else outerRoller.set(output);
+	}
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        
-    }
+	public void setInnerRoller(double output, boolean isVoltage) {
+		if (isVoltage) innerRoller.setVoltage(output);
+		else innerRoller.set(output);
+	}
 
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
-        
-    }
+	public void stopAllMotors() {
+		outerRoller.setVoltage(0);
+		innerRoller.setVoltage(0);
+	}
+
+	@Override
+	public void periodic() {
+		// This method will be called once per scheduler run
+		
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		// This method will be called once per scheduler run during simulation
+		
+	}
 
 }
