@@ -19,12 +19,15 @@ public final class Constants {
 
   public static class kClimber {
     public static final int id_motor                     = 0;
+    public static final int digitalInputPort             = 0;
     public static final int voltage                      = 0;
     public static final int currentLimit                 = 0;
-    
+
     public static final double kP                        = 0;
     public static final double kI                        = 0;
     public static final double kD                        = 0;
+
+    public static final double setpoint                  = 0;
 
 
 

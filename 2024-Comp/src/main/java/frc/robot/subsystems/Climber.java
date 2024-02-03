@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,9 +24,10 @@ public class Climber extends SubsystemBase {
   private final CANSparkMax m_motor;
   private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
+  private DigitalInput limitSwitch;
 
   private final ShuffleboardTab sb_climberTab;
-  private final GenericEntry kP, kI, kD, position;
+  private final GenericEntry kP, kI, kD, position, limitSwitchValue;
 
   /** Creates a new Climber. */
   public Climber() {
@@ -40,11 +42,14 @@ public class Climber extends SubsystemBase {
 
     s_encoder = m_motor.getEncoder();
 
+    limitSwitch = new DigitalInput(Constants.kClimber.digitalInputPort);
+
     sb_climberTab = Shuffleboard.getTab("Climber");
     kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
     kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
     kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
     position = sb_climberTab.add("position", 0).getEntry();
+    limitSwitchValue = sb_climberTab.add("limitSwitch", 0).getEntry();
 
     m_motor.burnFlash();
   }
@@ -67,9 +72,17 @@ public class Climber extends SubsystemBase {
     m_motor.setVoltage(voltage);
   }
 
+  public void fixEncoder() {
+    if (limitSwitch.get()) {
+      s_encoder.setPosition(0);
+    }
+  }
+
   @Override
   public void periodic() {
     position.setDouble(s_encoder.getPosition());
+    limitSwitchValue.setBoolean(limitSwitch.get());
+    fixEncoder();
     // This method will be called once per scheduler run
   }
 }
