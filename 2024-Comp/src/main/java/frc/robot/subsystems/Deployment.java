@@ -20,21 +20,21 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climber extends SubsystemBase {
+public class Deployment extends SubsystemBase {
   private final CANSparkMax m_motor;
   private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   private DigitalInput limitSwitch;
 
-  private final ShuffleboardTab sb_climberTab;
+  private final ShuffleboardTab sb_DeploymentTab;
   private final GenericEntry kP, kI, kD, position, limitSwitchValue;
 
-  /** Creates a new Climber. */
-  public Climber() {
-    m_motor = new CANSparkMax(Constants.kClimber.id_motor, MotorType.kBrushless);
+  /** Creates a new Deployment. */
+  public Deployment() {
+    m_motor = new CANSparkMax(Constants.kDeployment.id_motor, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
     m_motor.setIdleMode(IdleMode.kBrake);
-    m_motor.setSmartCurrentLimit(Constants.kClimber.currentLimit);
+    m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
 
     m_controller = m_motor.getPIDController();
     configPID();
@@ -42,22 +42,22 @@ public class Climber extends SubsystemBase {
 
     s_encoder = m_motor.getEncoder();
 
-    limitSwitch = new DigitalInput(Constants.kClimber.digitalInputPort);
+    limitSwitch = new DigitalInput(Constants.kDeployment.digitalInputPort);
 
-    sb_climberTab = Shuffleboard.getTab("Climber");
-    kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
-    kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
-    kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
-    position = sb_climberTab.add("position", 0).getEntry();
-    limitSwitchValue = sb_climberTab.add("limitSwitch", 0).getEntry();
+    sb_DeploymentTab = Shuffleboard.getTab("Deployment");
+    kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
+    kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
+    kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
+    position = sb_DeploymentTab.add("position", 0).getEntry();
+    limitSwitchValue = sb_DeploymentTab.add("limitSwitch", 0).getEntry();
 
     m_motor.burnFlash();
   }
 
   public void configPID() {
-    m_controller.setP(Constants.kClimber.kP);
-    m_controller.setI(Constants.kClimber.kI);
-    m_controller.setD(Constants.kClimber.kD);
+    m_controller.setP(Constants.kDeployment.kP);
+    m_controller.setI(Constants.kDeployment.kI);
+    m_controller.setD(Constants.kDeployment.kD);
   }
 
   public void zeroEncoder() {

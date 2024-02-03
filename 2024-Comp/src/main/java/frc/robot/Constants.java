@@ -17,7 +17,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  public static class kClimber {
+  public static class kDeployment {
     public static final int id_motor                     = 0;
     public static final int digitalInputPort             = 0;
     public static final int voltage                      = 0;

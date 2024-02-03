@@ -7,7 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,12 +23,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final Climber sys_climber;
+  private final Deployment sys_deployment;
 
   private final CommandXboxController joystickMain;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    sys_climber = new Climber();
+    sys_deployment = new Deployment();
     joystickMain = new CommandXboxController(0);
     // Configure the trigger bindings
     configureBindings();
@@ -44,16 +44,16 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    joystickMain.povUp()
-    .whileTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage), sys_climber))
-    .whileFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+    joystickMain.leftBumper()
+    .whileTrue(Commands.runOnce(() -> sys_deployment.manualExtend(Constants.kDeployment.voltage), sys_deployment))
+    .whileFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
-    joystickMain.povDown()
-    .whileTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage), sys_climber))
-    .whileFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+    joystickMain.rightBumper()
+    .whileTrue(Commands.runOnce(() -> sys_deployment.manualExtend(-Constants.kDeployment.voltage), sys_deployment))
+    .whileFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
-    joystickMain.a()
-    .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.setpoint), sys_climber));
+    joystickMain.x()
+    .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoint), sys_deployment));
 
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
