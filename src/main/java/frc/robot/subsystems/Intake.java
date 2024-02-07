@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.kCANID;
 import frc.robot.Constants.kDrivetrain;
 import frc.robot.shuffleboard.ShuffleboardManager;
 
@@ -20,6 +21,7 @@ public class Intake extends SubsystemBase {
 	// Motors
 	private final CANSparkMax outerRoller;
 	private final CANSparkMax innerRoller;
+	private final CANSparkMax deployer;
 
 	// Proximity sensor
 	private final DigitalInput laserSensor;
@@ -29,11 +31,13 @@ public class Intake extends SubsystemBase {
 
 	private Intake() {
 		// Motors
-		outerRoller = new CANSparkMax(0, MotorType.kBrushed);
-		innerRoller = new CANSparkMax(0, MotorType.kBrushed);
+		outerRoller = new CANSparkMax(kCANID.outerRollerID, MotorType.kBrushless);
+		innerRoller = new CANSparkMax(kCANID.innerRollerID, MotorType.kBrushless);
+		deployer = new CANSparkMax(kCANID.deployerID, MotorType.kBrushless);
 
 		configMotor(outerRoller, false);
 		configMotor(innerRoller, false);
+		configMotor(deployer, false);
 
 		// Laser sensor
 		laserSensor = new DigitalInput(0);
@@ -42,6 +46,7 @@ public class Intake extends SubsystemBase {
 		sb = new ShuffleboardManager("Intake");
 		sb.addEntry("Outer Roller Speed", () -> outerRoller.getEncoder().getVelocity());
 		sb.addEntry("Inner Roller Speed", () -> innerRoller.getEncoder().getVelocity());
+		sb.addEntry("Deployer Speed", () -> deployer.getEncoder().getVelocity());
 	}
 
 	// Get subsystem

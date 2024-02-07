@@ -18,8 +18,9 @@ public final class Constants {
     }
 
     public static final class kCANID {
-        public static final int OuterRollerID = 0;
-        public static final int InnerRollerID = 1;
+        public static final int outerRollerID = 0;
+        public static final int innerRollerID = 1;
+        public static final int deployerID = 2;
     }
 
     public static final class kDIO {
