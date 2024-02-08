@@ -27,9 +27,10 @@ public final class Constants {
     public static final double kI                        = 0;
     public static final double kD                        = 0;
 
-    public static final double setpoint                  = 0;
-
-
+    public static class setpoints {
+      public static final double amp_pos                 = 0; 
+      public static final double trap_pos                = 0;
+    }
 
   }
 }

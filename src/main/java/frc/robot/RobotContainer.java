@@ -53,7 +53,10 @@ public class RobotContainer {
     .whileFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
     joystickMain.x()
-    .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoint), sys_deployment));
+    .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.amp_pos), sys_deployment));
+
+    joystickMain.a()
+    .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos), sys_deployment));
 
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
