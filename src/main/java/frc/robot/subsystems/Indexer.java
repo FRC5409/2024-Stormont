@@ -9,14 +9,20 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
+import frc.robot.shuffleboard.ShuffleboardManager;
 
 public class Indexer extends SubsystemBase {
     private static Indexer instance = null;
 
     private final CANSparkMax motor;
 
+    private final ShuffleboardManager sb;
+
     private Indexer() {
         motor = initMotor();
+
+        sb = new ShuffleboardManager("Indexer");
+        sb.addEntry("Motor Speed", () -> motor.getEncoder().getVelocity());
     }
 
     private CANSparkMax initMotor() {
