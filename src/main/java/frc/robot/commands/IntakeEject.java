@@ -4,6 +4,8 @@ package frc.robot.commands;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 
@@ -24,7 +26,8 @@ public class IntakeEject extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        
+        intake.setSpeed(-IntakeConstants.HIGH_SPEED);
+        indexer.setSpeed(-IndexerConstants.HIGH_SPEED);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
