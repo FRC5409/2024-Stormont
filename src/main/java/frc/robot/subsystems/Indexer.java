@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 // 5409: The Chargers
 // http://github.com/FRC5409
 
@@ -16,13 +18,18 @@ public class Indexer extends SubsystemBase {
 
     private final CANSparkMax motor;
 
+    private final DigitalInput sensor;
+
     private final ShuffleboardManager sb;
 
     private Indexer() {
         motor = initMotor();
 
+        sensor = new DigitalInput(IndexerConstants.IR_SENSOR_PORT);
+
         sb = new ShuffleboardManager("Indexer");
         sb.addEntry("Motor Speed", () -> motor.getEncoder().getVelocity());
+        sb.addEntry("Sensor Value", () -> sensor.get());
     }
 
     private CANSparkMax initMotor() {
@@ -42,6 +49,10 @@ public class Indexer extends SubsystemBase {
 
     public void setSpeed(double speed) {
         motor.set(speed);
+    }
+
+    public boolean getSensorValue() {
+        return sensor.get();
     }
 
     @Override
