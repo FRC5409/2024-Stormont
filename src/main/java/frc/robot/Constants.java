@@ -39,6 +39,8 @@ public final class Constants {
         public static final int RAMP_RATE       = 1; // temp value
         public static final int CURRENT_LIMIT   = 30;
 
+        public static final int IR_SENSOR_PORT = 0; // temp value
+
         public static final double HIGH_SPEED = 0.75;
         public static final double LOW_SPEED = 0.25;
     }
