@@ -32,4 +32,10 @@ public final class Constants {
         
         public static final double kClosedLoopRampRate = 0.1;
     }
+
+    public static final class IndexerConstants {
+        public static final int MOTOR_ID        = 0; // temp value
+        public static final int RAMP_RATE       = 1; // temp value
+        public static final int CURRENT_LIMIT   = 30;
+    }
 }
