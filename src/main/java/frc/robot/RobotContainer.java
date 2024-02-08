@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.IntakeEject;
+import frc.robot.commands.IntakeNote;
 import frc.robot.subsystems.Intake;
 
 /**
@@ -25,6 +27,8 @@ public class RobotContainer {
 	private final Intake sys_intake;
 
 	// Commands
+	private final IntakeNote cmd_intakeNote;
+	private final IntakeEject cmd_intakeEject;
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -34,12 +38,19 @@ public class RobotContainer {
 		sys_intake = Intake.getInstance();
 
 		// Commands
+		cmd_intakeNote = new IntakeNote();
+		cmd_intakeEject = new IntakeEject();
 
 		// Configure the trigger bindings
 		configureBindings();
 	}
 
 	private void configureBindings() {
+		m_driverController.leftBumper()
+			.whileTrue(cmd_intakeNote);
+		
+		m_driverController.leftTrigger()
+			.whileTrue(cmd_intakeEject);
 	}
 
 	/**

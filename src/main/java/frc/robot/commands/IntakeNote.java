@@ -14,6 +14,8 @@ import frc.robot.subsystems.Intake;
  */
 public class IntakeNote extends Command {
 
+    private boolean isSpeedLowered = false;
+
     private final Intake m_intake;
     private final Indexer m_indexer;
 
@@ -35,7 +37,12 @@ public class IntakeNote extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        
+        if (!isSpeedLowered && m_indexer.getSensorValue()) {
+                m_intake.setSpeed(IntakeConstants.LOW_SPEED);
+                m_indexer.setSpeed(IndexerConstants.LOW_SPEED);
+
+                isSpeedLowered = true;
+        }
     }
 
     // Called once the command ends or is interrupted.
