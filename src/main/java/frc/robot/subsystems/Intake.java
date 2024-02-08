@@ -21,6 +21,7 @@ public class Intake extends SubsystemBase {
 	private final CANSparkMax rollersMotor;
 
 	// Proximity sensor
+	// this sensor is at the begining of the Intake
 	private final DigitalInput irSensor;
 
 	// Shuffleboard

@@ -18,6 +18,7 @@ public class Indexer extends SubsystemBase {
 
     private final CANSparkMax motor;
 
+    // this sensor is in between the Intake and Indexer
     private final DigitalInput sensor;
 
     private final ShuffleboardManager sb;
