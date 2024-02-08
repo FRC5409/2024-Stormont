@@ -36,7 +36,7 @@ public class IntakeEject extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (intake.getSensorValue()) finished = true;
+
     }
 
     // Called once the command ends or is interrupted.
@@ -44,13 +44,13 @@ public class IntakeEject extends Command {
     public void end(boolean interrupted) {
         indexer.setSpeed(0);
         // give the intake some time to push the note all the way out of the subsystem
-        Commands.waitSeconds(0.5);
+        if (!interrupted) Commands.waitSeconds(0.5);
         intake.setSpeed(0);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return finished;
+        return intake.getSensorValue();
     }
 }

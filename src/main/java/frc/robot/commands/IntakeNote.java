@@ -48,7 +48,8 @@ public class IntakeNote extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        
+        m_intake.setSpeed(0);
+        m_indexer.setSpeed(0);
     }
 
     // Returns true when the command should end.
