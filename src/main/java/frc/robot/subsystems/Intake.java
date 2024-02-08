@@ -58,8 +58,8 @@ public class Intake extends SubsystemBase {
 		return irSensor.get();
 	}
 
-	public void setRollerVoltage(double voltage) {
-		rollersMotor.setVoltage(voltage);
+	public void setSpeed(double speed) {
+		rollersMotor.set(speed);
 	}
 
 	@Override
