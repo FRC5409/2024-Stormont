@@ -24,7 +24,7 @@ public class Deployment extends SubsystemBase {
   private final CANSparkMax m_motor;
   private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
-  private DigitalInput limitSwitch;
+  // private DigitalInput limitSwitch;
 
   private final ShuffleboardTab sb_DeploymentTab;
   private final GenericEntry kP, kI, kD, position, limitSwitchValue;
@@ -42,7 +42,7 @@ public class Deployment extends SubsystemBase {
 
     s_encoder = m_motor.getEncoder();
 
-    limitSwitch = new DigitalInput(Constants.kDeployment.digitalInputPort);
+    // limitSwitch = new DigitalInput(Constants.kDeployment.digitalInputPort);
 
     sb_DeploymentTab = Shuffleboard.getTab("Deployment");
     kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
@@ -72,17 +72,17 @@ public class Deployment extends SubsystemBase {
     m_motor.setVoltage(voltage);
   }
 
-  public void fixEncoder() {
-    if (limitSwitch.get()) {
-      s_encoder.setPosition(0);
-    }
-  }
+  // public void fixEncoder() {
+  //   if (limitSwitch.get()) {
+  //     s_encoder.setPosition(0);
+  //   }
+  // }
 
   @Override
   public void periodic() {
     position.setDouble(s_encoder.getPosition());
-    limitSwitchValue.setBoolean(limitSwitch.get());
-    fixEncoder();
+    // limitSwitchValue.setBoolean(limitSwitch.get());
+    // fixEncoder();
     // This method will be called once per scheduler run
   }
 }
