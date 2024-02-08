@@ -1,0 +1,48 @@
+package frc.robot.commands;
+
+// 5409: The Chargers
+// http://github.com/FRC5409
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
+
+/**
+ * @author Logan Dhillon
+ */
+public class IntakeEject extends Command {
+    private final Intake intake;
+    private final Indexer indexer;
+
+    public IntakeEject() {
+        intake = Intake.getInstance();
+        indexer = Indexer.getInstance();
+
+        addRequirements(intake, indexer);
+    }
+
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        
+    }
+
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
+}
