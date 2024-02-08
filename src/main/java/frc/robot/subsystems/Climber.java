@@ -21,7 +21,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
-  private final CANSparkMax m_motor;
+  private final CANSparkMax m_main;
+  private final CANSparkMax m_follower;
   private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   private DigitalInput limitSwitch;
@@ -31,16 +32,23 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   public Climber() {
-    m_motor = new CANSparkMax(Constants.kClimber.id_motor, MotorType.kBrushless);
-    m_motor.restoreFactoryDefaults();
-    m_motor.setIdleMode(IdleMode.kBrake);
-    m_motor.setSmartCurrentLimit(Constants.kClimber.currentLimit);
+    m_main = new CANSparkMax(Constants.kClimber.id_main, MotorType.kBrushless);
+    m_main.restoreFactoryDefaults();
+    m_main.setIdleMode(IdleMode.kBrake);
+    m_main.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
-    m_controller = m_motor.getPIDController();
+    m_follower = new CANSparkMax(Constants.kClimber.id_follower, MotorType.kBrushless);
+    m_follower.restoreFactoryDefaults();
+    m_follower.follow(m_main,true);
+    m_follower.setIdleMode(IdleMode.kBrake);
+    m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
+
+    m_controller = m_main.getPIDController();
     configPID();
     // m_controller.setOutputRange(-1, 1);
 
-    s_encoder = m_motor.getEncoder();
+    s_encoder = m_main.getEncoder();
+    zeroEncoder();
 
     limitSwitch = new DigitalInput(Constants.kClimber.digitalInputPort);
 
@@ -51,7 +59,8 @@ public class Climber extends SubsystemBase {
     position = sb_climberTab.add("position", 0).getEntry();
     limitSwitchValue = sb_climberTab.add("limitSwitch", 0).getEntry();
 
-    m_motor.burnFlash();
+    m_main.burnFlash();
+    m_follower.burnFlash();
   }
 
   public void configPID() {
@@ -69,7 +78,7 @@ public class Climber extends SubsystemBase {
   }
 
   public void manualExtend(double voltage) {
-    m_motor.setVoltage(voltage);
+    m_main.setVoltage(voltage);
   }
 
   public void fixEncoder() {
