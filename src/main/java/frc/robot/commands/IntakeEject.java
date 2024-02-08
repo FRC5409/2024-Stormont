@@ -17,8 +17,6 @@ public class IntakeEject extends Command {
     private final Intake intake;
     private final Indexer indexer;
 
-    private boolean finished = false;
-
     public IntakeEject() {
         intake = Intake.getInstance();
         indexer = Indexer.getInstance();
