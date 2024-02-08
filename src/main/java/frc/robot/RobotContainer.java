@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IntakeEject;
 import frc.robot.commands.IntakeNote;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 
 /**
@@ -25,6 +26,7 @@ public class RobotContainer {
 
 	// Subsystems
 	private final Intake sys_intake;
+	private final Indexer sys_indexer;
 
 	// Commands
 	private final IntakeNote cmd_intakeNote;
@@ -35,10 +37,11 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		// Subsystems
-		sys_intake = Intake.getInstance();
+		sys_intake	= Intake.getInstance();
+		sys_indexer = Indexer.getInstance();
 
 		// Commands
-		cmd_intakeNote = new IntakeNote();
+		cmd_intakeNote	= new IntakeNote();
 		cmd_intakeEject = new IntakeEject();
 
 		// Configure the trigger bindings
