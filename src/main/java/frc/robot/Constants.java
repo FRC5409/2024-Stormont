@@ -17,14 +17,12 @@ public final class Constants {
         public static final int kDriverControllerPort = 0;
     }
 
-    public static final class kCANID {
-        public static final int outerRollerID = 0;
-        public static final int innerRollerID = 1;
-        public static final int deployerID = 2;
-    }
+    public static final class IntakeConstants {
+        public static final int MOTOR_ID = 0;
+        public static final int IR_SENSOR_PORT = 0;
 
-    public static final class kDIO {
-        public static final int LaserSensorCHNL = 0;
+        public static final int MOTOR_CURRENT_LIMIT = 30;
+        public static final double MOTOR_RAMP_RATE = 0.1;
     }
 
     public static final class kDrivetrain {

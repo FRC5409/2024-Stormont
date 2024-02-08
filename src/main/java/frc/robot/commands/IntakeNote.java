@@ -4,27 +4,29 @@ package frc.robot.commands;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 
 /**
  * @author 
  */
-public class StoreNote extends Command {
+public class IntakeNote extends Command {
 
     private final Intake m_intake;
+    private final Indexer m_indexer;
 
-    public StoreNote() {
+    public IntakeNote() {
         m_intake = Intake.getInstance();
+        m_indexer = Indexer.getInstance();
 
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(m_intake);
+        addRequirements(m_intake, m_indexer);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_intake.setOuterRoller(4.0, true);
-        m_intake.setInnerRoller(4.0, true);
+        m_intake.setRollerVoltag
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -36,13 +38,13 @@ public class StoreNote extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_intake.stopAllMotors();
+        
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return m_intake.getSensorValue();
+        return false;
     }
 
 }

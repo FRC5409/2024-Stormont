@@ -10,8 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.kCANID;
-import frc.robot.Constants.kDrivetrain;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.shuffleboard.ShuffleboardManager;
 
 public class Intake extends SubsystemBase {
@@ -19,70 +18,48 @@ public class Intake extends SubsystemBase {
 	private static Intake instance = null;
 
 	// Motors
-	private final CANSparkMax outerRoller;
-	private final CANSparkMax innerRoller;
-	private final CANSparkMax deployer;
+	private final CANSparkMax rollersMotor;
 
 	// Proximity sensor
-	private final DigitalInput laserSensor;
+	private final DigitalInput irSensor;
 
 	// Shuffleboard
 	private final ShuffleboardManager sb;
 
 	private Intake() {
 		// Motors
-		outerRoller = new CANSparkMax(kCANID.outerRollerID, MotorType.kBrushless);
-		innerRoller = new CANSparkMax(kCANID.innerRollerID, MotorType.kBrushless);
-		deployer = new CANSparkMax(kCANID.deployerID, MotorType.kBrushless);
+		rollersMotor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
 
-		configMotor(outerRoller, false);
-		configMotor(innerRoller, false);
-		configMotor(deployer, false);
+		configMotor(rollersMotor, false);
 
 		// Laser sensor
-		laserSensor = new DigitalInput(0);
+		irSensor = new DigitalInput(0);
 
 		// Shuffleboard
 		sb = new ShuffleboardManager("Intake");
-		sb.addEntry("Outer Roller Speed", () -> outerRoller.getEncoder().getVelocity());
-		sb.addEntry("Inner Roller Speed", () -> innerRoller.getEncoder().getVelocity());
-		sb.addEntry("Deployer Speed", () -> deployer.getEncoder().getVelocity());
+		sb.addEntry("Speed of Rollers", () -> rollersMotor.getEncoder().getVelocity());
+		sb.addEntry("Is Note Fed", () -> getSensorValue());
 	}
 
 	// Get subsystem
-	public static Intake getInstance() {
-		if (instance == null) instance = new Intake();
-
-		return instance;
-	}
+	public static Intake getInstance() { if (instance == null) instance = new Intake(); return instance; }
 
 	private void configMotor(CANSparkMax motor, boolean isInverted) {
 		motor.restoreFactoryDefaults();
 		motor.setInverted(isInverted);
 		motor.setIdleMode(IdleMode.kBrake);
-		motor.setSmartCurrentLimit(kDrivetrain.kCurrentLimit);
-		motor.setClosedLoopRampRate(kDrivetrain.kClosedLoopRampRate);
+		motor.setSmartCurrentLimit(IntakeConstants.MOTOR_CURRENT_LIMIT);
+		motor.setClosedLoopRampRate(IntakeConstants.MOTOR_RAMP_RATE);
 
 		motor.burnFlash();
 	}
 
 	public boolean getSensorValue() {
-		return laserSensor.get();
+		return irSensor.get();
 	}
 
-	public void setOuterRoller(double output, boolean isVoltage) {
-		if (isVoltage) outerRoller.setVoltage(output);
-		else outerRoller.set(output);
-	}
-
-	public void setInnerRoller(double output, boolean isVoltage) {
-		if (isVoltage) innerRoller.setVoltage(output);
-		else innerRoller.set(output);
-	}
-
-	public void stopAllMotors() {
-		outerRoller.setVoltage(0);
-		innerRoller.setVoltage(0);
+	public void setRollerVoltage(double voltage) {
+		rollersMotor.setVoltage(voltage);
 	}
 
 	@Override
