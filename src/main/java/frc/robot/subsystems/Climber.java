@@ -5,8 +5,6 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import com.ctre.phoenix6.signals.ControlModeValue;
-import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -25,10 +23,11 @@ public class Climber extends SubsystemBase {
   private final CANSparkMax m_follower;
   private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
-  private DigitalInput limitSwitch;
+  // private DigitalInput limitSwitch;
+  private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_climberTab;
-  private final GenericEntry kP, kI, kD, position, limitSwitchValue;
+  private final GenericEntry kP, kI, kD, position, irSwitchValue;
 
   /** Creates a new Climber. */
   public Climber() {
@@ -50,14 +49,16 @@ public class Climber extends SubsystemBase {
     s_encoder = m_main.getEncoder();
     zeroEncoder();
 
-    limitSwitch = new DigitalInput(Constants.kClimber.digitalInputPort);
+    // limitSwitch = new DigitalInput(Constants.kClimber.port_limitSwitch);
+    irSwitch = new DigitalInput(Constants.kClimber.port_irSwitch);
 
     sb_climberTab = Shuffleboard.getTab("Climber");
     kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
     kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
     kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
     position = sb_climberTab.add("position", 0).getEntry();
-    limitSwitchValue = sb_climberTab.add("limitSwitch", 0).getEntry();
+    // limitSwitchValue = sb_climberTab.add("limitSwitch", 0).getEntry();
+    irSwitchValue = sb_climberTab.add("irSwitch", 0).getEntry();
 
     m_main.burnFlash();
     m_follower.burnFlash();
@@ -81,17 +82,23 @@ public class Climber extends SubsystemBase {
     m_main.setVoltage(voltage);
   }
 
-  public void fixEncoder() {
-    if (limitSwitch.get()) {
+  // public void zeroEncoderLimit() {
+  //   if (limitSwitch.get()) {
+  //     s_encoder.setPosition(0);
+  //   }
+  // }
+
+  public void zeroEncoderIR() {
+    if (irSwitch.get()) {
       s_encoder.setPosition(0);
     }
-  }
-
+}
+  
   @Override
   public void periodic() {
     position.setDouble(s_encoder.getPosition());
-    limitSwitchValue.setBoolean(limitSwitch.get());
-    fixEncoder();
+    // limitSwitchValue.setBoolean(limitSwitch.get());
+    irSwitchValue.setBoolean(irSwitch.get());
     // This method will be called once per scheduler run
   }
 }

@@ -20,7 +20,8 @@ public final class Constants {
   public static class kClimber {
     public static final int id_main                      = 0;
     public static final int id_follower                  = 0;
-    public static final int digitalInputPort             = 0;
+    public static final int port_limitSwitch             = 0;
+    public static final int port_irSwitch                = 0;
     public static final int voltage                      = 0;
     public static final int currentLimit                 = 0;
 
@@ -28,7 +29,10 @@ public final class Constants {
     public static final double kI                        = 0;
     public static final double kD                        = 0;
 
-    public static final double setpoint                  = 0;
+    public static final double irZeroDistance            = 0;
+
+    public static final double high                      = 0;
+    public static final double low                       = 0;
 
 
 

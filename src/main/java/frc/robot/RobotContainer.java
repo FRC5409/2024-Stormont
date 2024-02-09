@@ -44,16 +44,28 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    // manual movement up
     joystickMain.povUp()
     .whileTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage), sys_climber))
     .whileFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
+    // manual movement down
     joystickMain.povDown()
     .whileTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage), sys_climber))
     .whileFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
+    // setpoint high
     joystickMain.a()
-    .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.setpoint), sys_climber));
+    .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high), sys_climber));
+
+    // while holding setpoint goes high, when let go setpoint goes low
+    joystickMain.x()
+    .whileTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high), sys_climber))
+    .whileFalse(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low), sys_climber));
+    
+    // zero encoder
+    joystickMain.start()
+    .onTrue(Commands.runOnce(() -> sys_climber.zeroEncoderIR(), sys_climber));
 
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
