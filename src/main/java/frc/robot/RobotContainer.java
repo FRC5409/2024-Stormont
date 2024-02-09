@@ -5,6 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDrive;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Deployment;
@@ -71,7 +73,6 @@ public class RobotContainer {
         sys_drivetrain = TunerConstants.DriveTrain;
         sys_deployment = new Deployment();
 
-
         // Commands
         cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
             return teleopDrive
@@ -108,19 +109,23 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        joystickMain.leftBumper()
-        .whileTrue(Commands.runOnce(() -> sys_deployment.manualExtend(Constants.kDeployment.voltage), sys_deployment))
-        .whileFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
+        m_primaryController.leftBumper()
+                .whileTrue(Commands.runOnce(() -> sys_deployment.manualExtend(Constants.kDeployment.voltage),
+                        sys_deployment))
+                .whileFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
-        joystickMain.rightBumper()
-        .whileTrue(Commands.runOnce(() -> sys_deployment.manualExtend(-Constants.kDeployment.voltage), sys_deployment))
-        .whileFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
+        m_primaryController.rightBumper()
+                .whileTrue(Commands.runOnce(() -> sys_deployment.manualExtend(-Constants.kDeployment.voltage),
+                        sys_deployment))
+                .whileFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
-        joystickMain.x()
-        .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.amp_pos), sys_deployment));
+        m_primaryController.x()
+                .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.amp_pos),
+                        sys_deployment));
 
-        joystickMain.a()
-        .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos), sys_deployment));
+        m_primaryController.a()
+                .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos),
+                        sys_deployment));
 
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
