@@ -25,6 +25,7 @@ public class Deployment extends SubsystemBase {
   private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
+  private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_DeploymentTab;
   private final GenericEntry kP, kI, kD, position, limitSwitchValue;
@@ -43,6 +44,7 @@ public class Deployment extends SubsystemBase {
     s_encoder = m_motor.getEncoder();
 
     // limitSwitch = new DigitalInput(Constants.kDeployment.digitalInputPort);
+    irSwitch = new DigitalInput(Constants.kDeployment.port_irSwitch);
 
     sb_DeploymentTab = Shuffleboard.getTab("Deployment");
     kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
@@ -73,9 +75,9 @@ public class Deployment extends SubsystemBase {
   }
 
   // public void fixEncoder() {
-  //   if (limitSwitch.get()) {
-  //     s_encoder.setPosition(0);
-  //   }
+  // if (limitSwitch.get()) {
+  // s_encoder.setPosition(0);
+  // }
   // }
 
   @Override
