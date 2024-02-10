@@ -37,7 +37,7 @@ public class IntakeNote extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (!isSpeedLowered && m_indexer.getSensorValue()) {
+        if (!isSpeedLowered && m_intake.getSensorValue()) {
                 m_intake.setSpeed(IntakeConstants.LOW_SPEED);
                 m_indexer.setSpeed(IndexerConstants.LOW_SPEED);
 
@@ -55,7 +55,7 @@ public class IntakeNote extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return m_indexer.getSensorValue();
     }
 
 }

@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -16,11 +16,13 @@ import frc.robot.shuffleboard.ShuffleboardManager;
 public class Indexer extends SubsystemBase {
     private static Indexer instance = null;
 
+    // Motors
     private final CANSparkMax motor;
 
-    // this sensor is in between the Intake and Indexer
+    // Sensors
     private final DigitalInput sensor;
 
+    // Shuffleboard
     private final ShuffleboardManager sb;
 
     private Indexer() {
@@ -48,12 +50,28 @@ public class Indexer extends SubsystemBase {
     // Get subsystem
     public static Indexer getInstance() { if (instance == null) instance = new Indexer(); return instance; }
 
+    /**
+	 * Set speed of rollers.
+	 * @param speed Between -1 to 1.
+	 */
     public void setSpeed(double speed) {
         motor.set(speed);
     }
 
+    /**
+	 * Gets the IR sensor value.
+	 * @return True if laser is interrupted.
+	 */
     public boolean getSensorValue() {
         return sensor.get();
+    }
+
+    /**
+	 * Gets the velocity of the indexer rollers in RPM.
+	 * @return RPM of motor.
+	 */
+    public double getRPM() {
+        return motor.getEncoder().getVelocity();
     }
 
     @Override

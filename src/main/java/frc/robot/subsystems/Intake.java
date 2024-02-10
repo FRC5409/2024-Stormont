@@ -20,8 +20,7 @@ public class Intake extends SubsystemBase {
 	// Motors
 	private final CANSparkMax rollersMotor;
 
-	// Proximity sensor
-	// this sensor is at the begining of the Intake
+	// Sensors
 	private final DigitalInput irSensor;
 
 	// Shuffleboard
@@ -55,10 +54,26 @@ public class Intake extends SubsystemBase {
 		motor.burnFlash();
 	}
 
+	/**
+	 * Gets the IR sensor value.
+	 * @return True if laser is interrupted.
+	 */
 	public boolean getSensorValue() {
 		return irSensor.get();
 	}
 
+	/**
+	 * Gets the velocity of the intake rollers in RPM.
+	 * @return RPM of motor.
+	 */
+	public double getRPM() {
+		return rollersMotor.getEncoder().getVelocity();
+	}
+
+	/**
+	 * Set speed of rollers.
+	 * @param speed Between -1 to 1.
+	 */
 	public void setSpeed(double speed) {
 		rollersMotor.set(speed);
 	}
