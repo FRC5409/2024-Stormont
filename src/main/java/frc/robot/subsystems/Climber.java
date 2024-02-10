@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase {
   private final CANSparkMax m_main;
   private final CANSparkMax m_follower;
-  private final SparkPIDController m_controller;
+  // private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
   private DigitalInput irSwitch;
@@ -38,12 +38,12 @@ public class Climber extends SubsystemBase {
 
     m_follower = new CANSparkMax(Constants.kClimber.id_follower, MotorType.kBrushless);
     m_follower.restoreFactoryDefaults();
-    m_follower.follow(m_main,true);
+    m_follower.follow(m_main, true);
     m_follower.setIdleMode(IdleMode.kBrake);
     m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
-    m_controller = m_main.getPIDController();
-    configPID();
+    // m_controller = m_main.getPIDController();
+    // configPID();
     // m_controller.setOutputRange(-1, 1);
 
     s_encoder = m_main.getEncoder();
@@ -64,36 +64,36 @@ public class Climber extends SubsystemBase {
     m_follower.burnFlash();
   }
 
-  public void configPID() {
-    m_controller.setP(Constants.kClimber.kP);
-    m_controller.setI(Constants.kClimber.kI);
-    m_controller.setD(Constants.kClimber.kD);
-  }
+  // public void configPID() {
+  // m_controller.setP(Constants.kClimber.kP);
+  // m_controller.setI(Constants.kClimber.kI);
+  // m_controller.setD(Constants.kClimber.kD);
+  // }
 
   public void zeroEncoder() {
     s_encoder.setPosition(0);
   }
 
-  public void setpoint(double setpoint) {
-    m_controller.setReference(setpoint, ControlType.kPosition);
-  }
+  // public void setpoint(double setpoint) {
+  // m_controller.setReference(setpoint, ControlType.kPosition);
+  // }
 
   public void manualExtend(double voltage) {
     m_main.setVoltage(voltage);
   }
 
   // public void zeroEncoderLimit() {
-  //   if (limitSwitch.get()) {
-  //     s_encoder.setPosition(0);
-  //   }
+  // if (limitSwitch.get()) {
+  // s_encoder.setPosition(0);
+  // }
   // }
 
   public void zeroEncoderIR() {
     if (irSwitch.get()) {
       s_encoder.setPosition(0);
     }
-}
-  
+  }
+
   @Override
   public void periodic() {
     position.setDouble(s_encoder.getPosition());
