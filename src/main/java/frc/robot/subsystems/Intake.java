@@ -71,7 +71,7 @@ public class Intake extends SubsystemBase {
 	}
 
 	/**
-	 * Set speed of rollers.
+	 * Set voltage of rollers.
 	 * @param speed Between -12 to 12.
 	 */
 	public void setVoltage(double voltage) {

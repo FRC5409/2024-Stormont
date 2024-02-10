@@ -51,7 +51,7 @@ public class Indexer extends SubsystemBase {
     public static Indexer getInstance() { if (instance == null) instance = new Indexer(); return instance; }
 
     /**
-	 * Set speed of rollers.
+	 * Set voltage of rollers.
 	 * @param speed Between -12 to 12.
 	 */
     public void setVoltage(double voltage) {
