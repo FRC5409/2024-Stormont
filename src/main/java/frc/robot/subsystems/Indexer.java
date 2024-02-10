@@ -52,10 +52,10 @@ public class Indexer extends SubsystemBase {
 
     /**
 	 * Set speed of rollers.
-	 * @param speed Between -1 to 1.
+	 * @param speed Between -12 to 12.
 	 */
-    public void setSpeed(double speed) {
-        motor.set(speed);
+    public void setVoltage(double voltage) {
+        motor.set(voltage);
     }
 
     /**

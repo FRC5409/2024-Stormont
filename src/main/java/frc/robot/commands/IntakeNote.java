@@ -30,16 +30,16 @@ public class IntakeNote extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_intake.setSpeed(IntakeConstants.HIGH_SPEED);
-        m_indexer.setSpeed(IndexerConstants.HIGH_SPEED);
+        m_intake.setVoltage(IntakeConstants.HIGH_VOLTAGE);
+        m_indexer.setVoltage(IndexerConstants.HIGH_VOLTAGE);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         if (!isSpeedLowered && m_intake.getSensorValue()) {
-                m_intake.setSpeed(IntakeConstants.LOW_SPEED);
-                m_indexer.setSpeed(IndexerConstants.LOW_SPEED);
+                m_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
+                m_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
 
                 isSpeedLowered = true;
         }
@@ -48,8 +48,8 @@ public class IntakeNote extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_intake.setSpeed(0);
-        m_indexer.setSpeed(0);
+        m_intake.setVoltage(0);
+        m_indexer.setVoltage(0);
     }
 
     // Returns true when the command should end.

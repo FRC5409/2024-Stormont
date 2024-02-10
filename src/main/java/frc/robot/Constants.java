@@ -24,8 +24,8 @@ public final class Constants {
         public static final int MOTOR_CURRENT_LIMIT = 30;
         public static final double MOTOR_RAMP_RATE = 0.1;
 
-        public static final double HIGH_SPEED = 0.75;
-        public static final double LOW_SPEED = 0.25;
+        public static final double HIGH_VOLTAGE = 10;
+        public static final double LOW_VOLTAGE = 4;
     }
 
     public static final class kDrivetrain {
@@ -41,7 +41,7 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temp value
 
-        public static final double HIGH_SPEED = 0.75;
-        public static final double LOW_SPEED = 0.25;
+        public static final double HIGH_VOLTAGE = 10;
+        public static final double LOW_VOLTAGE = 4;
     }
 }

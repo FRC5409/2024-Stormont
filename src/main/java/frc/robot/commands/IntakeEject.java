@@ -27,8 +27,8 @@ public class IntakeEject extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intake.setSpeed(-IntakeConstants.HIGH_SPEED);
-        indexer.setSpeed(-IndexerConstants.HIGH_SPEED);
+        intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
+        indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -40,10 +40,10 @@ public class IntakeEject extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        indexer.setSpeed(0);
+        indexer.setVoltage(0);
         // give the intake some time to push the note all the way out of the subsystem
         if (!interrupted) Commands.waitSeconds(0.5);
-        intake.setSpeed(0);
+        intake.setVoltage(0);
     }
 
     // Returns true when the command should end.
