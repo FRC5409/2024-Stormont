@@ -4,12 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.util.Color;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -27,10 +21,6 @@ public final class Constants {
     public static final class kControllers {
         public static final int kPrimaryController = 0;
         public static final int kSecondaryController = 1;
-    }
-
-    public static final class kCANID {
-
     }
 
     public static final class kDrive {
@@ -68,9 +58,9 @@ public final class Constants {
     }
 
     public static final class IndexerConstants {
-        public static final int MOTOR_ID        = 0; // temp value
-        public static final int RAMP_RATE       = 1; // temp value
-        public static final int CURRENT_LIMIT   = 30;
+        public static final int MOTOR_ID = 0; // temp value
+        public static final int RAMP_RATE = 1; // temp value
+        public static final int CURRENT_LIMIT = 30;
 
         public static final int IR_SENSOR_PORT = 0; // temp value
 
