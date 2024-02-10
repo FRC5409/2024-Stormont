@@ -24,54 +24,56 @@ import edu.wpi.first.wpilibj.util.Color;
  */
 public final class Constants {
 
-    public static final class kControllers {
-        public static final int kPrimaryController = 0;
-        public static final int kSecondaryController = 1;
-    }
+  public static final class kControllers {
+    public static final int kPrimaryController = 0;
+    public static final int kSecondaryController = 1;
+  }
 
-    public static final class kCANID {
+  public static final class kCANID {
 
-    }
+  }
 
-    public static final class kDrive {
+  public static final class kDrive {
 
-        public static final double kDriveGearRatio = 6.75;
-        public static final double kTurnGearRatio = 150.0 / 7.0;
+    public static final double kDriveGearRatio = 6.75;
+    public static final double kTurnGearRatio = 150.0 / 7.0;
 
-        public static final double kMaxDriveVelocity = 4.56; // metres per second
-        public static final double kMaxTurnAngularVelocity = 10; // rotation per second
-        public static final double kMaxTurnAngularAcceleration = 2 * Math.toRadians(360); // rotation per second squared
+    public static final double kMaxDriveVelocity = 4.56; // metres per second
+    public static final double kMaxTurnAngularVelocity = 10; // rotation per second
+    public static final double kMaxTurnAngularAcceleration = 2 * Math.toRadians(360); // rotation per second squared
 
-        public static final double kTranslationDeadband = 0.125;
-        public static final double kTargetHeadingDeadband = 0.3;
-        public static final double kManualRotationDeadband = 0.2;
+    public static final double kTranslationDeadband = 0.125;
+    public static final double kTargetHeadingDeadband = 0.3;
+    public static final double kManualRotationDeadband = 0.2;
 
-        public static final double kDriveRampRate = 0.6;
+    public static final double kDriveRampRate = 0.6;
 
-        public static final double kHeadingSnap = Math.toRadians(45);
+    public static final double kHeadingSnap = Math.toRadians(45);
 
-        public static final double kHeadingP = 2;
-        public static final double kHeadingI = 0;
-        public static final double kHeadingD = 0;
+    public static final double kHeadingP = 2;
+    public static final double kHeadingI = 0;
+    public static final double kHeadingD = 0;
 
-    }
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
 
   public static class kDeployment {
-    public static final int id_motor                     = 0;
-    public static final int digitalInputPort             = 0;
-    public static final int voltage                      = 0;
-    public static final int currentLimit                 = 0;
+    public static final int id_motor = 0;
+    public static final int digitalInputPort = 0;
+    public static final int voltage = 0;
+    public static final int currentLimit = 0;
+    public static final int port_irSwitch = 0;
 
-    public static final double kP                        = 0;
-    public static final double kI                        = 0;
-    public static final double kD                        = 0;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
 
     public static class setpoints {
-      public static final double amp_pos                 = 0; 
-      public static final double trap_pos                = 0;
+      public static final double amp_pos = 0;
+      public static final double trap_pos = 0;
     }
-}
+  }
 }

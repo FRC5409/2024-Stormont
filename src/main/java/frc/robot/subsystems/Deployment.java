@@ -28,7 +28,7 @@ public class Deployment extends SubsystemBase {
   private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_DeploymentTab;
-  private final GenericEntry kP, kI, kD, position, limitSwitchValue;
+  private final GenericEntry kP, kI, kD, position, limitSwitchValue, irSwitchValue;
 
   /** Creates a new Deployment. */
   public Deployment() {
@@ -52,6 +52,7 @@ public class Deployment extends SubsystemBase {
     kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
     position = sb_DeploymentTab.add("position", 0).getEntry();
     limitSwitchValue = sb_DeploymentTab.add("limitSwitch", 0).getEntry();
+    irSwitchValue = sb_DeploymentTab.add("irSwitch", 0).getEntry();
 
     m_motor.burnFlash();
   }
@@ -64,6 +65,12 @@ public class Deployment extends SubsystemBase {
 
   public void zeroEncoder() {
     s_encoder.setPosition(0);
+  }
+
+  public void zeroEncoderIR() {
+    if (irSwitch.get()) {
+      s_encoder.setPosition(0);
+    }
   }
 
   public void setpoint(double setpoint) {
@@ -83,6 +90,7 @@ public class Deployment extends SubsystemBase {
   @Override
   public void periodic() {
     position.setDouble(s_encoder.getPosition());
+    irSwitchValue.setBoolean(irSwitch.get());
     // limitSwitchValue.setBoolean(limitSwitch.get());
     // fixEncoder();
     // This method will be called once per scheduler run
