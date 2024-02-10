@@ -39,7 +39,6 @@ public class Indexer extends SubsystemBase {
         CANSparkMax motor = new CANSparkMax(IndexerConstants.MOTOR_ID, MotorType.kBrushless);
 
         motor.restoreFactoryDefaults();
-        motor.setOpenLoopRampRate(IndexerConstants.RAMP_RATE);
         motor.setIdleMode(IdleMode.kBrake);
         motor.setSmartCurrentLimit(IndexerConstants.CURRENT_LIMIT);
 
@@ -62,8 +61,8 @@ public class Indexer extends SubsystemBase {
 	 * Gets the IR sensor value.
 	 * @return True if laser is interrupted.
 	 */
-    public boolean getSensorValue() {
-        return sensor.get();
+    public boolean getSensorInterrupted() {
+        return !sensor.get();
     }
 
     /**

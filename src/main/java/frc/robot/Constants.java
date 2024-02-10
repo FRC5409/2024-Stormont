@@ -50,8 +50,7 @@ public final class Constants {
         public static final int MOTOR_ID = 0;
         public static final int IR_SENSOR_PORT = 0;
 
-        public static final int MOTOR_CURRENT_LIMIT = 30;
-        public static final double MOTOR_RAMP_RATE = 0.1;
+        public static final int CURRENT_LIMIT = 30;
 
         public static final double HIGH_VOLTAGE = 10;
         public static final double LOW_VOLTAGE = 4;
@@ -59,7 +58,6 @@ public final class Constants {
 
     public static final class IndexerConstants {
         public static final int MOTOR_ID = 0; // temp value
-        public static final int RAMP_RATE = 1; // temp value
         public static final int CURRENT_LIMIT = 30;
 
         public static final int IR_SENSOR_PORT = 0; // temp value

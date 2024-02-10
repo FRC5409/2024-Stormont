@@ -48,8 +48,7 @@ public class Intake extends SubsystemBase {
 		motor.restoreFactoryDefaults();
 		motor.setInverted(isInverted);
 		motor.setIdleMode(IdleMode.kBrake);
-		motor.setSmartCurrentLimit(IntakeConstants.MOTOR_CURRENT_LIMIT);
-		motor.setClosedLoopRampRate(IntakeConstants.MOTOR_RAMP_RATE);
+		motor.setSmartCurrentLimit(IntakeConstants.CURRENT_LIMIT);
 
 		motor.burnFlash();
 	}
@@ -58,8 +57,8 @@ public class Intake extends SubsystemBase {
 	 * Gets the IR sensor value.
 	 * @return True if laser is interrupted.
 	 */
-	public boolean getSensorValue() {
-		return irSensor.get();
+	public boolean getSensorInterrupted() {
+		return !irSensor.get();
 	}
 
 	/**
