@@ -20,8 +20,6 @@ import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
-import frc.robot.commands.IntakeEject;
-import frc.robot.commands.IntakeNote;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
@@ -49,8 +47,6 @@ public class RobotContainer {
 
     // Commands
     private final Command cmd_teleopDrive;
-	private final IntakeNote cmd_intakeNote;
-	private final IntakeEject cmd_intakeEject;
 
     private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
             .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
@@ -87,8 +83,6 @@ public class RobotContainer {
                             (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
                                     * kDrive.kMaxTurnAngularVelocity);
         }).ignoringDisable(true);
-		cmd_intakeNote	= new IntakeNote();
-		cmd_intakeEject = new IntakeEject();
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -119,25 +113,58 @@ public class RobotContainer {
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-		m_primaryController.leftBumper()
-			.whileTrue(cmd_intakeNote);
+        // Intake note command
+		m_primaryController.x()
+            .whileTrue(Commands.startEnd(
+                () -> {
+                    sys_intake.setVoltage(IntakeConstants.HIGH_VOLTAGE);
+                    sys_indexer.setVoltage(IndexerConstants.HIGH_VOLTAGE);
+
+                    while (true) {
+                        if (sys_intake.getSensorInterrupted()) {
+                            sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
+                            sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
+
+                            break;
+                        }
+                    }
+                },
+                () -> {
+                    sys_intake.setVoltage(0);
+                    sys_indexer.setVoltage(0);
+                }
+            ));
 		
         // Eject note command
-        // FIXME: This probably doesn't work; work on this later
-		m_primaryController.leftTrigger()
-            .whileTrue(
-                Commands.runOnce(() -> {
+        m_primaryController.b()
+            .whileTrue(Commands.startEnd(
+                () -> {
                     sys_intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
                     sys_indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
-                }, sys_intake, sys_indexer)
-                .alongWith(
-                    Commands.runOnce(() -> {
-                        sys_intake.setVoltage(0);
-                        sys_indexer.setVoltage(0);
-                    }, sys_intake, sys_indexer)
-                    .onlyIf(() -> sys_intake.getSensorInterrupted())
-                )
-            );
+                },
+                () -> {
+                    sys_intake.setVoltage(0);
+                    sys_intake.setVoltage(0);
+                },
+                sys_intake, sys_indexer
+            ));
+
+        // Eject note command
+        // FIXME: This probably doesn't work
+		// m_primaryController.leftTrigger()
+        //     .whileTrue(
+        //         Commands.runOnce(() -> {
+        //             sys_intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
+        //             sys_indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
+        //         }, sys_intake, sys_indexer)
+        //         .alongWith(
+        //             Commands.runOnce(() -> {
+        //                 sys_intake.setVoltage(0);
+        //                 sys_indexer.setVoltage(0);
+        //             }, sys_intake, sys_indexer)
+        //             .onlyIf(() -> sys_intake.getSensorInterrupted())
+        //         )
+        //     );
     }
 
     private void addShuffleboardItems() {
