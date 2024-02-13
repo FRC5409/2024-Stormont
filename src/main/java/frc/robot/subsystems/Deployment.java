@@ -35,7 +35,7 @@ public class Deployment extends SubsystemBase {
     m_motor = new CANSparkMax(Constants.kDeployment.id_motor, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
     m_motor.setIdleMode(IdleMode.kBrake);
-    m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
+    m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit); // current limit currently 0 set to 30 or 40
 
     m_controller = m_motor.getPIDController();
     configPID();
@@ -51,8 +51,8 @@ public class Deployment extends SubsystemBase {
     kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
     kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
     position = sb_DeploymentTab.add("position", 0).getEntry();
-    limitSwitchValue = sb_DeploymentTab.add("limitSwitch", 0).getEntry();
-    irSwitchValue = sb_DeploymentTab.add("irSwitch", 0).getEntry();
+    limitSwitchValue = sb_DeploymentTab.add("limitSwitch", 0).getEntry(); // true or false
+    irSwitchValue = sb_DeploymentTab.add("irSwitch", 0).getEntry(); // true or false
 
     m_motor.burnFlash();
   }
@@ -67,8 +67,9 @@ public class Deployment extends SubsystemBase {
     s_encoder.setPosition(0);
   }
 
-  public void zeroEncoderIR() {
-    if (irSwitch.get()) {
+  public void zeroEncoderIR() { // put this in periodic
+    // create a get swtich function
+    if (irSwitch.get()) { // should be !irSwitch.get() ir switch returns false when in range
       s_encoder.setPosition(0);
     }
   }
