@@ -74,6 +74,7 @@ public final class Constants {
     public static class setpoints {
       public static final double amp_pos = 0;
       public static final double trap_pos = 0;
+      public static final double the_end = 0;
     }
   }
 }

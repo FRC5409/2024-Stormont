@@ -75,6 +75,9 @@ public class Deployment extends SubsystemBase {
 
   public void setpoint(double setpoint) {
     m_controller.setReference(setpoint, ControlType.kPosition);
+    if (s_encoder.getPosition() <= Constants.kDeployment.setpoints.the_end) {
+      m_motor.setVoltage(0);
+    }
   }
 
   public void manualExtend(double voltage) {
