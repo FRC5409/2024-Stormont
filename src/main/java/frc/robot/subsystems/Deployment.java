@@ -35,7 +35,7 @@ public class Deployment extends SubsystemBase {
     m_motor = new CANSparkMax(Constants.kDeployment.id_motor, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
     m_motor.setIdleMode(IdleMode.kBrake);
-    m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit); // current limit currently 0 set to 30 or 40
+    m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
 
     m_controller = m_motor.getPIDController();
     configPID();
@@ -67,9 +67,8 @@ public class Deployment extends SubsystemBase {
     s_encoder.setPosition(0);
   }
 
-  public void zeroEncoderIR() { // put this in periodic
-    // create a get swtich function
-    if (irSwitch.get()) { // should be !irSwitch.get() ir switch returns false when in range
+  public void zeroEncoderIR() {
+    if (!irSwitch.get()) {
       s_encoder.setPosition(0);
     }
   }
@@ -95,6 +94,7 @@ public class Deployment extends SubsystemBase {
   public void periodic() {
     position.setDouble(s_encoder.getPosition());
     irSwitchValue.setBoolean(irSwitch.get());
+    zeroEncoderIR();
     // limitSwitchValue.setBoolean(limitSwitch.get());
     // fixEncoder();
     // This method will be called once per scheduler run
