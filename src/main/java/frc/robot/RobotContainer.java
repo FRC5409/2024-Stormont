@@ -148,23 +148,6 @@ public class RobotContainer {
                 },
                 sys_intake, sys_indexer
             ));
-
-        // Eject note command
-        // FIXME: This probably doesn't work
-		// m_primaryController.leftTrigger()
-        //     .whileTrue(
-        //         Commands.runOnce(() -> {
-        //             sys_intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
-        //             sys_indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
-        //         }, sys_intake, sys_indexer)
-        //         .alongWith(
-        //             Commands.runOnce(() -> {
-        //                 sys_intake.setVoltage(0);
-        //                 sys_indexer.setVoltage(0);
-        //             }, sys_intake, sys_indexer)
-        //             .onlyIf(() -> sys_intake.getSensorInterrupted())
-        //         )
-        //     );
     }
 
     private void addShuffleboardItems() {
