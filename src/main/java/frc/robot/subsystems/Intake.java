@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
 		// Shuffleboard
 		sb = new ShuffleboardManager("Intake");
 		sb.addEntry("Motor Speed", () -> rollersMotor.getEncoder().getVelocity());
-		sb.addEntry("Sensor Value", () -> irSensor.get());
+		sb.addEntry("Sensor Value", () -> getSensorInterrupted());
 	}
 
 	// Get subsystem

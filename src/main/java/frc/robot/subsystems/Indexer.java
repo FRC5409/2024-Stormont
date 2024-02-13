@@ -32,7 +32,7 @@ public class Indexer extends SubsystemBase {
 
         sb = new ShuffleboardManager("Indexer");
         sb.addEntry("Motor Speed", () -> motor.getEncoder().getVelocity());
-        sb.addEntry("Sensor Value", () -> sensor.get());
+        sb.addEntry("Sensor Value", () -> getSensorInterrupted());
     }
 
     private CANSparkMax initMotor() {
