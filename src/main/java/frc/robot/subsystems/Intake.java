@@ -77,6 +77,14 @@ public class Intake extends SubsystemBase {
 		rollersMotor.set(voltage);
 	}
 
+	/**
+	 * Get voltage of rollers.
+	 * @return The set voltage between -12 to 12.
+	 */
+	public double getVoltage() {
+		return rollersMotor.getBusVoltage();
+	}
+
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run

@@ -114,27 +114,27 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
         // Intake note command
-		m_primaryController.x()
-            .whileTrue(Commands.startEnd(
-                () -> {
-                    sys_intake.setVoltage(IntakeConstants.HIGH_VOLTAGE);
-                    sys_indexer.setVoltage(IndexerConstants.HIGH_VOLTAGE);
-
-                    while (true) {
-                        if (sys_intake.getSensorInterrupted()) {
+        m_primaryController.x()
+            .whileTrue(
+                Commands.runOnce(
+                    () -> {
+                        sys_intake.setVoltage(IntakeConstants.HIGH_VOLTAGE);
+                        sys_indexer.setVoltage(IndexerConstants.HIGH_VOLTAGE);
+                    }
+                ).andThen(Commands.runEnd(
+                    () -> {
+                        if (sys_intake.getSensorInterrupted() && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
                             sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
                             sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
-
-                            break;
                         }
-                    }
-                },
-                () -> {
-                    sys_intake.setVoltage(0);
-                    sys_indexer.setVoltage(0);
-                }
-            ));
-		
+                    },
+                    () -> {
+                        sys_intake.setVoltage(0);
+                        sys_indexer.setVoltage(0);
+                    },
+                    sys_intake, sys_indexer
+                )));
+
         // Eject note command
         m_primaryController.b()
             .whileTrue(Commands.startEnd(

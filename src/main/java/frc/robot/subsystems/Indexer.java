@@ -58,6 +58,14 @@ public class Indexer extends SubsystemBase {
     }
 
     /**
+	 * Get voltage of rollers.
+	 * @return The set voltage between -12 to 12.
+	 */
+	public double getVoltage() {
+		return motor.getBusVoltage();
+	}
+
+    /**
 	 * Gets the IR sensor value.
 	 * @return True if laser is interrupted.
 	 */
