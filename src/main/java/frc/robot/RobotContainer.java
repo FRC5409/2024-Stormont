@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
 import frc.robot.commands.IntakeEject;
@@ -114,16 +116,28 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
 		m_primaryController.leftBumper()
 			.whileTrue(cmd_intakeNote);
 		
+        // Eject note command
+        // FIXME: This probably doesn't work; work on this later
 		m_primaryController.leftTrigger()
-				.whileTrue(cmd_intakeEject);
-
+            .whileTrue(
+                Commands.runOnce(() -> {
+                    sys_intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
+                    sys_indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
+                }, sys_intake, sys_indexer)
+                .alongWith(
+                    Commands.runOnce(() -> {
+                        sys_intake.setVoltage(0);
+                        sys_indexer.setVoltage(0);
+                    }, sys_intake, sys_indexer)
+                    .onlyIf(() -> sys_intake.getSensorInterrupted())
+                )
+            );
     }
 
     private void addShuffleboardItems() {
