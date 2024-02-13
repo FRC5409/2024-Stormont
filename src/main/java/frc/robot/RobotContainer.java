@@ -111,18 +111,18 @@ public class RobotContainer {
          */
         private void configureBindings() {
                 m_primaryController.leftBumper()
-                                .whileTrue(Commands.runOnce(
+                                .whileTrue(Commands.runOnce( // on true (spamming CAN)
                                                 () -> sys_deployment.manualExtend(Constants.kDeployment.voltage),
                                                 sys_deployment))
-                                .whileFalse(Commands.runOnce(
+                                .whileFalse(Commands.runOnce( // on false
                                                 () -> sys_deployment.manualExtend(0),
                                                 sys_deployment));
 
                 m_primaryController.rightBumper()
-                                .whileTrue(Commands.runOnce(
+                                .whileTrue(Commands.runOnce( // on true
                                                 () -> sys_deployment.manualExtend(-Constants.kDeployment.voltage),
                                                 sys_deployment))
-                                .whileFalse(Commands.runOnce(
+                                .whileFalse(Commands.runOnce( // on false
                                                 () -> sys_deployment.manualExtend(0),
                                                 sys_deployment));
 
@@ -142,7 +142,7 @@ public class RobotContainer {
                                                 sys_drivetrain));
 
                 m_primaryController.start()
-                                .onTrue(Commands.runOnce(
+                                .onTrue(Commands.runOnce( // makes no sense?!?!? create a 0 functions that does no check
                                                 () -> sys_deployment.zeroEncoderIR(),
                                                 sys_deployment));
 
