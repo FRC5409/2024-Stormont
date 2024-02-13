@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kControllers;
@@ -109,31 +111,38 @@ public class RobotContainer {
     m_primaryController.rightBumper()
         .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-    // manual movement up
+    // Manual climber movement up
     m_secondaryController.povUp()
-        .whileTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage), sys_climber))
-        .whileFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+        .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage), sys_climber))
+        .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
-    // manual movement down
+    // Manual climber movement down
     m_secondaryController.povDown()
-        .whileTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage), sys_climber))
-        .whileFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+        .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage), sys_climber))
+        .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
-    // setpoint high
+    // Move climber to setpoint
     // m_secondaryController.a()
     // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
     // sys_climber));
 
-    // // while holding setpoint goes high, when let go setpoint goes low
+    // Climbing and scoring
+    // manual extend would be using the deployment stuff
     // m_secondaryController.x()
     // .whileTrue(Commands.runOnce(() ->
     // sys_climber.setpoint(Constants.kClimber.high), sys_climber))
-    // .whileFalse(Commands.runOnce(() ->
-    // sys_climber.setpoint(Constants.kClimber.low), sys_climber));
+    // .onFalse(Commands.runOnce(() ->sys_climber.setpoint(Constants.kClimber.low),
+    // sys_climber)
+    // .andThen(
+    // new ConditionalCommand(Commands.runOnce(() -> sys_climber.manualExtend(100),
+    // sys_climber), Commands.runOnce(() -> sys_climber.manualExtend(0),
+    // sys_climber), () -> sys_climber.getPosition() >= 100))
+    // .andThen(new WaitCommand(0.2))
+    // .andThen(Commands.runOnce(() -> sys_climber.manualExtend(100), sys_climber))
+    // );
 
-    // zero encoder
-    m_secondaryController.start()
-        .onTrue(Commands.runOnce(() -> sys_climber.zeroEncoderIR(), sys_climber));
+    // button to make the deployment go back to normal after shooting
+
   }
 
   private void addShuffleboardItems() {

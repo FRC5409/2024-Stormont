@@ -33,63 +33,93 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   public Climber() {
+
+    // Configurate motor 1
     m_main = new CANSparkMax(Constants.kClimber.id_main, MotorType.kBrushless);
     m_main.restoreFactoryDefaults();
     m_main.setIdleMode(IdleMode.kBrake);
     m_main.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
+    // Configurate motor 2
     m_follower = new CANSparkMax(Constants.kClimber.id_follower, MotorType.kBrushless);
     m_follower.restoreFactoryDefaults();
     m_follower.follow(m_main, true);
     m_follower.setIdleMode(IdleMode.kBrake);
     m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
+    // PID controller
     // m_controller = m_main.getPIDController();
     // configPID();
     // m_controller.setOutputRange(-1, 1);
 
+    // Encoder
     s_encoder = m_main.getEncoder();
     zeroEncoder();
 
+    // Limit Switches
     // limitSwitch = new DigitalInput(Constants.kClimber.port_limitSwitch);
     irSwitch = new DigitalInput(Constants.kClimber.port_irSwitch);
 
+    // Shuffleboard
     sb_climberTab = Shuffleboard.getTab("Climber");
     kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
     kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
     kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
     position = sb_climberTab.add("position", 0).getEntry();
-    // limitSwitchValue = sb_climberTab.add("limitSwitch", 0).getEntry();
-    irSwitchValue = sb_climberTab.add("irSwitch", 0).getEntry();
+    // limitSwitchValue = sb_climberTab.add("limitSwitch", false).getEntry();
+    irSwitchValue = sb_climberTab.add("irSwitch", false).getEntry();
 
     m_main.burnFlash();
     m_follower.burnFlash();
   }
 
+  // Configurate PID
   // public void configPID() {
   // m_controller.setP(Constants.kClimber.kP);
   // m_controller.setI(Constants.kClimber.kI);
   // m_controller.setD(Constants.kClimber.kD);
   // }
 
+  // Zero encoder
   public void zeroEncoder() {
     s_encoder.setPosition(0);
   }
 
+  /**
+   * Encoder getter method
+   * 
+   * @return The encoders position
+   */
+  public double getPosition() {
+    return s_encoder.getPosition();
+  }
+
+  /**
+   * Sets setpoint
+   * 
+   * @param setpoint value
+   */
   // public void setpoint(double setpoint) {
   // m_controller.setReference(setpoint, ControlType.kPosition);
   // }
 
+  /**
+   * Sets voltage for manual extension
+   * 
+   * @param voltage value
+   */
   public void manualExtend(double voltage) {
     m_main.setVoltage(voltage);
   }
 
+  // Zeros encoder using limitswtich
   // public void zeroEncoderLimit() {
   // if (limitSwitch.get()) {
   // s_encoder.setPosition(0);
-  // }
+  //
   // }
 
+  // Zeros encoder using IR sensor
   public void zeroEncoderIR() {
     if (irSwitch.get()) {
       s_encoder.setPosition(0);
@@ -97,14 +127,16 @@ public class Climber extends SubsystemBase {
   }
 
   // public Command setpoint(double setpoint) {
-  //   return Commands.runOnce(() -> this.setpoint(setpoint));
+  // return Commands.runOnce(() -> this.setpoint(setpoint));
   // }
 
   @Override
   public void periodic() {
+    // Sets values to shuffleboard
     position.setDouble(s_encoder.getPosition());
     // limitSwitchValue.setBoolean(limitSwitch.get());
     irSwitchValue.setBoolean(irSwitch.get());
-    // This method will be called once per scheduler run
+
+    zeroEncoderIR();
   }
 }

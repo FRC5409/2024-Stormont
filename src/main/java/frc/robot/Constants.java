@@ -56,22 +56,22 @@ public final class Constants {
 
     }
 
-     public static class kClimber {
-    public static final int id_main                      = 0;
-    public static final int id_follower                  = 0;
-    public static final int port_limitSwitch             = 0;
-    public static final int port_irSwitch                = 0;
-    public static final int voltage                      = 0;
-    public static final int currentLimit                 = 0;
+    public static class kClimber {
+        public static final int id_main = 0;
+        public static final int id_follower = 0;
+        public static final int port_limitSwitch = 0;
+        public static final int port_irSwitch = 0;
+        public static final int voltage = 0;
+        public static final int currentLimit = 40;
 
-    public static final double kP                        = 0;
-    public static final double kI                        = 0;
-    public static final double kD                        = 0;
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
 
-    public static final double irZeroDistance            = 0;
+        public static final double irZeroDistance = 0;
 
-    public static final double high                      = 0;
-    public static final double low                       = 0;
+        public static final double high = 0;
+        public static final double low = 0;
 
-  }
+    }
 }
