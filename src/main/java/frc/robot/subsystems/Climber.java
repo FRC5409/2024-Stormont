@@ -121,7 +121,7 @@ public class Climber extends SubsystemBase {
 
   // Zeros encoder using IR sensor
   public void zeroEncoderIR() {
-    if (irSwitch.get()) {
+    if (!irSwitch.get()) {
       s_encoder.setPosition(0);
     }
   }
