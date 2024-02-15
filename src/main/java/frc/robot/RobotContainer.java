@@ -137,17 +137,18 @@ public class RobotContainer {
 
         // Eject note command
         m_primaryController.b()
-            .whileTrue(Commands.startEnd(
+            .onTrue(Commands.runOnce(
                 () -> {
                     sys_intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
                     sys_indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
                 },
+                sys_intake, sys_indexer))
+            .onFalse(Commands.runOnce(
                 () -> {
                     sys_intake.setVoltage(0);
-                    sys_intake.setVoltage(0);
+                    sys_indexer.setVoltage(0);
                 },
-                sys_intake, sys_indexer
-            ));
+                sys_intake, sys_indexer));
     }
 
     private void addShuffleboardItems() {
