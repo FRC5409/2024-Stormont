@@ -122,6 +122,15 @@ public class Deployment extends SubsystemBase {
     }
   }
 
+  /*
+   * Gets the setpoint of the deployment elevator
+   * 
+   * @return the deployments setpoint
+   */
+  public double getSetpoint() {
+    return s_encoder.getPosition();
+  }
+
   /**
    * Sets voltage for manual extension
    * 
