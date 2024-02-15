@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase {
   private final CANSparkMax m_main;
   private final CANSparkMax m_follower;
+
   // private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
@@ -86,7 +87,7 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * Encoder getter method
+   * Gets the position of the climber
    * 
    * @return The encoders position
    */
@@ -95,7 +96,7 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * Sets setpoint
+   * Sets the position of the climber
    * 
    * @param setpoint value
    */
