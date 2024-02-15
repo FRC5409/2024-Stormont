@@ -33,7 +33,7 @@ public class Deployment extends SubsystemBase {
 
   // shuffleboard/generic entry
   private final ShuffleboardTab sb_DeploymentTab;
-  private final GenericEntry kP, kI, kD, position, limitSwitchValue, irSwitchValue;
+  private final GenericEntry kP, kI, kD;
 
   /**
    * Creates a new Deployment.
@@ -68,9 +68,9 @@ public class Deployment extends SubsystemBase {
     kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
     kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
     kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
-    position = sb_DeploymentTab.add("position", 0).getEntry();
-    limitSwitchValue = sb_DeploymentTab.add("limitSwitch", 0).getEntry(); // true or false
-    irSwitchValue = sb_DeploymentTab.add("irSwitch", 0).getEntry(); // true or false
+    sb_DeploymentTab.addDouble("position", () -> s_encoder.getPosition());
+    sb_DeploymentTab.addBoolean("irSwitch", () -> !irSwitch.get());
+    // sb_DeploymentTab.addBoolean("limitSwitch", () -> !limitSwitch.get());
 
     m_motor.burnFlash();
   }
@@ -141,10 +141,8 @@ public class Deployment extends SubsystemBase {
 
   @Override
   public void periodic() {
-    position.setDouble(s_encoder.getPosition());
-    irSwitchValue.setBoolean(!irSwitch.get());
     zeroEncoderIR();
-    // limitSwitchValue.setBoolean(limitSwitch.get());
+
     // fixEncoder();
     // This method will be called once per scheduler run
   }
