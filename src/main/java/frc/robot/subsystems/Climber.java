@@ -30,7 +30,7 @@ public class Climber extends SubsystemBase {
   private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_climberTab;
-  private final GenericEntry kP, kI, kD, position, irSwitchValue;
+  private final GenericEntry kP, kI, kD;
 
   /** Creates a new Climber. */
   public Climber() {
@@ -66,9 +66,9 @@ public class Climber extends SubsystemBase {
     kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
     kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
     kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
-    position = sb_climberTab.add("position", 0).getEntry();
-    // limitSwitchValue = sb_climberTab.add("limitSwitch", false).getEntry();
-    irSwitchValue = sb_climberTab.add("irSwitch", false).getEntry();
+    sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
+    sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
+    // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
 
     m_main.burnFlash();
     m_follower.burnFlash();
@@ -133,11 +133,6 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Sets values to shuffleboard
-    position.setDouble(s_encoder.getPosition());
-    // limitSwitchValue.setBoolean(limitSwitch.get());
-    irSwitchValue.setBoolean(irSwitch.get());
-
     zeroEncoderIR();
   }
 }
