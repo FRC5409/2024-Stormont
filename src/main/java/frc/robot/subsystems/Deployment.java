@@ -27,6 +27,7 @@ public class Deployment extends SubsystemBase {
   private final SparkPIDController m_controller;
   // encoder
   private final RelativeEncoder s_encoder;
+  // sensor
   // private DigitalInput limitSwitch;
   private DigitalInput irSwitch;
 
@@ -141,7 +142,7 @@ public class Deployment extends SubsystemBase {
   @Override
   public void periodic() {
     position.setDouble(s_encoder.getPosition());
-    irSwitchValue.setBoolean(irSwitch.get());
+    irSwitchValue.setBoolean(!irSwitch.get());
     zeroEncoderIR();
     // limitSwitchValue.setBoolean(limitSwitch.get());
     // fixEncoder();

@@ -9,8 +9,11 @@ import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+
 import frc.robot.subsystems.Deployment;
+import frc.robot.subsystems.Cartridge;
 import frc.robot.subsystems.ExampleSubsystem;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -44,6 +47,7 @@ public class RobotContainer {
         // Subsystems
         public final Drivetrain sys_drivetrain;
         private final Deployment sys_deployment;
+        private final Cartridge sys_Cartridge;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -72,6 +76,7 @@ public class RobotContainer {
                 // Subsystems
                 sys_drivetrain = TunerConstants.DriveTrain;
                 sys_deployment = new Deployment();
+                sys_Cartridge = new Cartridge();
 
                 // Commands
                 cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
@@ -140,6 +145,11 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(
                                                 sys_drivetrain::seedFieldRelative,
                                                 sys_drivetrain));
+
+                m_primaryController.y()
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_Cartridge.roll(Constants.kCartridge.voltage),
+                                                sys_Cartridge));
 
         }
 

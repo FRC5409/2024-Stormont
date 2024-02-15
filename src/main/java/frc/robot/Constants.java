@@ -77,4 +77,10 @@ public final class Constants {
       public static final double the_end = 0;
     }
   }
+
+  public static class kCartridge {
+    public static final int id_motor = 0;
+    public static final int voltage = 0;
+    public static final int currentLimit = 0;
+  }
 }
