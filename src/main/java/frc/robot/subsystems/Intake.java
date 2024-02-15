@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
 		// Shuffleboard
 		sb = new ShuffleboardManager("Intake");
 		sb.addEntry("Motor Speed", () -> rollersMotor.getEncoder().getVelocity());
-		sb.addEntry("Sensor Value", () -> getSensorInterrupted());
+		sb.addEntry("Sensor Value", () -> checkIR());
 	}
 
 	// Get subsystem
@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase {
 	 * Gets the IR sensor value.
 	 * @return True if laser is interrupted.
 	 */
-	public boolean getSensorInterrupted() {
+	public boolean checkIR() {
 		return !irSensor.get();
 	}
 

@@ -32,7 +32,7 @@ public class Indexer extends SubsystemBase {
 
         sb = new ShuffleboardManager("Indexer");
         sb.addEntry("Motor Speed", () -> motor.getEncoder().getVelocity());
-        sb.addEntry("Sensor Value", () -> getSensorInterrupted());
+        sb.addEntry("Sensor Value", () -> checkIR());
     }
 
     private CANSparkMax initMotor() {
@@ -69,7 +69,7 @@ public class Indexer extends SubsystemBase {
 	 * Gets the IR sensor value.
 	 * @return True if laser is interrupted.
 	 */
-    public boolean getSensorInterrupted() {
+    public boolean checkIR() {
         return !sensor.get();
     }
 

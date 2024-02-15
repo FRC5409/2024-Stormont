@@ -123,7 +123,7 @@ public class RobotContainer {
                     }
                 ).andThen(Commands.runEnd(
                     () -> {
-                        if (sys_intake.getSensorInterrupted() && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
+                        if (sys_intake.checkIR() && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
                             sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
                             sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
                         }
