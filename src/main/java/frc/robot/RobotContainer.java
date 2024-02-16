@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -122,7 +123,12 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
-                m_primaryController.leftBumper()
+                m_primaryController.rightBumper()
+                                .onTrue(Commands.runOnce(
+                                                sys_drivetrain::seedFieldRelative,
+                                                sys_drivetrain));
+
+                m_primaryController.leftTrigger()
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_deployment.manualExtend(Constants.kDeployment.voltage),
                                                 sys_deployment))
@@ -130,7 +136,7 @@ public class RobotContainer {
                                                 () -> sys_deployment.manualExtend(0),
                                                 sys_deployment));
 
-                m_primaryController.rightBumper()
+                m_primaryController.rightTrigger()
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_deployment.manualExtend(-Constants.kDeployment.voltage),
                                                 sys_deployment))
@@ -142,22 +148,14 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.amp_pos),
                                                 sys_deployment));
-
-                m_primaryController.a()
-                                .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos),
-                                                sys_deployment));
-
-                m_primaryController.rightBumper()
-                                .onTrue(Commands.runOnce(
-                                                sys_drivetrain::seedFieldRelative,
-                                                sys_drivetrain));
+                ;
 
                 m_primaryController.y()
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_Cartridge.roll(Constants.kCartridge.voltage),
                                                 sys_Cartridge));
 
+                // score in amp, extend deployment and roll cartridge
                 m_primaryController.b()
                                 .whileTrue(new SequentialCommandGroup(
                                                 Commands.runOnce(() -> sys_deployment
@@ -167,6 +165,25 @@ public class RobotContainer {
                                                                 () -> sys_Cartridge.roll(
                                                                                 Constants.kCartridge.scoreVoltage),
                                                                 sys_Cartridge)));
+                // Endgame Climber
+                m_primaryController.a()
+                                .whileTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                                                sys_climber))
+                                .whileFalse(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
+                                                sys_climber));
+
+                // // Endgame Climber and trap
+                // m_primaryController.a()
+                // .whileTrue(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber))
+                // .whileFalse(new ParallelCommandGroup(
+                // Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
+                // sys_climber),
+                // Commands.runOnce(
+                // () -> sys_Cartridge.roll(
+                // Constants.kCartridge.scoreVoltage),
+                // sys_Cartridge)));
 
                 // Manual climber movement up
                 m_secondaryController.povUp()
@@ -179,11 +196,6 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-                // Move climber to setpoint
-                // m_secondaryController.a()
-                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
-                // sys_climber));
 
         }
 
