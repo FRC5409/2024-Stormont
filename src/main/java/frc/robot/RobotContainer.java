@@ -26,10 +26,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -50,6 +53,7 @@ public class RobotContainer {
         public final Drivetrain sys_drivetrain;
         private final Deployment sys_deployment;
         private final Cartridge sys_Cartridge;
+        private final Climber sys_climber;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -79,6 +83,7 @@ public class RobotContainer {
                 sys_drivetrain = TunerConstants.DriveTrain;
                 sys_deployment = new Deployment();
                 sys_Cartridge = new Cartridge();
+                sys_climber = new Climber();
 
                 // Commands
                 cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
@@ -162,6 +167,23 @@ public class RobotContainer {
                                                                 () -> sys_Cartridge.roll(
                                                                                 Constants.kCartridge.scoreVoltage),
                                                                 sys_Cartridge)));
+
+                // Manual climber movement up
+                m_secondaryController.povUp()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // Manual climber movement down
+                m_secondaryController.povDown()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // Move climber to setpoint
+                // m_secondaryController.a()
+                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber));
 
         }
 
