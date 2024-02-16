@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
@@ -150,6 +152,16 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_Cartridge.roll(Constants.kCartridge.voltage),
                                                 sys_Cartridge));
+
+                m_primaryController.b()
+                                .whileTrue(new SequentialCommandGroup(
+                                                Commands.runOnce(() -> sys_deployment
+                                                                .setpoint(Constants.kDeployment.setpoints.amp_pos),
+                                                                sys_deployment),
+                                                Commands.runOnce(
+                                                                () -> sys_Cartridge.roll(
+                                                                                Constants.kCartridge.scoreVoltage),
+                                                                sys_Cartridge)));
 
         }
 

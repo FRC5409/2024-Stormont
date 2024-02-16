@@ -103,10 +103,18 @@ public class Deployment extends SubsystemBase {
    * @return distance from irswitch
    */
 
+  public boolean getIRSwitch() {
+    return !irSwitch.get();
+  }
+
   public void zeroEncoderIR() {
     if (!irSwitch.get()) {
       s_encoder.setPosition(0);
     }
+  }
+
+  public double getSetpoint() {
+    return s_encoder.getPosition();
   }
 
   /**
