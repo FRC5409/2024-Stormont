@@ -55,4 +55,9 @@ public final class Constants {
         public static final double kHeadingD = 0;
 
     }
+
+    public static final class kAdvantageKit {
+        public static final String kProjectName = "Beta-2024";
+
+    }
 }

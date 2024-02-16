@@ -4,9 +4,17 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -21,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -45,6 +53,24 @@ public class Robot extends TimedRobot {
         .onTrue(
             Commands.runOnce(() -> m_robotContainer.sys_drivetrain.setAllMotorsNeutralMode(NeutralModeValue.Coast))
                 .ignoringDisable(true));
+
+    // Advantage Kit Initialization
+    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+
+    // Runs replay if not real match.
+    if (isReal()) {
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+      Logger.addDataReceiver(new NT4Publisher());
+      new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+    } else {
+      setUseTiming(false);
+      String logPath = LogFileUtil.findReplayLog();
+      Logger.setReplaySource(new WPILOGReader(logPath));
+      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+    }
+
+    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
+                    // be added!
   }
 
   /**
