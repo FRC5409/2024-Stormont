@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kWaypoints;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 
@@ -31,6 +32,10 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDrive;
+//import frc.robot.Constants.kWaypoints;
+import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Climber;
@@ -87,15 +92,12 @@ public class RobotContainer {
                 sys_climber = new Climber();
 
                 // Commands
-                cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-                        return teleopDrive
-                                        .withVelocityX(-m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity)
-                                        .withVelocityY(-m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity)
-                                        .withRotationalRate(
-                                                        (m_primaryController.getLeftTriggerAxis()
-                                                                        - m_primaryController.getRightTriggerAxis())
-                                                                        * kDrive.kMaxTurnAngularVelocity);
-                }).ignoringDisable(true);
+                cmd_teleopDrive = sys_drivetrain.drive(
+                                () -> -m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity,
+                                () -> -m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity,
+                                () -> (m_primaryController.getLeftTriggerAxis()
+                                                - m_primaryController.getRightTriggerAxis())
+                                                * kDrive.kMaxTurnAngularVelocity);
 
                 sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -123,10 +125,19 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(
                                                 sys_drivetrain::seedFieldRelative,
                                                 sys_drivetrain));
+
+                m_primaryController.a()
+                                .whileTrue(Commands.runOnce(
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                                m_primaryController),
+                                                sys_drivetrain));
+                m_primaryController.b()
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
                 m_primaryController.leftTrigger()
                                 .onTrue(Commands.runOnce(
@@ -222,6 +233,11 @@ public class RobotContainer {
                 sb_driveteamTab.add("Choose auto", sc_autoChooser)
                                 .withPosition(0, 1)
                                 .withSize(3, 1);
+
+                // Re-zero
+                sb_driveteamTab.add("Seed field relative",
+                                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+                                .withPosition(0, 0);
 
         }
 
