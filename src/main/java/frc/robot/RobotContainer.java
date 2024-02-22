@@ -165,6 +165,16 @@ public class RobotContainer {
                                                                 () -> sys_Cartridge.roll(
                                                                                 Constants.kCartridge.scoreVoltage),
                                                                 sys_Cartridge)));
+
+                // using ParallelCommanGroup
+                // m_primaryController.b()
+                // .whileTrue(new ParallelCommandGroup(
+                // Commands.runOnce(() -> sys_deployment
+                // .setpoint(Constants.kDeployment.setpoints.amp_pos),
+                // sys_deployment),
+                // Commands.waitSeconds(1),
+                // Commands.runOnce(() -> sys_Cartridge
+                // .roll(Constants.kCartridge.scoreVoltage))));
                 // Endgame Climber
                 m_primaryController.a()
                                 .whileTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
@@ -177,9 +187,11 @@ public class RobotContainer {
                 // .whileTrue(Commands.runOnce(() ->
                 // sys_climber.setpoint(Constants.kClimber.high),
                 // sys_climber))
-                // .whileFalse(new ParallelCommandGroup(
+                // .whileFalse(new SequentialCommandGroup(
                 // Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
                 // sys_climber),
+                // Commands.runOnce(() -> sys_deployment
+                // .setpoint(Constants.kDeployment.setpoints.trap_pos)),
                 // Commands.runOnce(
                 // () -> sys_Cartridge.roll(
                 // Constants.kCartridge.scoreVoltage),
