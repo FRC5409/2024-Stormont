@@ -26,6 +26,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kWaypoints;
+import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -79,15 +83,12 @@ public class RobotContainer {
                 sys_Cartridge = new Cartridge();
 
                 // Commands
-                cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-                        return teleopDrive
-                                        .withVelocityX(-m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity)
-                                        .withVelocityY(-m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity)
-                                        .withRotationalRate(
-                                                        (m_primaryController.getLeftTriggerAxis()
-                                                                        - m_primaryController.getRightTriggerAxis())
-                                                                        * kDrive.kMaxTurnAngularVelocity);
-                }).ignoringDisable(true);
+                cmd_teleopDrive = sys_drivetrain.drive(
+                                () -> -m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity,
+                                () -> -m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity,
+                                () -> (m_primaryController.getLeftTriggerAxis()
+                                                - m_primaryController.getRightTriggerAxis())
+                                                * kDrive.kMaxTurnAngularVelocity);
 
                 sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -115,6 +116,15 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+                m_primaryController.rightBumper()
+                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                m_primaryController.a()
+                                .whileTrue(Commands.runOnce(
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                                m_primaryController),
+                                                sys_drivetrain));
+                m_primaryController.b()
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
                 m_primaryController.leftBumper()
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_deployment.manualExtend(Constants.kDeployment.voltage),
