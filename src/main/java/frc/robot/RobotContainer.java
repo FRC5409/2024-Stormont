@@ -23,6 +23,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kWaypoints;
+import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -37,6 +41,15 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class RobotContainer {
 
+        // Commands
+        private final Command cmd_teleopDrive;
+
+        // Shuffleboard
+        public final ShuffleboardTab sb_driveteamTab;
+
+        // Autonomous
+        private final SendableChooser<Command> sc_autoChooser;
+
         // Joysticks
         private final CommandXboxController m_primaryController;
         private final CommandXboxController m_secondaryController;
@@ -45,19 +58,10 @@ public class RobotContainer {
         public final Drivetrain sys_drivetrain;
         private final Deployment sys_deployment;
 
-        // Commands
-        private final Command cmd_teleopDrive;
-
         private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
                         .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
                         .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
                         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
-        // Shuffleboard
-        public final ShuffleboardTab sb_driveteamTab;
-
-        // Autonomous
-        private final SendableChooser<Command> sc_autoChooser;
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -74,21 +78,22 @@ public class RobotContainer {
                 sys_deployment = new Deployment();
 
                 // Commands
-                cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-                        return teleopDrive
-                                        .withVelocityX(-m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity)
-                                        .withVelocityY(-m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity)
-                                        .withRotationalRate(
-                                                        (m_primaryController.getLeftTriggerAxis()
-                                                                        - m_primaryController.getRightTriggerAxis())
-                                                                        * kDrive.kMaxTurnAngularVelocity);
-                }).ignoringDisable(true);
+                cmd_teleopDrive = sys_drivetrain.drive(
+                                () -> -m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity,
+                                () -> -m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity,
+                                () -> (m_primaryController.getLeftTriggerAxis()
+                                                - m_primaryController.getRightTriggerAxis())
+                                                * kDrive.kMaxTurnAngularVelocity);
 
                 sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
                 // Shuffleboard
                 sb_driveteamTab = Shuffleboard.getTab("Drive team");
                 sc_autoChooser = AutoBuilder.buildAutoChooser();
+                // Re-zero
+                sb_driveteamTab.add("Seed field relative",
+                                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+                                .withPosition(0, 0);
                 addShuffleboardItems();
 
                 // Configure the trigger bindings
@@ -110,6 +115,17 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+                m_primaryController.rightBumper()
+                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+
+                m_primaryController.a()
+                                .whileTrue(Commands.runOnce(
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                                m_primaryController),
+                                                sys_drivetrain));
+                m_primaryController.b()
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+
                 m_primaryController.leftBumper()
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_deployment.manualExtend(Constants.kDeployment.voltage),
