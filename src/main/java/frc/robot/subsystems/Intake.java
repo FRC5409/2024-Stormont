@@ -21,7 +21,7 @@ public class Intake extends SubsystemBase {
 	private final CANSparkMax rollersMotor;
 
 	// Sensors
-	private final DigitalInput irSensor;
+	// private final DigitalInput irSensor;
 
 	// Shuffleboard
 	private final ShuffleboardManager sb;
@@ -33,16 +33,20 @@ public class Intake extends SubsystemBase {
 		configMotor(rollersMotor, false);
 
 		// Laser sensor
-		irSensor = new DigitalInput(0);
+		// irSensor = new DigitalInput(0);
 
 		// Shuffleboard
 		sb = new ShuffleboardManager("Intake");
 		sb.addEntry("Motor Speed", () -> rollersMotor.getEncoder().getVelocity());
-		sb.addEntry("Sensor Value", () -> checkIR());
+		// sb.addEntry("Sensor Value", () -> checkIR());
 	}
 
 	// Get subsystem
-	public static Intake getInstance() { if (instance == null) instance = new Intake(); return instance; }
+	public static Intake getInstance() {
+		if (instance == null)
+			instance = new Intake();
+		return instance;
+	}
 
 	private void configMotor(CANSparkMax motor, boolean isInverted) {
 		motor.restoreFactoryDefaults();
@@ -55,14 +59,16 @@ public class Intake extends SubsystemBase {
 
 	/**
 	 * Gets the IR sensor value.
+	 * 
 	 * @return True if laser is interrupted.
 	 */
-	public boolean checkIR() {
-		return !irSensor.get();
-	}
+	// public boolean checkIR() {
+	// return !irSensor.get();
+	// }
 
 	/**
 	 * Gets the velocity of the intake rollers in RPM.
+	 * 
 	 * @return RPM of motor.
 	 */
 	public double getRPM() {
@@ -71,6 +77,7 @@ public class Intake extends SubsystemBase {
 
 	/**
 	 * Set voltage of rollers.
+	 * 
 	 * @param speed Between -12 to 12.
 	 */
 	public void setVoltage(double volts) {
@@ -79,6 +86,7 @@ public class Intake extends SubsystemBase {
 
 	/**
 	 * Get voltage of rollers.
+	 * 
 	 * @return The set voltage between -12 to 12.
 	 */
 	public double getVoltage() {
@@ -88,13 +96,13 @@ public class Intake extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		
+
 	}
 
 	@Override
 	public void simulationPeriodic() {
 		// This method will be called once per scheduler run during simulation
-		
+
 	}
 
 }

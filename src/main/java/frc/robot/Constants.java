@@ -5,10 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -39,6 +40,7 @@ public final class Constants {
         public static final double kTurnGearRatio = 150.0 / 7.0;
 
         public static final double kMaxDriveVelocity = 4.56; // metres per second
+        public static final double kMaxDriveAcceleration = 2;
         public static final double kMaxTurnAngularVelocity = 10; // rotation per second
         public static final double kMaxTurnAngularAcceleration = 2 * Math.toRadians(360); // rotation per second squared
 
@@ -50,15 +52,60 @@ public final class Constants {
 
         public static final double kHeadingSnap = Math.toRadians(45);
 
-        public static final double kHeadingP = 2;
+        public static final double kHeadingP = 5;
         public static final double kHeadingI = 0;
         public static final double kHeadingD = 0;
 
+        public static final class kAutoAlign {
+            public static final double kTControllerP = 5;
+            public static final double kTControllerI = 0.0;
+            public static final double kTControllerD = 0.0;
+            public static final double kTControllerTolerance = 0.0;
+
+            public static final double kRotationTolerance = 0.1;
+
+            public static final double kReachedPositionTimeout = 500; // ms
+
+            public static final boolean kAutoAlignDebug = false;
+        }
+    }
+
+    public static final class kPhotonVision {
+        public static final String kFieldLayout = AprilTagFields.k2024Crescendo.m_resourceFile;
+        public static final double kAmbiguityThreshold = 0.4;
+        // public static final Transform3d kFrontCameraOffset = new Transform3d(new
+        // Translation3d(10, 0.0, 0.26416), new Rotation3d(0,0,0));
+    }
+
+    public static final class kCameras {
+        // Arducam 1
+        public static final String kFrontCameraName = "Front Camera";
+        public static final String kFrontCameraID = "Arducam_OV2311_USB_Camera";
+        public static final String kFrontCameraURL = "http://photonvision.local:1182/stream.mjpg";
+        public static final Transform3d kFrontCameraOffset = new Transform3d(new Translation3d(0.3556, 0.0, 0.26416),
+                new Rotation3d(0, 0, 0));
+
+        // Arducam 2
+        public static final String kBackCameraName = "Back Camera";
+        public static final String kBackCameraID = "Arducam_OV2311_USB_Camera";
+        public static final String kBackCameraURL = "placeholder";
+        public static final Transform3d kBackCameraOffset = new Transform3d(new Translation3d(0, 0.0, 0),
+                new Rotation3d(0, 0, 0));
+    }
+
+    public static final class kWaypoints {
+        public static final Pose2d kAmpZoneTest = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5)); // Variable
+                                                                                                  // positioning name is
+                                                                                                  // releative to f2d
+                                                                                                  // map on Shuffleboard
+        // public static final Pose2d kAmpZoneTest = new Pose2d(14.5, 6.87, new
+        // Rotation2d(0, .5)); //Variable positioning name is releative to f2d map on
+        // Shuffleboard
     }
 
     public static final class IntakeConstants {
-        public static final int MOTOR_ID = 0;
-        public static final int IR_SENSOR_PORT = 0;
+        public static final int MOTOR_ID = 20;
+        public static final int IR_SENSOR_PORT = 0; // temporary
 
         public static final int CURRENT_LIMIT = 30;
 
@@ -67,10 +114,10 @@ public final class Constants {
     }
 
     public static final class IndexerConstants {
-        public static final int MOTOR_ID = 0; // temp value
+        public static final int MOTOR_ID = 22;
         public static final int CURRENT_LIMIT = 30;
 
-        public static final int IR_SENSOR_PORT = 0; // temp value
+        public static final int IR_SENSOR_PORT = 0; // temporary
 
         public static final double HIGH_VOLTAGE = 10;
         public static final double LOW_VOLTAGE = 4;
