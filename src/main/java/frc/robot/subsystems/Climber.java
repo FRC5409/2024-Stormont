@@ -59,7 +59,7 @@ public class Climber extends SubsystemBase {
 
     // Limit Switches
     // limitSwitch = new DigitalInput(Constants.kClimber.port_limitSwitch);
-    irSwitch = new DigitalInput(Constants.kClimber.port_irSwitch);
+    // irSwitch = new DigitalInput(Constants.kClimber.port_irSwitch);
 
     // Shuffleboard
     sb_climberTab = Shuffleboard.getTab("Climber");
@@ -67,7 +67,7 @@ public class Climber extends SubsystemBase {
     kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
     kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
     sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
-    sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
+    // sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
 
     m_main.burnFlash();
@@ -121,11 +121,11 @@ public class Climber extends SubsystemBase {
   // }
 
   // Zeros encoder using IR sensor
-  public void zeroEncoderIR() {
-    if (!irSwitch.get()) {
-      s_encoder.setPosition(0);
-    }
-  }
+  // public void zeroEncoderIR() {
+  //   if (!irSwitch.get()) {
+  //     s_encoder.setPosition(0);
+  //   }
+  // }
 
   // public Command setpoint(double setpoint) {
   // return Commands.runOnce(() -> this.setpoint(setpoint));
@@ -133,6 +133,6 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    zeroEncoderIR();
+    // zeroEncoderIR();
   }
 }
