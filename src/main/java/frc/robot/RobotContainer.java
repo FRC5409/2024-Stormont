@@ -42,8 +42,8 @@ public class RobotContainer {
 
     // Subsystems
     public final Drivetrain sys_drivetrain;
-	public final Intake sys_intake;
-	public final Indexer sys_indexer;
+    public final Intake sys_intake;
+    public final Indexer sys_indexer;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -71,8 +71,8 @@ public class RobotContainer {
 
         // Subsystems
         sys_drivetrain = TunerConstants.DriveTrain;
-		sys_intake	= Intake.getInstance();
-		sys_indexer = Indexer.getInstance();
+        sys_intake = Intake.getInstance();
+        sys_indexer = Indexer.getInstance();
 
         // Commands
         cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
@@ -110,45 +110,45 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
+
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
         // Intake note command
         m_primaryController.x()
-            .whileTrue(
-                Commands.runOnce(
-                    () -> {
-                        sys_intake.setVoltage(IntakeConstants.HIGH_VOLTAGE);
-                        sys_indexer.setVoltage(IndexerConstants.HIGH_VOLTAGE);
-                    }
-                ).andThen(Commands.runEnd(
-                    () -> {
-                        if (sys_intake.checkIR() && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
-                            sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
-                            sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
-                        }
-                    },
-                    () -> {
-                        sys_intake.setVoltage(0);
-                        sys_indexer.setVoltage(0);
-                    },
-                    sys_intake, sys_indexer
-                )));
+                .whileTrue(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_intake.setVoltage(IntakeConstants.HIGH_VOLTAGE);
+                                    sys_indexer.setVoltage(IndexerConstants.HIGH_VOLTAGE);
+                                }).andThen(Commands.runEnd(
+                                        () -> {
+                                            if (sys_intake.checkIR()
+                                                    && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
+                                                sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
+                                                sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
+                                            }
+                                        },
+                                        () -> {
+                                            sys_intake.setVoltage(0);
+                                            sys_indexer.setVoltage(0);
+                                        },
+                                        sys_intake, sys_indexer)));
 
         // Eject note command
         m_primaryController.b()
-            .onTrue(Commands.runOnce(
-                () -> {
-                    sys_intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
-                    sys_indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
-                },
-                sys_intake, sys_indexer))
-            .onFalse(Commands.runOnce(
-                () -> {
-                    sys_intake.setVoltage(0);
-                    sys_indexer.setVoltage(0);
-                },
-                sys_intake, sys_indexer));
+                .onTrue(Commands.runOnce(
+                        () -> {
+                            sys_intake.setVoltage(-IntakeConstants.HIGH_VOLTAGE);
+                            sys_indexer.setVoltage(-IndexerConstants.HIGH_VOLTAGE);
+                        },
+                        sys_intake, sys_indexer))
+                .onFalse(Commands.runOnce(
+                        () -> {
+                            sys_intake.setVoltage(0);
+                            sys_indexer.setVoltage(0);
+                        },
+                        sys_intake, sys_indexer));
     }
 
     private void addShuffleboardItems() {
