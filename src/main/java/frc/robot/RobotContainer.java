@@ -148,23 +148,33 @@ public class RobotContainer {
                 .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
         m_primaryController.x()
-                .whileTrue(
+                .onTrue(
                         Commands.runOnce(
                                 () -> {
-                                    sys_intake.setVoltage(IntakeConstants.HIGH_VOLTAGE);
-                                    sys_indexer.setVoltage(IndexerConstants.HIGH_VOLTAGE);
-                                }).andThen(Commands.runEnd(
-                                        () -> {
-                                            // if (sys_intake.checkIR()
-                                            // && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
-                                            if (sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
-                                                sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
-                                                sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
-                                            }
-                                        }, () -> {
-                                            sys_intake.setVoltage(0);
-                                            sys_indexer.setVoltage(0);
-                                        }, sys_intake, sys_indexer)));
+                                    sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
+                                    sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
+                                }, sys_intake, sys_indexer))
+                // when the robot is stopped, onFalse isn't called, leaving the motors on
+                // indefeinitly
+                .onFalse(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_intake.setVoltage(0);
+                                    sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer))
+        // .andThen(Commands.runEnd(
+        // () -> {
+        // if (sys_intake.checkIR()
+        // && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
+        // if (sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
+        // sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
+        // sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
+        // }
+        // }, () -> {
+        // sys_intake.setVoltage(0);
+        // sys_indexer.setVoltage(0);
+        // }, sys_intake, sys_indexer))
+        ;
 
         // Eject note command
         m_primaryController.b().onTrue(Commands.runOnce(() -> {

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -23,15 +24,15 @@ public class Indexer extends SubsystemBase {
     // private final DigitalInput sensor;
 
     // Shuffleboard
-    private final ShuffleboardManager sb;
+    // private final ShuffleboardManager sb;
 
     private Indexer() {
         motor = initMotor();
 
         // sensor = new DigitalInput(IndexerConstants.IR_SENSOR_PORT);
 
-        sb = new ShuffleboardManager("Indexer");
-        sb.addEntry("Motor Speed", () -> motor.getEncoder().getVelocity());
+        // sb = new ShuffleboardManager("Indexer");
+        // sb.addEntry("Motor Speed", () -> motor.getEncoder().getVelocity());
         // sb.addEntry("Sensor Value", () -> checkIR());
     }
 
@@ -59,7 +60,7 @@ public class Indexer extends SubsystemBase {
      * @param speed Between -12 to 12.
      */
     public void setVoltage(double volts) {
-        motor.set(volts);
+        motor.setVoltage(volts);
     }
 
     /**

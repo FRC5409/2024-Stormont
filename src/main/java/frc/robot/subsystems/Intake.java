@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
 	// private final DigitalInput irSensor;
 
 	// Shuffleboard
-	private final ShuffleboardManager sb;
+	// private final ShuffleboardManager sb;
 
 	private Intake() {
 		// Motors
@@ -36,8 +36,8 @@ public class Intake extends SubsystemBase {
 		// irSensor = new DigitalInput(0);
 
 		// Shuffleboard
-		sb = new ShuffleboardManager("Intake");
-		sb.addEntry("Motor Speed", () -> rollersMotor.getEncoder().getVelocity());
+		// sb = new ShuffleboardManager("Intake");
+		// sb.addEntry("Motor Speed", () -> rollersMotor.getEncoder().getVelocity());
 		// sb.addEntry("Sensor Value", () -> checkIR());
 	}
 
@@ -81,7 +81,7 @@ public class Intake extends SubsystemBase {
 	 * @param speed Between -12 to 12.
 	 */
 	public void setVoltage(double volts) {
-		rollersMotor.set(volts);
+		rollersMotor.setVoltage(volts);
 	}
 
 	/**

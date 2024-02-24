@@ -109,8 +109,8 @@ public final class Constants {
 
         public static final int CURRENT_LIMIT = 30;
 
-        public static final double HIGH_VOLTAGE = 10;
-        public static final double LOW_VOLTAGE = 4;
+        public static final double HIGH_VOLTAGE = 5;
+        public static final double LOW_VOLTAGE = 2;
     }
 
     public static final class IndexerConstants {
@@ -119,8 +119,8 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double HIGH_VOLTAGE = 10;
-        public static final double LOW_VOLTAGE = 4;
+        public static final double HIGH_VOLTAGE = 5;
+        public static final double LOW_VOLTAGE = 2;
     }
 
     public static class kClimber {
