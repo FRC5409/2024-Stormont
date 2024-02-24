@@ -4,8 +4,8 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kWaypoints;
+import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Climber;
@@ -35,135 +37,153 @@ import frc.robot.subsystems.Climber;
  */
 public class RobotContainer {
 
-  // Joysticks
-  private final CommandXboxController m_primaryController;
-  private final CommandXboxController m_secondaryController;
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
+        // Joysticks
+        private final CommandXboxController m_primaryController;
+        private final CommandXboxController m_secondaryController;
 
-  // Subsystems
-  public final Drivetrain sys_drivetrain;
-  private final Climber sys_climber;
+        // Subsystems
+        public final Drivetrain sys_drivetrain;
+        private final Climber sys_climber;
 
-  // Commands
-  private final Command cmd_teleopDrive;
+        // Commands
+        private final Command cmd_teleopDrive;
 
-  private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-      .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-      .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
+                        .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
+                        .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-  // Shuffleboard
-  public final ShuffleboardTab sb_driveteamTab;
+        // Shuffleboard
+        public final ShuffleboardTab sb_driveteamTab;
 
-  // Autonomous
-  private final SendableChooser<Command> sc_autoChooser;
+        // Autonomous
+        private final SendableChooser<Command> sc_autoChooser;
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
+        public RobotContainer() {
 
-    // Joysticks
-    m_primaryController = new CommandXboxController(kControllers.kPrimaryController);
-    m_secondaryController = new CommandXboxController(kControllers.kSecondaryController);
-    DriverStation.silenceJoystickConnectionWarning(true);
+                // Joysticks
+                m_primaryController = new CommandXboxController(kControllers.kPrimaryController);
+                m_secondaryController = new CommandXboxController(kControllers.kSecondaryController);
+                DriverStation.silenceJoystickConnectionWarning(true);
 
-    // Subsystems
-    sys_drivetrain = TunerConstants.DriveTrain;
-    sys_climber = new Climber();
+                // Subsystems
+                sys_drivetrain = TunerConstants.DriveTrain;
+                sys_climber = new Climber();
 
-    // Commands
-    cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-      return teleopDrive
-          .withVelocityX(-m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity)
-          .withVelocityY(-m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity)
-          .withRotationalRate(
-              (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                  * kDrive.kMaxTurnAngularVelocity);
-    }).ignoringDisable(true);
+                // Commands
+                cmd_teleopDrive = sys_drivetrain.drive(
+                                () -> -m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity,
+                                () -> -m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity,
+                                () -> (m_primaryController.getLeftTriggerAxis()
+                                                - m_primaryController.getRightTriggerAxis())
+                                                * kDrive.kMaxTurnAngularVelocity);
 
-    sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
+                sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
-    // Shuffleboard
-    sb_driveteamTab = Shuffleboard.getTab("Drive team");
-    sc_autoChooser = AutoBuilder.buildAutoChooser();
-    addShuffleboardItems();
+                // Shuffleboard
+                sb_driveteamTab = Shuffleboard.getTab("Drive team");
+                sc_autoChooser = AutoBuilder.buildAutoChooser();
+                addShuffleboardItems();
 
-    // Configure the trigger bindings
-    configureBindings();
-  }
+                // Re-zero
+                sb_driveteamTab.add("Seed field relative",
+                                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+                                .withPosition(0, 0);
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be
-   * created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
-  private void configureBindings() {
+                // Configure the trigger bindings
+                configureBindings();
+        }
 
-    m_primaryController.rightBumper()
-        .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+        /**
+         * Use this method to define your trigger->command mappings. Triggers can be
+         * created via the
+         * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
+         * an arbitrary
+         * predicate, or via the named factories in {@link
+         * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+         * {@link
+         * CommandXboxController
+         * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+         * PS4} controllers or
+         * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+         * joysticks}.
+         */
+        private void configureBindings() {
 
-    // Manual climber movement up
-    m_secondaryController.povUp()
-        .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage), sys_climber))
-        .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+                m_primaryController.rightBumper()
+                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-    // Manual climber movement down
-    m_secondaryController.povDown()
-        .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage), sys_climber))
-        .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+                // Manual climber movement up
+                m_secondaryController.povUp()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
-    // Move climber to setpoint
-    // m_secondaryController.a()
-    // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
-    // sys_climber));
+                // Manual climber movement down
+                m_secondaryController.povDown()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
-    // Climbing and scoring
-    // manual extend would be using the deployment stuff
-    // m_secondaryController.x()
-    // .whileTrue(Commands.runOnce(() ->
-    // sys_climber.setpoint(Constants.kClimber.high), sys_climber))
-    // .onFalse(Commands.runOnce(() ->sys_climber.setpoint(Constants.kClimber.low),
-    // sys_climber)
-    // .andThen(
-    // new ConditionalCommand(Commands.runOnce(() -> sys_climber.manualExtend(100),
-    // sys_climber), Commands.runOnce(() -> sys_climber.manualExtend(0),
-    // sys_climber), () -> sys_climber.getPosition() >= 100))
-    // .andThen(new WaitCommand(0.2))
-    // .andThen(Commands.runOnce(() -> sys_climber.manualExtend(100), sys_climber))
-    // );
+                m_primaryController.rightBumper()
+                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                m_primaryController.a()
+                                .whileTrue(Commands.runOnce(
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                                m_primaryController),
+                                                sys_drivetrain));
+                m_primaryController.b()
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+                // Move climber to setpoint
+                // m_secondaryController.a()
+                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber));
 
-    // button to make the deployment go back to normal after shooting
+                // Climbing and scoring
+                // manual extend would be using the deployment stuff
+                // m_secondaryController.x()
+                // .whileTrue(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.high), sys_climber))
+                // .onFalse(Commands.runOnce(() ->sys_climber.setpoint(Constants.kClimber.low),
+                // sys_climber)
+                // .andThen(
+                // new ConditionalCommand(Commands.runOnce(() -> sys_climber.manualExtend(100),
+                // sys_climber), Commands.runOnce(() -> sys_climber.manualExtend(0),
+                // sys_climber), () -> sys_climber.getPosition() >= 100))
+                // .andThen(new WaitCommand(0.2))
+                // .andThen(Commands.runOnce(() -> sys_climber.manualExtend(100), sys_climber))
+                // );
 
-  }
+                // button to make the deployment go back to normal after shooting
 
-  private void addShuffleboardItems() {
+        }
 
-    // Re-zero
-    sb_driveteamTab.add("Seed field relative", Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-        .withPosition(0, 0);
+        private void addShuffleboardItems() {
 
-    // Autonomous
-    sb_driveteamTab.add("Choose auto", sc_autoChooser)
-        .withPosition(0, 1)
-        .withSize(3, 1);
+                // Re-zero
+                sb_driveteamTab.add("Seed field relative",
+                                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+                                .withPosition(0, 0);
 
-  }
+                // Autonomous
+                sb_driveteamTab.add("Choose auto", sc_autoChooser)
+                                .withPosition(0, 1)
+                                .withSize(3, 1);
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return sc_autoChooser.getSelected();
-  }
+        }
+
+        /**
+         * Use this to pass the autonomous command to the main {@link Robot} class.
+         *
+         * @return the command to run in autonomous
+         */
+        public Command getAutonomousCommand() {
+                return sc_autoChooser.getSelected();
+        }
 }
