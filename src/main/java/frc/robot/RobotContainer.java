@@ -20,7 +20,10 @@ import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kWaypoints;
+import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -36,12 +39,16 @@ import frc.robot.subsystems.Intake;
  */
 public class RobotContainer {
 
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
     // Joysticks
     private final CommandXboxController m_primaryController;
     private final CommandXboxController m_secondaryController;
 
     // Subsystems
     public final Drivetrain sys_drivetrain;
+    private final Climber sys_climber;
     public final Intake sys_intake;
     public final Indexer sys_indexer;
 
@@ -71,18 +78,17 @@ public class RobotContainer {
 
         // Subsystems
         sys_drivetrain = TunerConstants.DriveTrain;
+        sys_climber = new Climber();
         sys_intake = Intake.getInstance();
         sys_indexer = Indexer.getInstance();
 
         // Commands
-        cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-            return teleopDrive
-                    .withVelocityX(-m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity)
-                    .withVelocityY(-m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity)
-                    .withRotationalRate(
-                            (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                                    * kDrive.kMaxTurnAngularVelocity);
-        }).ignoringDisable(true);
+        cmd_teleopDrive = sys_drivetrain.drive(
+                () -> -m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity,
+                () -> -m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity,
+                () -> (m_primaryController.getLeftTriggerAxis()
+                        - m_primaryController.getRightTriggerAxis())
+                        * kDrive.kMaxTurnAngularVelocity);
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -90,6 +96,11 @@ public class RobotContainer {
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sc_autoChooser = AutoBuilder.buildAutoChooser();
         addShuffleboardItems();
+
+        // Re-zero
+        // sb_driveteamTab.add("Seed field relative",
+        // Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+        // .withPosition(0, 0);
 
         // Configure the trigger bindings
         configureBindings();
@@ -114,7 +125,28 @@ public class RobotContainer {
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-        // Intake note command
+        // Manual climber movement up
+        m_secondaryController.povUp()
+                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
+                        sys_climber))
+                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+        // Manual climber movement down
+        m_secondaryController.povDown()
+                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
+                        sys_climber))
+                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+        m_primaryController.rightBumper()
+                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+        m_primaryController.a()
+                .whileTrue(Commands.runOnce(
+                        () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                m_primaryController),
+                        sys_drivetrain));
+        m_primaryController.b()
+                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+
         m_primaryController.x()
                 .whileTrue(
                         Commands.runOnce(
@@ -147,7 +179,8 @@ public class RobotContainer {
     private void addShuffleboardItems() {
 
         // Re-zero
-        sb_driveteamTab.add("Seed field relative", Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+        sb_driveteamTab.add("Seed field relative",
+                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
                 .withPosition(0, 0);
 
         // Autonomous
