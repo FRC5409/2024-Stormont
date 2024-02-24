@@ -27,10 +27,10 @@ public class Climber extends SubsystemBase {
   // private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
-  private DigitalInput irSwitch;
+  // private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_climberTab;
-  private final GenericEntry kP, kI, kD;
+  // private final GenericEntry kP, kI, kD;
 
   /** Creates a new Climber. */
   public Climber() {
@@ -63,9 +63,9 @@ public class Climber extends SubsystemBase {
 
     // Shuffleboard
     sb_climberTab = Shuffleboard.getTab("Climber");
-    kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
-    kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
-    kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
+    // kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
+    // kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
+    // kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
     sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
     // sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
@@ -122,9 +122,9 @@ public class Climber extends SubsystemBase {
 
   // Zeros encoder using IR sensor
   // public void zeroEncoderIR() {
-  //   if (!irSwitch.get()) {
-  //     s_encoder.setPosition(0);
-  //   }
+  // if (!irSwitch.get()) {
+  // s_encoder.setPosition(0);
+  // }
   // }
 
   // public Command setpoint(double setpoint) {

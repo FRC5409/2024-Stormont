@@ -104,11 +104,11 @@ public final class Constants {
     }
 
     public static class kClimber {
-        public static final int id_main = 0;
-        public static final int id_follower = 0;
+        public static final int id_main = 24;
+        public static final int id_follower = 25;
         public static final int port_limitSwitch = 0;
         public static final int port_irSwitch = 0;
-        public static final int voltage = 0;
+        public static final int voltage = 6;
         public static final int currentLimit = 40;
 
         public static final double kP = 0;
@@ -119,6 +119,10 @@ public final class Constants {
 
         public static final double high = 0;
         public static final double low = 0;
+
+        // deployment elevator 23
+        // index 22
+        // intake 20
 
     }
 }

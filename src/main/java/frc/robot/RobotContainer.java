@@ -92,9 +92,9 @@ public class RobotContainer {
                 addShuffleboardItems();
 
                 // Re-zero
-                sb_driveteamTab.add("Seed field relative",
-                                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                                .withPosition(0, 0);
+                // sb_driveteamTab.add("Seed field relative",
+                // Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+                // .withPosition(0, 0);
 
                 // Configure the trigger bindings
                 configureBindings();
@@ -121,13 +121,13 @@ public class RobotContainer {
 
                 // Manual climber movement up
                 m_secondaryController.povUp()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
                 // Manual climber movement down
                 m_secondaryController.povDown()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
@@ -140,27 +140,6 @@ public class RobotContainer {
                                                 sys_drivetrain));
                 m_primaryController.b()
                                 .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
-                // Move climber to setpoint
-                // m_secondaryController.a()
-                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
-                // sys_climber));
-
-                // Climbing and scoring
-                // manual extend would be using the deployment stuff
-                // m_secondaryController.x()
-                // .whileTrue(Commands.runOnce(() ->
-                // sys_climber.setpoint(Constants.kClimber.high), sys_climber))
-                // .onFalse(Commands.runOnce(() ->sys_climber.setpoint(Constants.kClimber.low),
-                // sys_climber)
-                // .andThen(
-                // new ConditionalCommand(Commands.runOnce(() -> sys_climber.manualExtend(100),
-                // sys_climber), Commands.runOnce(() -> sys_climber.manualExtend(0),
-                // sys_climber), () -> sys_climber.getPosition() >= 100))
-                // .andThen(new WaitCommand(0.2))
-                // .andThen(Commands.runOnce(() -> sys_climber.manualExtend(100), sys_climber))
-                // );
-
-                // button to make the deployment go back to normal after shooting
 
         }
 
