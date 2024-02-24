@@ -1,4 +1,4 @@
-# 2024-Comp Name TBD
+# 2024-Stormont
 
 ![5409](./img/garthwebbrobotics_small.jpg)
 
