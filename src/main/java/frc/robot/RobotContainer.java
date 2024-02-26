@@ -119,6 +119,15 @@ public class RobotContainer {
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
+                m_primaryController.a()
+                                .whileTrue(Commands.runOnce(
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                                m_primaryController),
+                                                sys_drivetrain));
+                m_primaryController.b()
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+
+                // CLIMBER
                 // Manual climber movement up
                 m_secondaryController.povUp()
                                 .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
@@ -130,16 +139,6 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-                m_primaryController.rightBumper()
-                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
-                m_primaryController.a()
-                                .whileTrue(Commands.runOnce(
-                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
-                                                                m_primaryController),
-                                                sys_drivetrain));
-                m_primaryController.b()
-                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
         }
 
