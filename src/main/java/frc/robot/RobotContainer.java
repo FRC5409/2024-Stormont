@@ -46,7 +46,7 @@ public class RobotContainer {
 
         // Subsystems
         public final Drivetrain sys_drivetrain;
-        private final Climber sys_climber;
+        public final Climber sys_climber;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -139,6 +139,13 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                m_secondaryController.y()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                                                sys_climber));
+
+                m_secondaryController.a()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(-0.8), sys_climber));
 
         }
 

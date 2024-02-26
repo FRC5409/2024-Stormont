@@ -24,13 +24,13 @@ public class Climber extends SubsystemBase {
   private final CANSparkMax m_main;
   private final CANSparkMax m_follower;
 
-  // private final SparkPIDController m_controller;
+  private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
   // private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_climberTab;
-  // private final GenericEntry kP, kI, kD;
+  private final GenericEntry kP, kI, kD;
 
   /** Creates a new Climber. */
   public Climber() {
@@ -49,8 +49,8 @@ public class Climber extends SubsystemBase {
     m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
     // PID controller
-    // m_controller = m_main.getPIDController();
-    // configPID();
+    m_controller = m_main.getPIDController();
+    configPID();
     // m_controller.setOutputRange(-1, 1);
 
     // Encoder
@@ -63,9 +63,9 @@ public class Climber extends SubsystemBase {
 
     // Shuffleboard
     sb_climberTab = Shuffleboard.getTab("Climber");
-    // kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
-    // kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
-    // kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
+    kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
+    kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
+    kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
     sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
     // sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
@@ -75,11 +75,11 @@ public class Climber extends SubsystemBase {
   }
 
   // Configurate PID
-  // public void configPID() {
-  // m_controller.setP(Constants.kClimber.kP);
-  // m_controller.setI(Constants.kClimber.kI);
-  // m_controller.setD(Constants.kClimber.kD);
-  // }
+  public void configPID() {
+    m_controller.setP(Constants.kClimber.kP);
+    m_controller.setI(Constants.kClimber.kI);
+    m_controller.setD(Constants.kClimber.kD);
+  }
 
   // Zero encoder
   public void zeroEncoder() {
@@ -100,9 +100,9 @@ public class Climber extends SubsystemBase {
    * 
    * @param setpoint value
    */
-  // public void setpoint(double setpoint) {
-  // m_controller.setReference(setpoint, ControlType.kPosition);
-  // }
+  public void setpoint(double setpoint) {
+    m_controller.setReference(setpoint, ControlType.kPosition);
+  }
 
   /**
    * Sets voltage for manual extension
@@ -136,3 +136,7 @@ public class Climber extends SubsystemBase {
     // zeroEncoderIR();
   }
 }
+
+// max limit is -50.7
+// min limit is -0.5
+// setpoint -30
