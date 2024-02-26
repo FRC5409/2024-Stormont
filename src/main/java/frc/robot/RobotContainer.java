@@ -126,7 +126,7 @@ public class RobotContainer {
                 m_primaryController.b()
                                 .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
-                m_primaryController.leftBumper()
+                m_secondaryController.leftBumper()
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_deployment.manualExtend(Constants.kDeployment.voltage),
                                                 sys_deployment))
@@ -134,28 +134,13 @@ public class RobotContainer {
                                                 () -> sys_deployment.manualExtend(0),
                                                 sys_deployment));
 
-                m_primaryController.rightBumper()
+                m_secondaryController.rightBumper()
                                 .onTrue(Commands.runOnce(
                                                 () -> sys_deployment.manualExtend(-Constants.kDeployment.voltage),
                                                 sys_deployment))
                                 .onFalse(Commands.runOnce(
                                                 () -> sys_deployment.manualExtend(0),
                                                 sys_deployment));
-
-                m_primaryController.x()
-                                .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.amp_pos),
-                                                sys_deployment));
-
-                m_primaryController.a()
-                                .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos),
-                                                sys_deployment));
-
-                m_primaryController.rightBumper()
-                                .onTrue(Commands.runOnce(
-                                                sys_drivetrain::seedFieldRelative,
-                                                sys_drivetrain));
 
         }
 

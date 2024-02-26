@@ -76,9 +76,9 @@ public final class Constants {
     }
 
     public static class kDeployment {
-        public static final int id_motor = 0;
+        public static final int id_motor = 23;
         public static final int digitalInputPort = 0;
-        public static final int voltage = 0;
+        public static final int voltage = 3;
         public static final int currentLimit = 40;
         public static final int port_irSwitch = 0;
 

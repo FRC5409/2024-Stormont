@@ -24,15 +24,16 @@ public class Deployment extends SubsystemBase {
   // motor
   private final CANSparkMax m_motor;
   // controller
-  private final SparkPIDController m_controller;
+  // private final SparkPIDController m_controller;
   // encoder
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
-  private DigitalInput irSwitch;
+  // private DigitalInput irSwitch;
 
   // shuffleboard/generic entry
   private final ShuffleboardTab sb_DeploymentTab;
-  private final GenericEntry kP, kI, kD, position, limitSwitchValue, irSwitchValue;
+  // private final GenericEntry kP, kI, kD, position, limitSwitchValue,
+  // irSwitchValue;
 
   /**
    * Creates a new Deployment.
@@ -46,8 +47,8 @@ public class Deployment extends SubsystemBase {
     m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
 
     // initialize controller
-    m_controller = m_motor.getPIDController();
-    configPID();
+    // m_controller = m_motor.getPIDController();
+    // configPID();
     // m_controller.setOutputRange(-1, 1);
 
     // initialize encoder
@@ -55,7 +56,7 @@ public class Deployment extends SubsystemBase {
 
     // initiaize snesor
     // limitSwitch = new DigitalInput(Constants.kDeployment.digitalInputPort);
-    irSwitch = new DigitalInput(Constants.kDeployment.port_irSwitch);
+    // irSwitch = new DigitalInput(Constants.kDeployment.port_irSwitch);
 
     /*
      * set up shuffleboard tabs for deployment
@@ -64,12 +65,17 @@ public class Deployment extends SubsystemBase {
      * IR switch value for distance of the elevator
      */
     sb_DeploymentTab = Shuffleboard.getTab("Deployment");
-    kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
-    kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
-    kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
-    position = sb_DeploymentTab.add("position", 0).getEntry();
-    limitSwitchValue = sb_DeploymentTab.add("limitSwitch", 0).getEntry(); // true or false
-    irSwitchValue = sb_DeploymentTab.add("irSwitch", 0).getEntry(); // true or false
+
+    // kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
+    // kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
+    // kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
+    // position = sb_DeploymentTab.add("position", 0).getEntry();
+
+    sb_DeploymentTab.addDouble("position", () -> s_encoder.getPosition());
+    // limitSwitchValue = sb_DeploymentTab.add("limitSwitch", 0).getEntry(); // true
+    // or false
+    // irSwitchValue = sb_DeploymentTab.add("irSwitch", 0).getEntry(); // true or
+    // false
 
     m_motor.burnFlash();
   }
@@ -80,11 +86,11 @@ public class Deployment extends SubsystemBase {
    * @param PID value
    */
 
-  public void configPID() {
-    m_controller.setP(Constants.kDeployment.kP);
-    m_controller.setI(Constants.kDeployment.kI);
-    m_controller.setD(Constants.kDeployment.kD);
-  }
+  // public void configPID() {
+  // m_controller.setP(Constants.kDeployment.kP);
+  // m_controller.setI(Constants.kDeployment.kI);
+  // m_controller.setD(Constants.kDeployment.kD);
+  // }
 
   /**
    * Zero encoder with encoder
@@ -102,11 +108,11 @@ public class Deployment extends SubsystemBase {
    * @return distance from irswitch
    */
 
-  public void zeroEncoderIR() {
-    if (!irSwitch.get()) {
-      s_encoder.setPosition(0);
-    }
-  }
+  // public void zeroEncoderIR() {
+  // if (!irSwitch.get()) {
+  // s_encoder.setPosition(0);
+  // }
+  // }
 
   /**
    * Motor go to setpoint from constants
@@ -116,7 +122,7 @@ public class Deployment extends SubsystemBase {
    */
 
   public void setpoint(double setpoint) {
-    m_controller.setReference(setpoint, ControlType.kPosition);
+    // m_controller.setReference(setpoint, ControlType.kPosition);
     if (s_encoder.getPosition() <= Constants.kDeployment.setpoints.the_end) {
       m_motor.setVoltage(0);
     }
@@ -149,9 +155,8 @@ public class Deployment extends SubsystemBase {
 
   @Override
   public void periodic() {
-    position.setDouble(s_encoder.getPosition());
-    irSwitchValue.setBoolean(irSwitch.get());
-    zeroEncoderIR();
+    // irSwitchValue.setBoolean(irSwitch.get());
+    // zeroEncoderIR();
     // limitSwitchValue.setBoolean(limitSwitch.get());
     // fixEncoder();
     // This method will be called once per scheduler run
