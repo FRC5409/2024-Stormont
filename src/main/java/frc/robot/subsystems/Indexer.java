@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 
 public class Indexer extends SubsystemBase {
@@ -28,7 +29,7 @@ public class Indexer extends SubsystemBase {
 
     private Indexer() {
         // Motors
-        motor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
+        motor = new CANSparkMax(IndexerConstants.MOTOR_ID, MotorType.kBrushless);
 
         configMotor(motor, false);
 

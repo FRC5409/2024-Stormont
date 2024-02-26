@@ -144,14 +144,27 @@ public class RobotContainer {
                                                 () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
                                                                 m_primaryController),
                                                 sys_drivetrain));
-                m_primaryController.y() // updated button binding according to spreadsheet; was previously set to B
-                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+                // m_primaryController.y() // updated button binding according to spreadsheet;
+                // was previously set to B
+                // .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
                 m_primaryController.x()
                                 .onTrue(Commands.runOnce(
                                                 () -> {
                                                         sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
                                                         sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
+                                                }, sys_intake, sys_indexer))
+                                .onFalse(Commands.runOnce(
+                                                () -> {
+                                                        sys_intake.setVoltage(0);
+                                                        sys_indexer.setVoltage(0);
+                                                }, sys_intake, sys_indexer));
+
+                m_primaryController.y()
+                                .onTrue(Commands.runOnce(
+                                                () -> {
+                                                        sys_intake.setVoltage(-IntakeConstants.LOW_VOLTAGE);
+                                                        sys_indexer.setVoltage(-IndexerConstants.LOW_VOLTAGE);
                                                 }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(
                                                 () -> {
