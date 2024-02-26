@@ -4,41 +4,40 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.shuffleboard.ShuffleboardManager;
 
 public class Intake extends SubsystemBase {
 
 	private static Intake instance = null;
 
 	// Motors
-	private final CANSparkMax rollersMotor;
+	private final CANSparkMax motor;
 
 	// Sensors
 	// private final DigitalInput irSensor;
 
 	// Shuffleboard
-	// private final ShuffleboardManager sb;
+	// private final ShuffleboardTab sb_tab;
 
 	private Intake() {
 		// Motors
-		rollersMotor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
+		motor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
 
-		configMotor(rollersMotor, false);
+		configMotor(motor, false);
 
 		// Laser sensor
 		// irSensor = new DigitalInput(0);
 
 		// Shuffleboard
-		// sb = new ShuffleboardManager("Intake");
-		// sb.addEntry("Motor Speed", () -> rollersMotor.getEncoder().getVelocity());
-		// sb.addEntry("Sensor Value", () -> checkIR());
+		// sb_tab = Shuffleboard.getTab("Intake");
+		// sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
 	}
 
 	// Get subsystem
@@ -67,30 +66,30 @@ public class Intake extends SubsystemBase {
 	// }
 
 	/**
-	 * Gets the velocity of the intake rollers in RPM.
+	 * Gets the velocity of motor in RPM.
 	 * 
 	 * @return RPM of motor.
 	 */
 	public double getRPM() {
-		return rollersMotor.getEncoder().getVelocity();
+		return motor.getEncoder().getVelocity();
 	}
 
 	/**
-	 * Set voltage of rollers.
+	 * Set voltage of motor.
 	 * 
-	 * @param speed Between -12 to 12.
+	 * @param volts Between -12 to 12.
 	 */
 	public void setVoltage(double volts) {
-		rollersMotor.setVoltage(volts);
+		motor.setVoltage(volts);
 	}
 
 	/**
-	 * Get voltage of rollers.
+	 * Get voltage of motor.
 	 * 
 	 * @return The set voltage between -12 to 12.
 	 */
 	public double getVoltage() {
-		return rollersMotor.getBusVoltage();
+		return motor.getBusVoltage();
 	}
 
 	@Override

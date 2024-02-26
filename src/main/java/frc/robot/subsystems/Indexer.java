@@ -2,49 +2,42 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IndexerConstants;
-import frc.robot.shuffleboard.ShuffleboardManager;
+import frc.robot.Constants.IntakeConstants;
 
 public class Indexer extends SubsystemBase {
+
     private static Indexer instance = null;
 
     // Motors
     private final CANSparkMax motor;
 
     // Sensors
-    // private final DigitalInput sensor;
+    // private final DigitalInput irSensor;
 
     // Shuffleboard
-    // private final ShuffleboardManager sb;
+    // private final ShuffleboardTab sb_tab;
 
     private Indexer() {
-        motor = initMotor();
+        // Motors
+        motor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
 
-        // sensor = new DigitalInput(IndexerConstants.IR_SENSOR_PORT);
+        configMotor(motor, false);
 
-        // sb = new ShuffleboardManager("Indexer");
-        // sb.addEntry("Motor Speed", () -> motor.getEncoder().getVelocity());
-        // sb.addEntry("Sensor Value", () -> checkIR());
-    }
+        // Laser sensor
+        // irSensor = new DigitalInput(0);
 
-    private CANSparkMax initMotor() {
-        CANSparkMax motor = new CANSparkMax(IndexerConstants.MOTOR_ID, MotorType.kBrushless);
-
-        motor.restoreFactoryDefaults();
-        motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(IndexerConstants.CURRENT_LIMIT);
-
-        motor.burnFlash();
-        return motor;
+        // Shuffleboard
+        // sb_tab = Shuffleboard.getTab("Intake");
+        // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
     // Get subsystem
@@ -54,22 +47,13 @@ public class Indexer extends SubsystemBase {
         return instance;
     }
 
-    /**
-     * Set voltage of rollers.
-     * 
-     * @param speed Between -12 to 12.
-     */
-    public void setVoltage(double volts) {
-        motor.setVoltage(volts);
-    }
+    private void configMotor(CANSparkMax motor, boolean isInverted) {
+        motor.restoreFactoryDefaults();
+        motor.setInverted(isInverted);
+        motor.setIdleMode(IdleMode.kBrake);
+        motor.setSmartCurrentLimit(IntakeConstants.CURRENT_LIMIT);
 
-    /**
-     * Get voltage of rollers.
-     * 
-     * @return The set voltage between -12 to 12.
-     */
-    public double getVoltage() {
-        return motor.getBusVoltage();
+        motor.burnFlash();
     }
 
     /**
@@ -78,11 +62,11 @@ public class Indexer extends SubsystemBase {
      * @return True if laser is interrupted.
      */
     // public boolean checkIR() {
-    // return !sensor.get();
+    // return !irSensor.get();
     // }
 
     /**
-     * Gets the velocity of the indexer rollers in RPM.
+     * Gets the velocity of motor in RPM.
      * 
      * @return RPM of motor.
      */
@@ -90,9 +74,34 @@ public class Indexer extends SubsystemBase {
         return motor.getEncoder().getVelocity();
     }
 
+    /**
+     * Set voltage of motor.
+     * 
+     * @param volts Between -12 to 12.
+     */
+    public void setVoltage(double volts) {
+        motor.setVoltage(volts);
+    }
+
+    /**
+     * Get voltage of motor.
+     * 
+     * @return The set voltage between -12 to 12.
+     */
+    public double getVoltage() {
+        return motor.getBusVoltage();
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
 
     }
+
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run during simulation
+
+    }
+
 }
