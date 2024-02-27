@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.generated.TunerConstants;
@@ -33,6 +34,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+    // subsystem
+    private final PhotonVision sys_photonvision;
 
     // shuffleboard
     private final Field2d m_field;
@@ -52,6 +56,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        // subsystems
+        sys_photonvision = new PhotonVision();
 
         // shuffleboard
         m_field = new Field2d();
@@ -144,7 +151,21 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         return positions;
     }
 
+    private void updatePoseEstimator() {
+        var photonData = sys_photonvision.getEstimatedGlobalPose(this.getState().Pose);
+        if (photonData.isPresent()) {
+            // update pose estimator using april tags
+            try {
+                this.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(), photonData.get().timestampSeconds);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
     public void periodic() {
+        updatePoseEstimator();
         updateFieldMap();
     }
+
 }

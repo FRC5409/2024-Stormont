@@ -55,4 +55,27 @@ public final class Constants {
         public static final double kHeadingD = 0;
 
     }
+
+    public static final class kPhotonVision {
+        public static final String kFieldLayout = AprilTagFields.k2024Crescendo.m_resourceFile;
+        public static final double kAmbiguityThreshold = 0.4;
+        // public static final Transform3d kFrontCameraOffset = new Transform3d(new
+        // Translation3d(10, 0.0, 0.26416), new Rotation3d(0,0,0));
+    }
+
+    public static final class kCameras {
+        // Arducam 1
+        public static final String kFrontCameraName = "Front Camera";
+        public static final String kFrontCameraID = "Arducam_OV2311_USB_Camera";
+        public static final String kFrontCameraURL = "http://photonvision.local:1182/stream.mjpg";
+        public static final Transform3d kFrontCameraOffset = new Transform3d(new Translation3d(0.3556, 0.0, 0.26416),
+                new Rotation3d(0, 0, 0));
+
+        // Arducam 2
+        public static final String kBackCameraName = "Back Camera";
+        public static final String kBackCameraID = "Arducam_OV2311_USB_Camera";
+        public static final String kBackCameraURL = "placeholder";
+        public static final Transform3d kBackCameraOffset = new Transform3d(new Translation3d(0, 0.0, 0),
+                new Rotation3d(0, 0, 0));
+    }
 }
