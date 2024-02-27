@@ -182,6 +182,13 @@ public class RobotContainer {
                                 .whileFalse(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
                                                 sys_climber));
 
+                m_secondaryController.a()
+                                .whileTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                                                sys_climber))
+                                .whileFalse(
+                                                Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
+                                                                sys_climber));
+
                 // // Endgame Climber and trap
                 // m_primaryController.a()
                 // .whileTrue(Commands.runOnce(() ->
