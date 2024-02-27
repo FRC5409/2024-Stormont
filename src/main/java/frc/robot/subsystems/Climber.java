@@ -51,7 +51,6 @@ public class Climber extends SubsystemBase {
     // PID controller
     m_controller = m_main.getPIDController();
     configPID();
-    // m_controller.setOutputRange(-1, 1);
 
     // Encoder
     s_encoder = m_main.getEncoder();
@@ -110,12 +109,17 @@ public class Climber extends SubsystemBase {
    * @param voltage value
    */
   public void manualExtend(double voltage) {
-    m_main.setVoltage(voltage);
+    // limits position
+    if (s_encoder.getPosition() > -0.5 || s_encoder.getPosition() < -49) {
+      m_main.setVoltage(0);
+    } else {
+      m_main.setVoltage(voltage);
+    }
   }
 
   // Zeros encoder using limitswtich
   // public void zeroEncoderLimit() {
-  // if (limitSwitch.get()) {
+  // if (!limitSwitch.get()) {
   // s_encoder.setPosition(0);
   //
   // }
