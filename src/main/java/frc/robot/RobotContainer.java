@@ -148,6 +148,7 @@ public class RobotContainer {
                 // was previously set to B
                 // .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
+                // Intake note command
                 m_primaryController.x()
                                 .onTrue(Commands.runOnce(
                                                 () -> {
@@ -159,30 +160,6 @@ public class RobotContainer {
                                                         sys_intake.setVoltage(0);
                                                         sys_indexer.setVoltage(0);
                                                 }, sys_intake, sys_indexer));
-
-                m_primaryController.y()
-                                .onTrue(Commands.runOnce(
-                                                () -> {
-                                                        sys_intake.setVoltage(-IntakeConstants.LOW_VOLTAGE);
-                                                        sys_indexer.setVoltage(-IndexerConstants.LOW_VOLTAGE);
-                                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(
-                                                () -> {
-                                                        sys_intake.setVoltage(0);
-                                                        sys_indexer.setVoltage(0);
-                                                }, sys_intake, sys_indexer));
-                // .andThen(Commands.runEnd(
-                // () -> {
-                // if (sys_intake.checkIR()
-                // && sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
-                // if (sys_intake.getVoltage() == IntakeConstants.HIGH_VOLTAGE) {
-                // sys_intake.setVoltage(IntakeConstants.LOW_VOLTAGE);
-                // sys_indexer.setVoltage(IndexerConstants.LOW_VOLTAGE);
-                // }
-                // }, () -> {
-                // sys_intake.setVoltage(0);
-                // sys_indexer.setVoltage(0);
-                // }, sys_intake, sys_indexer))
 
                 // Eject note command
                 m_primaryController.b()
