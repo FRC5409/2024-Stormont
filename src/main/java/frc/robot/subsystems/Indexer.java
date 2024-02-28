@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -22,32 +20,23 @@ public class Indexer extends SubsystemBase {
     // Motors
     private final CANSparkMax motor;
 
-    // PID
-    private final SparkPIDController controller;
-
     // Sensors
     // private final DigitalInput irSensor;
 
     // Shuffleboard
-    // private final ShuffleboardTab sb_tab;
+    private final ShuffleboardTab sb_tab;
 
     private Indexer() {
         // Motors
         motor = new CANSparkMax(IndexerConstants.MOTOR_ID, MotorType.kBrushless);
         configMotor(motor, false);
 
-        // PID
-        controller = motor.getPIDController();
-        controller.setP(IndexerConstants.KP);
-        controller.setI(IndexerConstants.KI);
-        controller.setD(IndexerConstants.KD);
-
         // Laser sensor
         // irSensor = new DigitalInput(0);
 
         // Shuffleboard
-        // sb_tab = Shuffleboard.getTab("Indexer");
-        // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
+        sb_tab = Shuffleboard.getTab("Indexer");
+        sb_tab.addDouble("RPM", () -> getRPM());
     }
 
     // Get subsystem
@@ -100,15 +89,6 @@ public class Indexer extends SubsystemBase {
      */
     public double getVoltage() {
         return motor.getBusVoltage();
-    }
-
-    /**
-     * Set desired RPM of motor. Will set the setpoint of the PID controller.
-     * 
-     * @param rpm Desired RPM of motor.
-     */
-    public void setRPM(double rpm) {
-        controller.setReference(rpm, ControlType.kVelocity);
     }
 
     @Override

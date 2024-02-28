@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
 	// private final DigitalInput irSensor;
 
 	// Shuffleboard
-	// private final ShuffleboardTab sb_tab;
+	private final ShuffleboardTab sb_tab;
 
 	private Intake() {
 		// Motors
@@ -43,12 +43,14 @@ public class Intake extends SubsystemBase {
 		controller.setD(IntakeConstants.KD);
 		controller.setFF(IntakeConstants.KFF);
 
+		motor.burnFlash();
+
 		// Laser sensor
 		// irSensor = new DigitalInput(0);
 
 		// Shuffleboard
-		// sb_tab = Shuffleboard.getTab("Intake");
-		// sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
+		sb_tab = Shuffleboard.getTab("Intake");
+		sb_tab.addDouble("RPM", () -> getRPM());
 	}
 
 	// Get subsystem
@@ -63,8 +65,6 @@ public class Intake extends SubsystemBase {
 		motor.setInverted(isInverted);
 		motor.setIdleMode(IdleMode.kBrake);
 		motor.setSmartCurrentLimit(IntakeConstants.CURRENT_LIMIT);
-
-		motor.burnFlash();
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class Intake extends SubsystemBase {
 	 * @param rpm Desired RPM of motor.
 	 */
 	public void setRPM(double rpm) {
-		controller.setReference(getRPM(), ControlType.kVelocity);
+		controller.setReference(rpm, ControlType.kVelocity);
 	}
 
 	@Override

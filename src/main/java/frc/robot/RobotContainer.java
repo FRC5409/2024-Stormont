@@ -144,16 +144,13 @@ public class RobotContainer {
                                                 () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
                                                                 m_primaryController),
                                                 sys_drivetrain));
-                // m_primaryController.y() // updated button binding according to spreadsheet;
-                // was previously set to B
-                // .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
                 // Intake note command
                 m_primaryController.x()
                                 .onTrue(Commands.runOnce(
                                                 () -> {
                                                         sys_intake.setRPM(IntakeConstants.RPM);
-                                                        sys_indexer.setRPM(IndexerConstants.RPM);
+                                                        sys_indexer.setVoltage(IndexerConstants.VOLTAGE);
                                                 }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(
                                                 () -> {
@@ -166,7 +163,7 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(
                                                 () -> {
                                                         sys_intake.setRPM(-IntakeConstants.RPM);
-                                                        sys_indexer.setRPM(-IndexerConstants.RPM);
+                                                        sys_indexer.setVoltage(-IndexerConstants.VOLTAGE);
                                                 }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(
                                                 () -> {

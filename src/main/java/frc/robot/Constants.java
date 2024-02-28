@@ -109,12 +109,12 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double KP = 0;
+        public static final double KP = 0.0003; // tuning in progress
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KFF = 0;
 
-        public static final double RPM = 0; // temporary
+        public static final double RPM = 800; // tuning in progress
     }
 
     public static final class IndexerConstants {
@@ -123,12 +123,7 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double KP = 0;
-        public static final double KI = 0;
-        public static final double KD = 0;
-        public static final double KFF = 0;
-
-        public static final double RPM = 0; // temporary
+        public static final double VOLTAGE = 6;
     }
 
     public static class kClimber {
