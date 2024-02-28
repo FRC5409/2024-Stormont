@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -12,7 +14,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
-import frc.robot.Constants.IntakeConstants;
 
 public class Indexer extends SubsystemBase {
 
@@ -20,6 +21,9 @@ public class Indexer extends SubsystemBase {
 
     // Motors
     private final CANSparkMax motor;
+
+    // PID
+    private final SparkPIDController controller;
 
     // Sensors
     // private final DigitalInput irSensor;
@@ -30,14 +34,19 @@ public class Indexer extends SubsystemBase {
     private Indexer() {
         // Motors
         motor = new CANSparkMax(IndexerConstants.MOTOR_ID, MotorType.kBrushless);
-
         configMotor(motor, false);
+
+        // PID
+        controller = motor.getPIDController();
+        controller.setP(IndexerConstants.KP);
+        controller.setI(IndexerConstants.KI);
+        controller.setD(IndexerConstants.KD);
 
         // Laser sensor
         // irSensor = new DigitalInput(0);
 
         // Shuffleboard
-        // sb_tab = Shuffleboard.getTab("Intake");
+        // sb_tab = Shuffleboard.getTab("Indexer");
         // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
@@ -52,7 +61,7 @@ public class Indexer extends SubsystemBase {
         motor.restoreFactoryDefaults();
         motor.setInverted(isInverted);
         motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(IntakeConstants.CURRENT_LIMIT);
+        motor.setSmartCurrentLimit(IndexerConstants.CURRENT_LIMIT);
 
         motor.burnFlash();
     }
@@ -76,9 +85,9 @@ public class Indexer extends SubsystemBase {
     }
 
     /**
-     * Set voltage of motor.
+     * Manually set voltage of motor.
      * 
-     * @param volts Between -12 to 12.
+     * @param volts Between -12 and 12.
      */
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
@@ -87,10 +96,19 @@ public class Indexer extends SubsystemBase {
     /**
      * Get voltage of motor.
      * 
-     * @return The set voltage between -12 to 12.
+     * @return The set voltage between -12 and 12.
      */
     public double getVoltage() {
         return motor.getBusVoltage();
+    }
+
+    /**
+     * Set desired RPM of motor. Will set the setpoint of the PID controller.
+     * 
+     * @param rpm Desired RPM of motor.
+     */
+    public void setRPM(double rpm) {
+        controller.setReference(rpm, ControlType.kVelocity);
     }
 
     @Override

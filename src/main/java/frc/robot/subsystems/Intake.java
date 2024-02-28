@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -20,6 +22,9 @@ public class Intake extends SubsystemBase {
 	// Motors
 	private final CANSparkMax motor;
 
+	// PID
+	private final SparkPIDController controller;
+
 	// Sensors
 	// private final DigitalInput irSensor;
 
@@ -29,8 +34,14 @@ public class Intake extends SubsystemBase {
 	private Intake() {
 		// Motors
 		motor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
-
 		configMotor(motor, false);
+
+		// PID
+		controller = motor.getPIDController();
+		controller.setP(IntakeConstants.KP);
+		controller.setI(IntakeConstants.KI);
+		controller.setD(IntakeConstants.KD);
+		controller.setFF(IntakeConstants.KFF);
 
 		// Laser sensor
 		// irSensor = new DigitalInput(0);
@@ -75,9 +86,9 @@ public class Intake extends SubsystemBase {
 	}
 
 	/**
-	 * Set voltage of motor.
+	 * Manually set voltage of motor.
 	 * 
-	 * @param volts Between -12 to 12.
+	 * @param volts Between -12 and 12.
 	 */
 	public void setVoltage(double volts) {
 		motor.setVoltage(volts);
@@ -86,10 +97,19 @@ public class Intake extends SubsystemBase {
 	/**
 	 * Get voltage of motor.
 	 * 
-	 * @return The set voltage between -12 to 12.
+	 * @return The set voltage between -12 and 12.
 	 */
 	public double getVoltage() {
 		return motor.getBusVoltage();
+	}
+
+	/**
+	 * Set desired RPM of motor. Will set the setpoint of the PID controller.
+	 * 
+	 * @param rpm Desired RPM of motor.
+	 */
+	public void setRPM(double rpm) {
+		controller.setReference(getRPM(), ControlType.kVelocity);
 	}
 
 	@Override

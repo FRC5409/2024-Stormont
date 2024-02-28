@@ -109,8 +109,12 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double HIGH_VOLTAGE = 10;
-        public static final double LOW_VOLTAGE = 9;
+        public static final double KP = 0;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KFF = 0;
+
+        public static final double RPM = 0; // temporary
     }
 
     public static final class IndexerConstants {
@@ -119,8 +123,12 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double HIGH_VOLTAGE = 10;
-        public static final double LOW_VOLTAGE = 6;
+        public static final double KP = 0;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KFF = 0;
+
+        public static final double RPM = 0; // temporary
     }
 
     public static class kClimber {
