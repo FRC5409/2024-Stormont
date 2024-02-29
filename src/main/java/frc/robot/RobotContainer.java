@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -55,11 +53,6 @@ public class RobotContainer {
         // Commands
         private final Command cmd_teleopDrive;
 
-        private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-                        .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-                        .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
-                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
         // Shuffleboard
         public final ShuffleboardTab sb_driveteamTab;
 
@@ -96,11 +89,6 @@ public class RobotContainer {
                 sb_driveteamTab = Shuffleboard.getTab("Drive team");
                 sc_autoChooser = AutoBuilder.buildAutoChooser();
                 addShuffleboardItems();
-
-                // Re-zero
-                // sb_driveteamTab.add("Seed field relative",
-                // Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                // .withPosition(0, 0);
 
                 // Configure the trigger bindings
                 configureBindings();
@@ -144,6 +132,8 @@ public class RobotContainer {
                                                 () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
                                                                 m_primaryController),
                                                 sys_drivetrain));
+                m_primaryController.y() // changed to Y from B to conform to latest button bindings
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
                 // Intake note command
                 m_primaryController.x()
@@ -170,6 +160,7 @@ public class RobotContainer {
                                                         sys_intake.setVoltage(0);
                                                         sys_indexer.setVoltage(0);
                                                 }, sys_intake, sys_indexer));
+
         }
 
         private void addShuffleboardItems() {
