@@ -21,6 +21,7 @@ public class Indexer extends SubsystemBase {
     private final CANSparkMax motor;
 
     // Sensors
+    // Temporarily commented-out until IR sensor is attached
     // private final DigitalInput irSensor;
 
     // Shuffleboard
@@ -32,6 +33,7 @@ public class Indexer extends SubsystemBase {
         configMotor(motor, false);
 
         // Laser sensor
+        // Temporarily commented-out until IR sensor is attached
         // irSensor = new DigitalInput(0);
 
         // Shuffleboard
@@ -60,9 +62,10 @@ public class Indexer extends SubsystemBase {
      * 
      * @return True if laser is interrupted.
      */
-    // public boolean checkIR() {
-    // return !irSensor.get();
-    // }
+    // Temporarily commented-out until IR sensor is attached
+    /* public boolean checkIR() {
+        return !irSensor.get();
+    } */
 
     /**
      * Gets the velocity of motor in RPM.
@@ -81,26 +84,4 @@ public class Indexer extends SubsystemBase {
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
     }
-
-    /**
-     * Get voltage of motor.
-     * 
-     * @return The set voltage between -12 and 12.
-     */
-    public double getVoltage() {
-        return motor.getBusVoltage();
-    }
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
-
-    }
-
 }

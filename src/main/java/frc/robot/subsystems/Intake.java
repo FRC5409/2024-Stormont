@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
-
 	private static Intake instance = null;
 
 	// Motors
@@ -26,6 +25,7 @@ public class Intake extends SubsystemBase {
 	private final SparkPIDController controller;
 
 	// Sensors
+	// Temporarily commented-out until IR sensor is attached
 	// private final DigitalInput irSensor;
 
 	// Shuffleboard
@@ -46,6 +46,7 @@ public class Intake extends SubsystemBase {
 		motor.burnFlash();
 
 		// Laser sensor
+		// Temporarily commented-out until IR sensor is attached
 		// irSensor = new DigitalInput(0);
 
 		// Shuffleboard
@@ -72,9 +73,10 @@ public class Intake extends SubsystemBase {
 	 * 
 	 * @return True if laser is interrupted.
 	 */
-	// public boolean checkIR() {
-	// return !irSensor.get();
-	// }
+	// Temporarily commented-out until IR sensor is attached
+	/* public boolean checkIR() {
+		return !irSensor.get();
+	} */
 
 	/**
 	 * Gets the velocity of motor in RPM.
@@ -95,15 +97,6 @@ public class Intake extends SubsystemBase {
 	}
 
 	/**
-	 * Get voltage of motor.
-	 * 
-	 * @return The set voltage between -12 and 12.
-	 */
-	public double getVoltage() {
-		return motor.getBusVoltage();
-	}
-
-	/**
 	 * Set desired RPM of motor. Will set the setpoint of the PID controller.
 	 * 
 	 * @param rpm Desired RPM of motor.
@@ -111,17 +104,4 @@ public class Intake extends SubsystemBase {
 	public void setRPM(double rpm) {
 		controller.setReference(rpm, ControlType.kVelocity);
 	}
-
-	@Override
-	public void periodic() {
-		// This method will be called once per scheduler run
-
-	}
-
-	@Override
-	public void simulationPeriodic() {
-		// This method will be called once per scheduler run during simulation
-
-	}
-
 }
