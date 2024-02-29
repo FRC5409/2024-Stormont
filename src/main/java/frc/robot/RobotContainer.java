@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,6 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kControllers;
@@ -21,6 +25,7 @@ import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,7 +47,7 @@ public class RobotContainer {
 
         // Subsystems
         public final Drivetrain sys_drivetrain;
-        private final Climber sys_climber;
+        public final Climber sys_climber;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -117,8 +122,29 @@ public class RobotContainer {
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
-                m_primaryController.rightBumper()
-                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                // climber setpoint high
+                m_secondaryController.y()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                                                sys_climber));
+
+                // climber setpoint middle
+                m_secondaryController.x()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.middle),
+                                                sys_climber));
+                // climber setpoint low
+                m_secondaryController.a()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
+                                                sys_climber));
+
+                // // climber endgame sequence
+                // m_secondaryController.b()
+                // .whileTrue(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber))
+                // .whileFalse(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.low),
+                // sys_climber));
+
                 m_primaryController.a()
                                 .whileTrue(Commands.runOnce(
                                                 () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
