@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -34,7 +36,13 @@ public final class Constants {
 
     }
 
+    public static final class kRobot {
+        public static final boolean kDebugMode = true;
+    }
+
     public static final class kDrive {
+
+        public static final ShuffleboardTab kDriveShuffleboardTab = Shuffleboard.getTab("Drive");
 
         public static final double kDriveGearRatio = 6.75;
         public static final double kTurnGearRatio = 150.0 / 7.0;
