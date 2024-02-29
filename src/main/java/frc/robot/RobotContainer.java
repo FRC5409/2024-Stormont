@@ -23,6 +23,7 @@ import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kWaypoints;
 import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Climber;
 
@@ -50,11 +51,6 @@ public class RobotContainer {
 
         // Commands
         private final Command cmd_teleopDrive;
-
-        private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-                        .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-                        .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
-                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         // Shuffleboard
         public final ShuffleboardTab sb_driveteamTab;
@@ -91,11 +87,6 @@ public class RobotContainer {
                 sc_autoChooser = AutoBuilder.buildAutoChooser();
                 addShuffleboardItems();
 
-                // Re-zero
-                // sb_driveteamTab.add("Seed field relative",
-                // Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                // .withPosition(0, 0);
-
                 // Configure the trigger bindings
                 configureBindings();
         }
@@ -119,15 +110,6 @@ public class RobotContainer {
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-                m_primaryController.a()
-                                .whileTrue(Commands.runOnce(
-                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
-                                                                m_primaryController),
-                                                sys_drivetrain));
-                m_primaryController.b()
-                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
-
-                // CLIMBER
                 // Manual climber movement up
                 m_secondaryController.povUp()
                                 .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
@@ -157,6 +139,14 @@ public class RobotContainer {
                 // .whileFalse(Commands.runOnce(() ->
                 // sys_climber.setpoint(Constants.kClimber.low),
                 // sys_climber));
+
+                m_primaryController.a()
+                                .whileTrue(Commands.runOnce(
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                                m_primaryController),
+                                                sys_drivetrain));
+                m_primaryController.b()
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
         }
 
