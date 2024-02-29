@@ -39,13 +39,12 @@ public class Climber extends SubsystemBase {
     m_main = new CANSparkMax(Constants.kClimber.id_main, MotorType.kBrushless);
     m_main.restoreFactoryDefaults();
     m_main.setIdleMode(IdleMode.kBrake);
-    m_main.setInverted(true);
     m_main.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
     // Configurate motor 2
     m_follower = new CANSparkMax(Constants.kClimber.id_follower, MotorType.kBrushless);
     m_follower.restoreFactoryDefaults();
-    m_follower.follow(m_main, false);
+    m_follower.follow(m_main, true);
     m_follower.setIdleMode(IdleMode.kBrake);
     m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
@@ -111,12 +110,7 @@ public class Climber extends SubsystemBase {
    * @param voltage value
    */
   public void manualExtend(double voltage) {
-    // limits position
-    if (s_encoder.getPosition() > 34 || s_encoder.getPosition() < 0.5) {
-      m_main.setVoltage(0);
-    } else {
-      m_main.setVoltage(voltage);
-    }
+    m_main.setVoltage(voltage);
   }
 
   // Zeros encoder using limitswtich
@@ -145,7 +139,5 @@ public class Climber extends SubsystemBase {
 
 // max limit is -50.7
 // min limit is -0.5
-// setpoint -30
 
-// gear ratio 20:1
 // max height is 13.82 inches, 35.1 cm

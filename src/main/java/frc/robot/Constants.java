@@ -108,7 +108,7 @@ public final class Constants {
         public static final int id_follower = 25;
         public static final int port_limitSwitch = 0;
         public static final int port_irSwitch = 0;
-        public static final int voltage = 12;
+        public static final int voltage = 8;
         public static final int currentLimit = 40;
         public static final double conversionFactor = 0.692;
 

@@ -141,20 +141,22 @@ public class RobotContainer {
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
                 // climber setpoint high
-                m_secondaryController.y()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
-                                                sys_climber));
+                // m_secondaryController.y()
+                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber));
 
-                // climber setpoint low
-                m_secondaryController.a()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(-0.8), sys_climber));
+                // // climber setpoint low
+                // m_secondaryController.a()
+                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(-0.8), sys_climber));
 
-                // climber endgame sequence
-                m_secondaryController.b()
-                                .whileTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
-                                                sys_climber))
-                                .whileFalse(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
-                                                sys_climber));
+                // // climber endgame sequence
+                // m_secondaryController.b()
+                // .whileTrue(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber))
+                // .whileFalse(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.low),
+                // sys_climber));
 
         }
 
