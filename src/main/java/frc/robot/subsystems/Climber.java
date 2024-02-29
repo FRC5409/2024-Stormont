@@ -38,14 +38,14 @@ public class Climber extends SubsystemBase {
     // Configurate motor 1
     m_main = new CANSparkMax(Constants.kClimber.id_main, MotorType.kBrushless);
     m_main.restoreFactoryDefaults();
-    m_main.setIdleMode(IdleMode.kCoast);
+    m_main.setIdleMode(IdleMode.kBrake);
     m_main.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
     // Configurate motor 2
     m_follower = new CANSparkMax(Constants.kClimber.id_follower, MotorType.kBrushless);
     m_follower.restoreFactoryDefaults();
     m_follower.follow(m_main, true);
-    m_follower.setIdleMode(IdleMode.kCoast);
+    m_follower.setIdleMode(IdleMode.kBrake);
     m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
 
     // PID controller
@@ -56,7 +56,7 @@ public class Climber extends SubsystemBase {
     s_encoder = m_main.getEncoder();
     s_encoder.setPositionConversionFactor(Constants.kClimber.conversionFactor);
     zeroEncoder();
-    s_encoder.setInverted(true);
+    // s_encoder.setInverted(true);
 
     // Limit Switches
     // limitSwitch = new DigitalInput(Constants.kClimber.port_limitSwitch);
