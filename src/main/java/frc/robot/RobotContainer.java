@@ -4,8 +4,8 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IndexerConstants;
@@ -27,6 +29,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,17 +51,12 @@ public class RobotContainer {
 
         // Subsystems
         public final Drivetrain sys_drivetrain;
-        private final Climber sys_climber;
-        public final Intake sys_intake;
-        public final Indexer sys_indexer;
+        public final Climber sys_climber;
+        private final Intake sys_intake;
+        private final Indexer sys_indexer;
 
         // Commands
         private final Command cmd_teleopDrive;
-
-        private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-                        .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-                        .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
-                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         // Shuffleboard
         public final ShuffleboardTab sb_driveteamTab;
@@ -97,11 +95,6 @@ public class RobotContainer {
                 sc_autoChooser = AutoBuilder.buildAutoChooser();
                 addShuffleboardItems();
 
-                // Re-zero
-                // sb_driveteamTab.add("Seed field relative",
-                // Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                // .withPosition(0, 0);
-
                 // Configure the trigger bindings
                 configureBindings();
         }
@@ -137,16 +130,36 @@ public class RobotContainer {
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
-                m_primaryController.rightBumper()
-                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                // climber setpoint high
+                m_secondaryController.y()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                                                sys_climber));
+
+                // climber setpoint middle
+                m_secondaryController.x()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.middle),
+                                                sys_climber));
+                // climber setpoint low
+                m_secondaryController.a()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
+                                                sys_climber));
+
+                // // climber endgame sequence
+                // m_secondaryController.b()
+                // .whileTrue(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber))
+                // .whileFalse(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.low),
+                // sys_climber));
+
                 m_primaryController.a()
                                 .whileTrue(Commands.runOnce(
                                                 () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
                                                                 m_primaryController),
                                                 sys_drivetrain));
-                // m_primaryController.y() // updated button binding according to spreadsheet;
-                // was previously set to B
-                // .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+                m_primaryController.y() // change from Y to B as per button bindings
+                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
 
                 // Intake note command
                 m_primaryController.x()
@@ -173,6 +186,7 @@ public class RobotContainer {
                                                         sys_intake.setVoltage(0);
                                                         sys_indexer.setVoltage(0);
                                                 }, sys_intake, sys_indexer));
+
         }
 
         private void addShuffleboardItems() {

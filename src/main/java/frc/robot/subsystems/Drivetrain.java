@@ -25,11 +25,11 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.generated.TunerConstants;
 
@@ -84,6 +84,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
         // shuffleboard
         m_field = new Field2d();
+
+        shuffleboardDebug();
     }
 
     private void configurePathPlanner() {
@@ -241,6 +243,37 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         BooleanSupplier isAPressed = () -> m_controller.a().getAsBoolean();
         Command pathfind = AutoBuilder.pathfindToPose(targetPose, constraints, 0, 0).onlyWhile(isAPressed);
         pathfind.schedule();
+    }
+
+    private void shuffleboardDebug() {
+
+        if (kRobot.kDebugMode) {
+
+            for (int i = 0; i < this.ModuleCount - 2; i++) { // only show front modules
+
+                SwerveModule module = this.getModule(i);
+
+                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn pos", i + 1),
+                        () -> module.getSteerMotor().getPosition().getValueAsDouble());
+                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn pos cancoder", i + 1),
+                        () -> module.getCANcoder().getPosition().getValueAsDouble());
+
+                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn motor set speed", i + 1),
+                        () -> module.getSteerMotor().get()); // get turn position
+                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn speed", i + 1),
+                        () -> module.getSteerMotor().getVelocity().getValueAsDouble()); // get turn position cancoder
+                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn speed cancoder", i + 1),
+                        () -> module.getCANcoder().getVelocity().getValueAsDouble()); // get turn position cancoder
+
+                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d drive set speed", i + 1),
+                        () -> module.getDriveMotor().get());
+                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d drive velocity", i + 1),
+                        () -> module.getDriveMotor().getVelocity().getValueAsDouble());
+
+            }
+
+        }
+
     }
 
     public void periodic() {

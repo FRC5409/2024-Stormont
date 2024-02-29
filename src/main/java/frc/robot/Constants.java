@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -34,7 +36,13 @@ public final class Constants {
 
     }
 
+    public static final class kRobot {
+        public static final boolean kDebugMode = true;
+    }
+
     public static final class kDrive {
+
+        public static final ShuffleboardTab kDriveShuffleboardTab = Shuffleboard.getTab("Drive");
 
         public static final double kDriveGearRatio = 6.75;
         public static final double kTurnGearRatio = 150.0 / 7.0;
@@ -128,21 +136,24 @@ public final class Constants {
         public static final int id_follower = 25;
         public static final int port_limitSwitch = 0;
         public static final int port_irSwitch = 0;
-        public static final int voltage = 6;
+        public static final int voltage = 3;
         public static final int currentLimit = 40;
+        public static final double conversionFactor = 0.692;
 
-        public static final double kP = 0;
+        public static final double kP = 1;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 1;
 
         public static final double irZeroDistance = 0;
 
-        public static final double high = 0;
-        public static final double low = 0;
+        public static final double high = -60;
+        public static final double low = -1;
+        public static final double middle = -33;
 
         // deployment elevator 23
         // index 22
         // intake 20
+        // -63.79 (top when not inverted)
 
     }
 }
