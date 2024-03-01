@@ -36,17 +36,17 @@ public class Climber extends SubsystemBase {
   public Climber() {
 
     // Configurate motor 1
-    m_main = new CANSparkMax(Constants.kClimber.id_main, MotorType.kBrushless);
+    m_main = new CANSparkMax(Constants.kClimber.ID_MAIN, MotorType.kBrushless);
     m_main.restoreFactoryDefaults();
     m_main.setIdleMode(IdleMode.kBrake);
-    m_main.setSmartCurrentLimit(Constants.kClimber.currentLimit);
+    m_main.setSmartCurrentLimit(Constants.kClimber.CURRENT_LIMIT);
 
     // Configurate motor 2
-    m_follower = new CANSparkMax(Constants.kClimber.id_follower, MotorType.kBrushless);
+    m_follower = new CANSparkMax(Constants.kClimber.ID_FOLLOWER, MotorType.kBrushless);
     m_follower.restoreFactoryDefaults();
     m_follower.follow(m_main, true);
     m_follower.setIdleMode(IdleMode.kBrake);
-    m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
+    m_follower.setSmartCurrentLimit(Constants.kClimber.CURRENT_LIMIT);
 
     // PID controller
     m_controller = m_main.getPIDController();
@@ -54,7 +54,7 @@ public class Climber extends SubsystemBase {
 
     // Encoder
     s_encoder = m_main.getEncoder();
-    s_encoder.setPositionConversionFactor(Constants.kClimber.conversionFactor);
+    s_encoder.setPositionConversionFactor(Constants.kClimber.CONVERSION_FACTOR);
     zeroEncoder();
     // s_encoder.setInverted(true);
 
@@ -64,9 +64,9 @@ public class Climber extends SubsystemBase {
 
     // Shuffleboard
     sb_climberTab = Shuffleboard.getTab("Climber");
-    kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
-    kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
-    kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
+    kP = sb_climberTab.add("kP", Constants.kClimber.KP).getEntry();
+    kI = sb_climberTab.add("kI", Constants.kClimber.KI).getEntry();
+    kD = sb_climberTab.add("kD", Constants.kClimber.KD).getEntry();
     sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
     // sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
@@ -77,9 +77,9 @@ public class Climber extends SubsystemBase {
 
   // Configurate PID
   public void configPID() {
-    m_controller.setP(Constants.kClimber.kP);
-    m_controller.setI(Constants.kClimber.kI);
-    m_controller.setD(Constants.kClimber.kD);
+    m_controller.setP(Constants.kClimber.KP);
+    m_controller.setI(Constants.kClimber.KI);
+    m_controller.setD(Constants.kClimber.KD);
   }
 
   // Zero encoder

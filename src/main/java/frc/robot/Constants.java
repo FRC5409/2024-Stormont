@@ -132,23 +132,23 @@ public final class Constants {
     }
 
     public static class kClimber {
-        public static final int id_main = 24;
-        public static final int id_follower = 25;
-        public static final int port_limitSwitch = 0;
-        public static final int port_irSwitch = 0;
-        public static final int voltage = 3;
-        public static final int currentLimit = 40;
-        public static final double conversionFactor = 0.692;
+        public static final int ID_MAIN = 24;
+        public static final int ID_FOLLOWER = 25;
+        public static final int LIMIT_SWITCH_PORT = 0;
+        public static final int IR_SWITCH_PORT = 0;
+        public static final int VOLTAGE = 3;
+        public static final int CURRENT_LIMIT = 40;
+        public static final double CONVERSION_FACTOR = 0.692;
 
-        public static final double kP = 1;
-        public static final double kI = 0;
-        public static final double kD = 1;
+        public static final double KP = 1;
+        public static final double KI = 0;
+        public static final double KD = 1;
 
-        public static final double irZeroDistance = 0;
+        public static final double IR_ZERO_DISTANCE = 0;
 
-        public static final double high = -60;
-        public static final double low = -1;
-        public static final double middle = -33;
+        public static final double LOW = -1;
+        public static final double MIDDLE = -33;
+        public static final double HIGH = -60;
 
         // deployment elevator 23
         // index 22

@@ -115,28 +115,28 @@ public class RobotContainer {
 
                 // Manual climber movement up
                 m_secondaryController.povUp()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
                 // Manual climber movement down
                 m_secondaryController.povDown()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
                 // climber setpoint high
                 m_secondaryController.y()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.high),
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
                                                 sys_climber));
 
                 // climber setpoint middle
                 m_secondaryController.x()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.middle),
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
                                                 sys_climber));
                 // climber setpoint low
                 m_secondaryController.a()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.low),
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
                                                 sys_climber));
 
                 // // climber endgame sequence
