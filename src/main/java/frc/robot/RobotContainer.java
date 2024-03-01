@@ -159,7 +159,7 @@ public class RobotContainer {
                 // Intake note command
                 m_primaryController.x()
                                 .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(kIntake.VOLTAGE);
+                                        sys_intake.setRPM(kIntake.RPM);
                                         sys_indexer.setVoltage(kIndexer.VOLTAGE);
                                 }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(() -> {
@@ -170,7 +170,7 @@ public class RobotContainer {
                 // Eject note command
                 m_primaryController.b()
                                 .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                        sys_intake.setRPM(-kIntake.RPM);
                                         sys_indexer.setVoltage(-kIndexer.VOLTAGE);
                                 }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(() -> {
