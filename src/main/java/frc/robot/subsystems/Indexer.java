@@ -67,30 +67,12 @@ public class Indexer extends SubsystemBase {
     // }
 
     /**
-     * Gets the velocity of motor in RPM.
-     * 
-     * @return RPM of motor.
-     */
-    public double getRPM() {
-        return motor.getEncoder().getVelocity();
-    }
-
-    /**
      * Set voltage of motor.
      * 
      * @param volts Between -12 to 12.
      */
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
-    }
-
-    /**
-     * Get voltage of motor.
-     * 
-     * @return The set voltage between -12 to 12.
-     */
-    public double getVoltage() {
-        return motor.getBusVoltage();
     }
 
     @Override
