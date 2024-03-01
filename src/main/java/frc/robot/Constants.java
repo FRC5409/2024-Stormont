@@ -111,6 +111,24 @@ public final class Constants {
         // Shuffleboard
     }
 
+    public static final class IntakeConstants {
+        public static final int MOTOR_ID = 20;
+        public static final int CURRENT_LIMIT = 30;
+
+        public static final int IR_SENSOR_PORT = 0; // temporary
+
+        public static final double VOLTAGE = 9;
+    }
+
+    public static final class IndexerConstants {
+        public static final int MOTOR_ID = 22;
+        public static final int CURRENT_LIMIT = 30;
+
+        public static final int IR_SENSOR_PORT = 0; // temporary
+
+        public static final double VOLTAGE = 6;
+    }
+
     public static class kClimber {
         public static final int id_main = 24;
         public static final int id_follower = 25;

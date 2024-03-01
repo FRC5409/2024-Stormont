@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,10 +12,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kWaypoints;
@@ -25,7 +23,8 @@ import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,6 +47,8 @@ public class RobotContainer {
         // Subsystems
         public final Drivetrain sys_drivetrain;
         public final Climber sys_climber;
+        private final Intake sys_intake;
+        private final Indexer sys_indexer;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -71,6 +72,8 @@ public class RobotContainer {
                 // Subsystems
                 sys_drivetrain = TunerConstants.DriveTrain;
                 sys_climber = new Climber();
+                sys_intake = Intake.getInstance();
+                sys_indexer = Indexer.getInstance();
 
                 // Commands
                 cmd_teleopDrive = sys_drivetrain.drive(
@@ -150,8 +153,30 @@ public class RobotContainer {
                                                 () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
                                                                 m_primaryController),
                                                 sys_drivetrain));
-                m_primaryController.b()
+                m_primaryController.y()
                                 .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+
+                // Intake note command
+                m_primaryController.x()
+                                .onTrue(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(IntakeConstants.VOLTAGE);
+                                        sys_indexer.setVoltage(IndexerConstants.VOLTAGE);
+                                }, sys_intake, sys_indexer))
+                                .onFalse(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(0);
+                                        sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
+
+                // Eject note command
+                m_primaryController.b()
+                                .onTrue(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(-IntakeConstants.VOLTAGE);
+                                        sys_indexer.setVoltage(-IndexerConstants.VOLTAGE);
+                                }, sys_intake, sys_indexer))
+                                .onFalse(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(0);
+                                        sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
 
         }
 
