@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.kCANID;
 import frc.robot.Constants.kIntake;
 
 public class Intake extends SubsystemBase {
@@ -28,7 +29,7 @@ public class Intake extends SubsystemBase {
 
 	private Intake() {
 		// Motors
-		motor = new CANSparkMax(kIntake.MOTOR_ID, MotorType.kBrushless);
+		motor = new CANSparkMax(kCANID.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
 		configMotor(motor, false);
 

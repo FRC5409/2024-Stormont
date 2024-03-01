@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Constants.kCANID;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -36,13 +37,13 @@ public class Climber extends SubsystemBase {
   public Climber() {
 
     // Configurate motor 1
-    m_main = new CANSparkMax(Constants.kClimber.ID_MAIN, MotorType.kBrushless);
+    m_main = new CANSparkMax(kCANID.CLIMBER_MAIN_ID, MotorType.kBrushless);
     m_main.restoreFactoryDefaults();
     m_main.setIdleMode(IdleMode.kBrake);
     m_main.setSmartCurrentLimit(Constants.kClimber.CURRENT_LIMIT);
 
     // Configurate motor 2
-    m_follower = new CANSparkMax(Constants.kClimber.ID_FOLLOWER, MotorType.kBrushless);
+    m_follower = new CANSparkMax(kCANID.CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
     m_follower.restoreFactoryDefaults();
     m_follower.follow(m_main, true);
     m_follower.setIdleMode(IdleMode.kBrake);

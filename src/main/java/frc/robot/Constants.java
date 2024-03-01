@@ -33,7 +33,12 @@ public final class Constants {
     }
 
     public static final class kCANID {
+        public static final int INTAKE_MOTOR_ID = 20;
 
+        public static final int INDEXER_MOTOR_ID = 22;
+
+        public static final int CLIMBER_MAIN_ID = 24;
+        public static final int CLIMBER_FOLLOWER_ID = 25;
     }
 
     public static final class kRobot {
@@ -114,7 +119,6 @@ public final class Constants {
     }
 
     public static final class kIntake {
-        public static final int MOTOR_ID = 20;
         public static final int CURRENT_LIMIT = 30;
 
         public static final int IR_SENSOR_PORT = 0; // temporary
@@ -123,7 +127,6 @@ public final class Constants {
     }
 
     public static final class kIndexer {
-        public static final int MOTOR_ID = 22;
         public static final int CURRENT_LIMIT = 30;
 
         public static final int IR_SENSOR_PORT = 0; // temporary
@@ -132,8 +135,6 @@ public final class Constants {
     }
 
     public static class kClimber {
-        public static final int ID_MAIN = 24;
-        public static final int ID_FOLLOWER = 25;
         public static final int LIMIT_SWITCH_PORT = 0;
         public static final int IR_SWITCH_PORT = 0;
         public static final int VOLTAGE = 3;
