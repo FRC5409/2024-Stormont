@@ -13,7 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.kCANID;
+import frc.robot.Constants.kIntake;
 
 public class Intake extends SubsystemBase {
 	private static Intake instance = null;
@@ -33,15 +34,15 @@ public class Intake extends SubsystemBase {
 
 	private Intake() {
 		// Motors
-		motor = new CANSparkMax(IntakeConstants.MOTOR_ID, MotorType.kBrushless);
+		motor = new CANSparkMax(kCANID.INTAKE_MOTOR_ID, MotorType.kBrushless);
 		configMotor(motor, false);
 
 		// PID
 		controller = motor.getPIDController();
-		controller.setP(IntakeConstants.KP);
-		controller.setI(IntakeConstants.KI);
-		controller.setD(IntakeConstants.KD);
-		controller.setFF(IntakeConstants.KFF);
+		controller.setP(kIntake.KP);
+		controller.setI(kIntake.KI);
+		controller.setD(kIntake.KD);
+		controller.setFF(kIntake.KFF);
 
 		motor.burnFlash();
 
@@ -65,7 +66,7 @@ public class Intake extends SubsystemBase {
 		motor.restoreFactoryDefaults();
 		motor.setInverted(isInverted);
 		motor.setIdleMode(IdleMode.kBrake);
-		motor.setSmartCurrentLimit(IntakeConstants.CURRENT_LIMIT);
+		motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
 	}
 
 	/**
@@ -74,9 +75,11 @@ public class Intake extends SubsystemBase {
 	 * @return True if laser is interrupted.
 	 */
 	// Temporarily commented-out until IR sensor is attached
-	/* public boolean checkIR() {
-		return !irSensor.get();
-	} */
+	/*
+	 * public boolean checkIR() {
+	 * return !irSensor.get();
+	 * }
+	 */
 
 	/**
 	 * Gets the velocity of motor in RPM.

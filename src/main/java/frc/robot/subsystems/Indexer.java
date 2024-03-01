@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.kCANID;
+import frc.robot.Constants.kIntake;
 
 public class Indexer extends SubsystemBase {
 
@@ -21,24 +22,23 @@ public class Indexer extends SubsystemBase {
     private final CANSparkMax motor;
 
     // Sensors
-    // Temporarily commented-out until IR sensor is attached
     // private final DigitalInput irSensor;
 
     // Shuffleboard
-    private final ShuffleboardTab sb_tab;
+    // private final ShuffleboardTab sb_tab;
 
     private Indexer() {
         // Motors
-        motor = new CANSparkMax(IndexerConstants.MOTOR_ID, MotorType.kBrushless);
+        motor = new CANSparkMax(kCANID.INDEXER_MOTOR_ID, MotorType.kBrushless);
+
         configMotor(motor, false);
 
         // Laser sensor
-        // Temporarily commented-out until IR sensor is attached
         // irSensor = new DigitalInput(0);
 
         // Shuffleboard
-        sb_tab = Shuffleboard.getTab("Indexer");
-        sb_tab.addDouble("RPM", () -> getRPM());
+        // sb_tab = Shuffleboard.getTab("Intake");
+        // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
     // Get subsystem
@@ -52,7 +52,7 @@ public class Indexer extends SubsystemBase {
         motor.restoreFactoryDefaults();
         motor.setInverted(isInverted);
         motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(IndexerConstants.CURRENT_LIMIT);
+        motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
 
         motor.burnFlash();
     }
@@ -62,26 +62,29 @@ public class Indexer extends SubsystemBase {
      * 
      * @return True if laser is interrupted.
      */
-    // Temporarily commented-out until IR sensor is attached
-    /* public boolean checkIR() {
-        return !irSensor.get();
-    } */
+    // public boolean checkIR() {
+    // return !irSensor.get();
+    // }
 
     /**
-     * Gets the velocity of motor in RPM.
+     * Set voltage of motor.
      * 
-     * @return RPM of motor.
-     */
-    public double getRPM() {
-        return motor.getEncoder().getVelocity();
-    }
-
-    /**
-     * Manually set voltage of motor.
-     * 
-     * @param volts Between -12 and 12.
+     * @param volts Between -12 to 12.
      */
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
     }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run during simulation
+
+    }
+
 }

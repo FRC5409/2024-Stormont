@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.IndexerConstants;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.kIndexer;
+import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kWaypoints;
@@ -46,9 +46,9 @@ public class RobotContainer {
 
         // Subsystems
         public final Drivetrain sys_drivetrain;
-        private final Climber sys_climber;
-        public final Intake sys_intake;
-        public final Indexer sys_indexer;
+        public final Climber sys_climber;
+        private final Intake sys_intake;
+        private final Indexer sys_indexer;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -65,8 +65,8 @@ public class RobotContainer {
         public RobotContainer() {
 
                 // Joysticks
-                m_primaryController = new CommandXboxController(kControllers.kPrimaryController);
-                m_secondaryController = new CommandXboxController(kControllers.kSecondaryController);
+                m_primaryController = new CommandXboxController(kControllers.PRIMARY_CONTROLLER);
+                m_secondaryController = new CommandXboxController(kControllers.SECONDARY_CONTROLLER);
                 DriverStation.silenceJoystickConnectionWarning(true);
 
                 // Subsystems
@@ -77,11 +77,11 @@ public class RobotContainer {
 
                 // Commands
                 cmd_teleopDrive = sys_drivetrain.drive(
-                                () -> -m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity,
-                                () -> -m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity,
+                                () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
+                                () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
                                 () -> (m_primaryController.getLeftTriggerAxis()
                                                 - m_primaryController.getRightTriggerAxis())
-                                                * kDrive.kMaxTurnAngularVelocity);
+                                                * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
                 sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -115,47 +115,68 @@ public class RobotContainer {
 
                 // Manual climber movement up
                 m_secondaryController.povUp()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.voltage),
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
                 // Manual climber movement down
                 m_secondaryController.povDown()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.voltage),
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
                                                 sys_climber))
                                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
-                m_primaryController.rightBumper()
-                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                // climber setpoint high
+                m_secondaryController.y()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
+                                                sys_climber));
+
+                // climber setpoint middle
+                m_secondaryController.x()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
+                                                sys_climber));
+                // climber setpoint low
+                m_secondaryController.a()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                                                sys_climber));
+
+                // // climber endgame sequence
+                // m_secondaryController.b()
+                // .whileTrue(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.high),
+                // sys_climber))
+                // .whileFalse(Commands.runOnce(() ->
+                // sys_climber.setpoint(Constants.kClimber.low),
+                // sys_climber));
+
                 m_primaryController.a()
                                 .whileTrue(Commands.runOnce(
-                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
                                                                 m_primaryController),
                                                 sys_drivetrain));
-                m_primaryController.y() // changed to Y from B to conform to latest button bindings
-                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+                m_primaryController.y()
+                                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
 
                 // Intake note command
                 m_primaryController.x()
                                 .onTrue(Commands.runOnce(() -> {
-                                                sys_intake.setRPM(IntakeConstants.RPM);
-                                                sys_indexer.setVoltage(IndexerConstants.VOLTAGE);
-                                        }, sys_intake, sys_indexer))
+                                        sys_intake.setVoltage(kIntake.VOLTAGE);
+                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(() -> {
-                                                sys_intake.setVoltage(0);
-                                                sys_indexer.setVoltage(0);
-                                        }, sys_intake, sys_indexer));
+                                        sys_intake.setVoltage(0);
+                                        sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
 
                 // Eject note command
                 m_primaryController.b()
-                                .onTrue(Commands.runOnce( () -> {
-                                                sys_intake.setRPM(-IntakeConstants.RPM);
-                                                sys_indexer.setVoltage(-IndexerConstants.VOLTAGE);
-                                        }, sys_intake, sys_indexer))
+                                .onTrue(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                        sys_indexer.setVoltage(-kIndexer.VOLTAGE);
+                                }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(() -> {
-                                                sys_intake.setVoltage(0);
-                                                sys_indexer.setVoltage(0);
-                                        }, sys_intake, sys_indexer));
+                                        sys_intake.setVoltage(0);
+                                        sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
 
         }
 
