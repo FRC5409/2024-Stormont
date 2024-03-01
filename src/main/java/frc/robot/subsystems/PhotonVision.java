@@ -31,17 +31,17 @@ public class PhotonVision extends SubsystemBase {
 
     public PhotonVision() {
         try {
-            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(kPhotonVision.kFieldLayout);
+            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(kPhotonVision.FIELD_LAYOUT);
         } catch (Exception ignore) {
         }
 
         // Arducam 1
-        frontCamera = new PhotonCamera(kCameras.kFrontCameraID);
+        frontCamera = new PhotonCamera(kCameras.FRONT_CAMERA_ID);
 
         // Pose Estimator
         poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                 frontCamera,
-                kCameras.kFrontCameraOffset);
+                kCameras.FRONT_CAMERA_OFFSET);
         poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         // Smart Dashboard
@@ -60,7 +60,7 @@ public class PhotonVision extends SubsystemBase {
         if (frontCamera.isConnected()) {
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
-                return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.kAmbiguityThreshold)
+                return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
                         ? photonData
                         : Optional.empty();
             }
