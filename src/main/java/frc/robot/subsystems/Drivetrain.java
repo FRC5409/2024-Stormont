@@ -52,13 +52,13 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     public final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-            .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+            .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
+            .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     public final SwerveRequest.FieldCentricFacingAngle teleopDriveWithAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-            .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+            .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
+            .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
@@ -73,7 +73,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             startSimThread();
         }
 
-        teleopDriveWithAngle.HeadingController.setPID(kDrive.kHeadingP, kDrive.kHeadingI, kDrive.kHeadingD);
+        teleopDriveWithAngle.HeadingController.setPID(kDrive.HEADING_P, kDrive.HEADING_I, kDrive.HEADING_D);
         teleopDriveWithAngle.HeadingController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
         teleopDriveWithAngle.HeadingController.setTolerance(Math.toRadians(.01));
 
@@ -202,7 +202,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         SmartDashboard.putData(m_field);
 
         // DEBUG Shuffleboard printouts
-        if (kAutoAlign.kAutoAlignDebug) {
+        if (kAutoAlign.AUTO_ALIGN_DEBUG) {
             SmartDashboard.putNumber("Field X", m_odometry.getEstimatedPosition().getX());
             SmartDashboard.putNumber("Field Y", m_odometry.getEstimatedPosition().getY());
         }
@@ -238,8 +238,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * @param m_controller Primary driver controller
      */
     public void navigateTo(Pose2d targetPose, CommandXboxController m_controller) {
-        PathConstraints constraints = new PathConstraints(kDrive.kMaxDriveVelocity, kDrive.kMaxDriveAcceleration,
-                kDrive.kMaxTurnAngularVelocity, kDrive.kMaxTurnAngularAcceleration);
+        PathConstraints constraints = new PathConstraints(kDrive.MAX_DRIVE_VELOCIY, kDrive.MAX_DRIVE_ACCELERATION,
+                kDrive.MAX_TURN_ANGULAR_VELOCITY, kDrive.MAX_TURN_ANGULAR_ACCELERATION);
         BooleanSupplier isAPressed = () -> m_controller.a().getAsBoolean();
         Command pathfind = AutoBuilder.pathfindToPose(targetPose, constraints, 0, 0).onlyWhile(isAPressed);
         pathfind.schedule();
@@ -247,27 +247,27 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     private void shuffleboardDebug() {
 
-        if (kRobot.kDebugMode) {
+        if (kRobot.DEBUG_MODE) {
 
             for (int i = 0; i < this.ModuleCount - 2; i++) { // only show front modules
 
                 SwerveModule module = this.getModule(i);
 
-                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn pos", i + 1),
+                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn pos", i + 1),
                         () -> module.getSteerMotor().getPosition().getValueAsDouble());
-                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn pos cancoder", i + 1),
+                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn pos cancoder", i + 1),
                         () -> module.getCANcoder().getPosition().getValueAsDouble());
 
-                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn motor set speed", i + 1),
+                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn motor set speed", i + 1),
                         () -> module.getSteerMotor().get()); // get turn position
-                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn speed", i + 1),
+                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn speed", i + 1),
                         () -> module.getSteerMotor().getVelocity().getValueAsDouble()); // get turn position cancoder
-                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d turn speed cancoder", i + 1),
+                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn speed cancoder", i + 1),
                         () -> module.getCANcoder().getVelocity().getValueAsDouble()); // get turn position cancoder
 
-                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d drive set speed", i + 1),
+                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d drive set speed", i + 1),
                         () -> module.getDriveMotor().get());
-                kDrive.kDriveShuffleboardTab.addNumber(String.format("%d drive velocity", i + 1),
+                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d drive velocity", i + 1),
                         () -> module.getDriveMotor().getVelocity().getValueAsDouble());
 
             }
