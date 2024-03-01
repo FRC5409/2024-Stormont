@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kDrive.kAutoAlign;
+import frc.robot.Constants.kDrive.kAutoPathPlanner;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -99,8 +100,11 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 this::seedFieldRelative, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
                 this::driveFromChassisSpeeds, // Consumer of ChassisSpeeds to drive the robot
-                new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
-                        new PIDConstants(10, 0, 0),
+                new HolonomicPathFollowerConfig(
+                        new PIDConstants(kAutoPathPlanner.TRANSLATION_P, kAutoPathPlanner.TRANSLATION_I,
+                                kAutoPathPlanner.TRANSLATION_D),
+                        new PIDConstants(kAutoPathPlanner.ROTATION_P, kAutoPathPlanner.ROTATION_I,
+                                kAutoPathPlanner.ROTATION_D),
                         TunerConstants.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
