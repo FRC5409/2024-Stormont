@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kIndexer;
+import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kWaypoints;
@@ -25,7 +27,8 @@ import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -48,6 +51,8 @@ public class RobotContainer {
         // Subsystems
         public final Drivetrain sys_drivetrain;
         public final Climber sys_climber;
+        private final Intake sys_intake;
+        private final Indexer sys_indexer;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -64,21 +69,23 @@ public class RobotContainer {
         public RobotContainer() {
 
                 // Joysticks
-                m_primaryController = new CommandXboxController(kControllers.kPrimaryController);
-                m_secondaryController = new CommandXboxController(kControllers.kSecondaryController);
+                m_primaryController = new CommandXboxController(kControllers.PRIMARY_CONTROLLER);
+                m_secondaryController = new CommandXboxController(kControllers.SECONDARY_CONTROLLER);
                 DriverStation.silenceJoystickConnectionWarning(true);
 
                 // Subsystems
                 sys_drivetrain = TunerConstants.DriveTrain;
                 sys_climber = new Climber();
+                sys_intake = Intake.getInstance();
+                sys_indexer = Indexer.getInstance();
 
                 // Commands
                 cmd_teleopDrive = sys_drivetrain.drive(
-                                () -> -m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity,
-                                () -> -m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity,
+                                () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
+                                () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
                                 () -> (m_primaryController.getLeftTriggerAxis()
                                                 - m_primaryController.getRightTriggerAxis())
-                                                * kDrive.kMaxTurnAngularVelocity);
+                                                * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
                 sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -147,11 +154,33 @@ public class RobotContainer {
 
                 m_primaryController.a()
                                 .whileTrue(Commands.runOnce(
-                                                () -> sys_drivetrain.navigateTo(kWaypoints.kAmpZoneTest,
+                                                () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
                                                                 m_primaryController),
                                                 sys_drivetrain));
+                m_primaryController.y()
+                                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
+
+                // Intake note command
+                m_primaryController.x()
+                                .onTrue(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(kIntake.VOLTAGE);
+                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                }, sys_intake, sys_indexer))
+                                .onFalse(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(0);
+                                        sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
+
+                // Eject note command
                 m_primaryController.b()
-                                .whileTrue(new AlignToPose(kWaypoints.kAmpZoneTest, sys_drivetrain));
+                                .onTrue(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                        sys_indexer.setVoltage(-kIndexer.VOLTAGE);
+                                }, sys_intake, sys_indexer))
+                                .onFalse(Commands.runOnce(() -> {
+                                        sys_intake.setVoltage(0);
+                                        sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
 
         }
 
@@ -177,4 +206,24 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 return sc_autoChooser.getSelected();
         }
+
 }
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+        
+
+         
+
+        
+        
+
+        
+        

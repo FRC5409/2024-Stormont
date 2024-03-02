@@ -29,7 +29,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kDrive.kAutoAlign;
+import frc.robot.Constants.kDrive.kAutoPathPlanner;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -51,13 +53,13 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
     public final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-            .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+            .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
+            .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     public final SwerveRequest.FieldCentricFacingAngle teleopDriveWithAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-            .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+            .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
+            .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
@@ -72,7 +74,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             startSimThread();
         }
 
-        teleopDriveWithAngle.HeadingController.setPID(kDrive.kHeadingP, kDrive.kHeadingI, kDrive.kHeadingD);
+        teleopDriveWithAngle.HeadingController.setPID(kDrive.HEADING_P, kDrive.HEADING_I, kDrive.HEADING_D);
         teleopDriveWithAngle.HeadingController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
         teleopDriveWithAngle.HeadingController.setTolerance(Math.toRadians(.01));
 
@@ -83,6 +85,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
         // shuffleboard
         m_field = new Field2d();
+
+        setDriveMotorInversions();
     }
 
     private void configurePathPlanner() {
@@ -96,8 +100,11 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 this::seedFieldRelative, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
                 this::driveFromChassisSpeeds, // Consumer of ChassisSpeeds to drive the robot
-                new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
-                        new PIDConstants(10, 0, 0),
+                new HolonomicPathFollowerConfig(
+                        new PIDConstants(kAutoPathPlanner.TRANSLATION_P, kAutoPathPlanner.TRANSLATION_I,
+                                kAutoPathPlanner.TRANSLATION_D),
+                        new PIDConstants(kAutoPathPlanner.ROTATION_P, kAutoPathPlanner.ROTATION_I,
+                                kAutoPathPlanner.ROTATION_D),
                         TunerConstants.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
@@ -199,7 +206,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         SmartDashboard.putData(m_field);
 
         // DEBUG Shuffleboard printouts
-        if (kAutoAlign.kAutoAlignDebug) {
+        if (kAutoAlign.AUTO_ALIGN_DEBUG) {
             SmartDashboard.putNumber("Field X", m_odometry.getEstimatedPosition().getX());
             SmartDashboard.putNumber("Field Y", m_odometry.getEstimatedPosition().getY());
         }
@@ -235,11 +242,25 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * @param m_controller Primary driver controller
      */
     public void navigateTo(Pose2d targetPose, CommandXboxController m_controller) {
-        PathConstraints constraints = new PathConstraints(kDrive.kMaxDriveVelocity, kDrive.kMaxDriveAcceleration,
-                kDrive.kMaxTurnAngularVelocity, kDrive.kMaxTurnAngularAcceleration);
+        PathConstraints constraints = new PathConstraints(kDrive.MAX_DRIVE_VELOCIY, kDrive.MAX_DRIVE_ACCELERATION,
+                kDrive.MAX_TURN_ANGULAR_VELOCITY, kDrive.MAX_TURN_ANGULAR_ACCELERATION);
         BooleanSupplier isAPressed = () -> m_controller.a().getAsBoolean();
         Command pathfind = AutoBuilder.pathfindToPose(targetPose, constraints, 0, 0).onlyWhile(isAPressed);
         pathfind.schedule();
+    }
+
+    private void setDriveMotorInversions() {
+
+        for (int i = 0; i < this.ModuleCount; i++) {
+            SwerveModule module = this.getModule(i);
+
+            if (i % 2 == 0) { // even = left side
+                module.getDriveMotor().setInverted(TunerConstants.kInvertLeftSide);
+            } else { // odd = right side
+                module.getDriveMotor().setInverted(TunerConstants.kInvertRightSide);
+            }
+        }
+
     }
 
     public void periodic() {

@@ -4,6 +4,12 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.Constants.kCANID;
+import frc.robot.Constants.kClimber;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -22,48 +28,52 @@ public class Climber extends SubsystemBase {
   private final CANSparkMax m_follower;
 
   private final SparkPIDController m_controller;
+  private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
   // private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_climberTab;
   private final GenericEntry kP, kI, kD;
+  private final GenericEntry kP, kI, kD;
 
   /** Creates a new Climber. */
   public Climber() {
 
     // Configurate motor 1
-    m_main = new CANSparkMax(Constants.kClimber.id_main, MotorType.kBrushless);
+    m_main = new CANSparkMax(kCANID.CLIMBER_MAIN_ID, MotorType.kBrushless);
     m_main.restoreFactoryDefaults();
     m_main.setIdleMode(IdleMode.kBrake);
-    m_main.setSmartCurrentLimit(Constants.kClimber.currentLimit);
+    m_main.setSmartCurrentLimit(kClimber.CURRENT_LIMIT);
 
     // Configurate motor 2
-    m_follower = new CANSparkMax(Constants.kClimber.id_follower, MotorType.kBrushless);
+    m_follower = new CANSparkMax(kCANID.CLIMBER_FOLLOWER_ID, MotorType.kBrushless);
     m_follower.restoreFactoryDefaults();
     m_follower.follow(m_main, true);
     m_follower.setIdleMode(IdleMode.kBrake);
-    m_follower.setSmartCurrentLimit(Constants.kClimber.currentLimit);
+    m_follower.setSmartCurrentLimit(kClimber.CURRENT_LIMIT);
 
     // PID controller
+    m_controller = m_main.getPIDController();
+    configPID();
     m_controller = m_main.getPIDController();
     configPID();
 
     // Encoder
     s_encoder = m_main.getEncoder();
-    s_encoder.setPositionConversionFactor(Constants.kClimber.conversionFactor);
+    s_encoder.setPositionConversionFactor(kClimber.CONVERSION_FACTOR);
     zeroEncoder();
     // s_encoder.setInverted(true);
 
     // Limit Switches
-    // limitSwitch = new DigitalInput(Constants.kClimber.port_limitSwitch);
-    // irSwitch = new DigitalInput(Constants.kClimber.port_irSwitch);
+    // limitSwitch = new DigitalInput(kClimber.port_limitSwitch);
+    // irSwitch = new DigitalInput(kClimber.port_irSwitch);
 
     // Shuffleboard
     sb_climberTab = Shuffleboard.getTab("Climber");
-    kP = sb_climberTab.add("kP", Constants.kClimber.kP).getEntry();
-    kI = sb_climberTab.add("kI", Constants.kClimber.kI).getEntry();
-    kD = sb_climberTab.add("kD", Constants.kClimber.kD).getEntry();
+    kP = sb_climberTab.add("kP", kClimber.KP).getEntry();
+    kI = sb_climberTab.add("kI", kClimber.KI).getEntry();
+    kD = sb_climberTab.add("kD", kClimber.KD).getEntry();
     sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
     // sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
@@ -74,9 +84,9 @@ public class Climber extends SubsystemBase {
 
   // Configurate PID
   public void configPID() {
-    m_controller.setP(Constants.kClimber.kP);
-    m_controller.setI(Constants.kClimber.kI);
-    m_controller.setD(Constants.kClimber.kD);
+    m_controller.setP(kClimber.KP);
+    m_controller.setI(kClimber.KI);
+    m_controller.setD(kClimber.KD);
   }
 
   // Zero encoder
