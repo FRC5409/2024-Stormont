@@ -33,16 +33,18 @@ public class AlignToPose extends Command {
         this.targetPose = targetPose;
 
         // Initializing PID Controllers
-        m_xController = new PIDController(kAutoAlign.kTControllerP, kAutoAlign.kTControllerI, kAutoAlign.kTControllerD); // TODO
-                                                                                                                         // check
-                                                                                                                         // period
-                                                                                                                         // var
+        m_xController = new PIDController(kAutoAlign.T_CONTROLLER_P, kAutoAlign.T_CONTROLLER_I,
+                kAutoAlign.T_CONTROLLER_D); // TODO
+                                            // check
+                                            // period
+                                            // var
         m_xController.setSetpoint(targetPose.getX());
-        m_xController.setTolerance(kAutoAlign.kTControllerTolerance);
+        m_xController.setTolerance(kAutoAlign.T_CONTROLLER_TOLERANCE);
 
-        m_yController = new PIDController(kAutoAlign.kTControllerP, kAutoAlign.kTControllerI, kAutoAlign.kTControllerD);
+        m_yController = new PIDController(kAutoAlign.T_CONTROLLER_P, kAutoAlign.T_CONTROLLER_I,
+                kAutoAlign.T_CONTROLLER_D);
         m_yController.setSetpoint(targetPose.getY());
-        m_yController.setTolerance(kAutoAlign.kTControllerTolerance);
+        m_yController.setTolerance(kAutoAlign.T_CONTROLLER_TOLERANCE);
     }
 
     /**
@@ -94,10 +96,10 @@ public class AlignToPose extends Command {
         double poseDelta = getPoseDelta(currentPose, targetPose);
         double rotationDelta = Math.abs(targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
 
-        if (poseDelta >= kAutoAlign.kTControllerTolerance || rotationDelta >= kAutoAlign.kRotationTolerance) {
+        if (poseDelta >= kAutoAlign.T_CONTROLLER_TOLERANCE || rotationDelta >= kAutoAlign.ROTATION_TOLERANCE) {
             notInLineTime = System.currentTimeMillis();
         } else {
-            if ((currentTime - notInLineTime) >= kAutoAlign.kReachedPositionTimeout) {
+            if ((currentTime - notInLineTime) >= kAutoAlign.REACHED_POSITION_TIMEOUT) {
                 return true;
             }
         }
