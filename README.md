@@ -1,4 +1,4 @@
-# 2024-Comp Name TBD
+# 2024-Stormont
 
 ![5409](./img/garthwebbrobotics_small.jpg)
 
@@ -17,49 +17,9 @@
 
 ## Documentaton
 
-[Button Bindings](#button-bindings)
+[Button Bindings](https://docs.google.com/spreadsheets/d/1HSiYmBb3gUdGuNg3Dq-xGTUsblrMMzPB7j3w7IODIzY/edit?usp=sharing)
 
-[CAN IDs](#can-ids)
+[CAN IDs](https://docs.google.com/spreadsheets/d/1e_u3waKVk8dI_7sqbLWBXy6xubhJGqY-UIRehofz2PU/edit?usp=sharing)
 
 [Auto routines diagram](./doc/placeholder.pdf)
 
-## Button Bindings
-
-[Spreadsheet](placeholder)
-
-| Button      | Controller | Function                                           | Subsystem(s)          | Action |
-| :---------: | :--------: | :------------------------------------------------- | :-------------------- | :----: |
-
-### Button Bindings Legend
-
-| Key         | Value              |
-| :---------: | :----------------: |
-| LT          | Left trigger       |
-| RT          | Right trigger      |
-| LB          | Left bumper        |
-| RB          | Right bumper       |
-| LS-X        | Left stick x-axis  |
-| LS-Y        | Left stick y-axis  |
-| LS-B        | Left stick button  |
-| RS-X        | Right stick x-axis |
-| RS-Y        | Right stick y-axis |
-| RS-B        | Right stick button |
-| X           | X                  |
-| Y           | Y                  |
-| A           | A                  |
-| B           | B                  |
-| D-PAD UP    | D-Pad up           |
-| D-PAD DOWN  | D-Pad down         |
-| D-PAD LEFT  | D-Pad left         |
-| D-PAD RIGHT | D-Pad right        |
-| START       | Start              |
-| BACK        | Back               |
-| *empty*     | Unbound button     |
-
-
-## CAN IDs
-
-[Spreadsheet](placeholder)
-
-| Part                      | ID  | CAN Bus         |
-| :------------------------ | :-: | :-------------: |
