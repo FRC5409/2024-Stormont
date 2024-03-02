@@ -30,7 +30,6 @@ public class Climber extends SubsystemBase {
   // private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_climberTab;
-  private final GenericEntry kP, kI, kD;
 
   /** Creates a new Climber. */
   public Climber() {
@@ -64,9 +63,9 @@ public class Climber extends SubsystemBase {
 
     // Shuffleboard
     sb_climberTab = Shuffleboard.getTab("Climber");
-    kP = sb_climberTab.add("kP", kClimber.KP).getEntry();
-    kI = sb_climberTab.add("kI", kClimber.KI).getEntry();
-    kD = sb_climberTab.add("kD", kClimber.KD).getEntry();
+    sb_climberTab.addDouble("kP", () -> m_controller.getP());
+    sb_climberTab.addDouble("kI", () -> m_controller.getI());
+    sb_climberTab.addDouble("kD", () -> m_controller.getD());
     sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
     // sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
@@ -77,9 +76,13 @@ public class Climber extends SubsystemBase {
 
   // Configurate PID
   public void configPID() {
-    m_controller.setP(kClimber.KP);
-    m_controller.setI(kClimber.KI);
-    m_controller.setD(kClimber.KD);
+    m_controller.setP(kClimber.KP_0, 0);
+    m_controller.setI(kClimber.KI_0, 0);
+    m_controller.setD(kClimber.KD_0, 0);
+
+    m_controller.setP(kClimber.KP_1, 1);
+    m_controller.setI(kClimber.kI_1, 1);
+    m_controller.setD(kClimber.kD_1, 1);
   }
 
   // Zero encoder
@@ -102,7 +105,11 @@ public class Climber extends SubsystemBase {
    * @param setpoint value
    */
   public void setPosition(double setpoint) {
-    m_controller.setReference(setpoint, ControlType.kPosition);
+    m_controller.setReference(setpoint, ControlType.kPosition, 0);
+  }
+
+  public void setPositionSlow(double setpoint) {
+    m_controller.setReference(setpoint, ControlType.kPosition, 1);
   }
 
   /**

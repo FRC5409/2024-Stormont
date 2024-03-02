@@ -131,7 +131,7 @@ public class RobotContainer {
 
                 // climber setpoint high
                 m_secondaryController.y()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setPosition(Constants.kClimber.HIGH),
+                                .onTrue(Commands.runOnce(() -> sys_climber.setPositionSlow(Constants.kClimber.HIGH),
                                                 sys_climber));
 
                 // climber setpoint middle

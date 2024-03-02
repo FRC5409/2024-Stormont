@@ -151,9 +151,13 @@ public final class Constants {
         public static final int CURRENT_LIMIT = 40;
         public static final double CONVERSION_FACTOR = 0.692;
 
-        public static final double KP = 1;
-        public static final double KI = 0;
-        public static final double KD = 1;
+        public static final double KP_0 = 1;
+        public static final double KI_0 = 0;
+        public static final double KD_0 = 1;
+
+        public static final double KP_1 = 0.2;
+        public static final double kI_1 = 0;
+        public static final double kD_1 = 0;
 
         public static final double IR_ZERO_DISTANCE = 0;
 
