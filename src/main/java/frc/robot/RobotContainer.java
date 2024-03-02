@@ -131,16 +131,22 @@ public class RobotContainer {
 
                 // climber setpoint high
                 m_secondaryController.y()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setPositionSlow(Constants.kClimber.HIGH),
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                                                Constants.kClimber.KFAST_SLOT),
                                                 sys_climber));
 
                 // climber setpoint middle
                 m_secondaryController.x()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setPosition(Constants.kClimber.MIDDLE),
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                                                Constants.kClimber.KLOW_SLOT),
                                                 sys_climber));
                 // climber setpoint low
                 m_secondaryController.a()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setPosition(Constants.kClimber.LOW),
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_climber.setPosition(Constants.kClimber.LOW,
+                                                                Constants.kClimber.KFAST_SLOT),
                                                 sys_climber));
 
                 // // climber endgame sequence

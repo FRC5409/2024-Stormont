@@ -159,6 +159,9 @@ public final class Constants {
         public static final double kI_1 = 0;
         public static final double kD_1 = 0;
 
+        public static final int KFAST_SLOT = 0;
+        public static final int KLOW_SLOT = 1;
+
         public static final double IR_ZERO_DISTANCE = 0;
 
         public static final double LOW = -1;

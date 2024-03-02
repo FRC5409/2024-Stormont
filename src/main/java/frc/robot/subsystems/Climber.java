@@ -79,10 +79,12 @@ public class Climber extends SubsystemBase {
     m_controller.setP(kClimber.KP_0, 0);
     m_controller.setI(kClimber.KI_0, 0);
     m_controller.setD(kClimber.KD_0, 0);
+    m_controller.setOutputRange(-1.0, 1.0, 0);
 
-    m_controller.setP(kClimber.KP_1, 1);
-    m_controller.setI(kClimber.kI_1, 1);
-    m_controller.setD(kClimber.kD_1, 1);
+    m_controller.setP(kClimber.KP_0, 1);
+    m_controller.setI(kClimber.KI_0, 1);
+    m_controller.setD(kClimber.KD_0, 1);
+    m_controller.setOutputRange(-0.4, 0.4, 1);
   }
 
   // Zero encoder
@@ -104,12 +106,8 @@ public class Climber extends SubsystemBase {
    * 
    * @param setpoint value
    */
-  public void setPosition(double setpoint) {
-    m_controller.setReference(setpoint, ControlType.kPosition, 0);
-  }
-
-  public void setPositionSlow(double setpoint) {
-    m_controller.setReference(setpoint, ControlType.kPosition, 1);
+  public void setPosition(double setpoint, int slot) {
+    m_controller.setReference(setpoint, ControlType.kPosition, slot);
   }
 
   /**
