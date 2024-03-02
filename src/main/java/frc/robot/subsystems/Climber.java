@@ -13,9 +13,6 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -28,13 +25,11 @@ public class Climber extends SubsystemBase {
   private final CANSparkMax m_follower;
 
   private final SparkPIDController m_controller;
-  private final SparkPIDController m_controller;
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
   // private DigitalInput irSwitch;
 
   private final ShuffleboardTab sb_climberTab;
-  private final GenericEntry kP, kI, kD;
   private final GenericEntry kP, kI, kD;
 
   /** Creates a new Climber. */
@@ -54,8 +49,6 @@ public class Climber extends SubsystemBase {
     m_follower.setSmartCurrentLimit(kClimber.CURRENT_LIMIT);
 
     // PID controller
-    m_controller = m_main.getPIDController();
-    configPID();
     m_controller = m_main.getPIDController();
     configPID();
 
