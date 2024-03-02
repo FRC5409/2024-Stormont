@@ -88,4 +88,9 @@ public class Indexer extends SubsystemBase {
 
     }
 
+    public Indexer until(boolean checkIR) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'until'");
+    }
+
 }

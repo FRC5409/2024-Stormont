@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kIndexer;
@@ -164,7 +165,7 @@ public class RobotContainer {
                                 }, sys_intake, sys_indexer))
                                 .onFalse(Commands.runOnce(() -> {
                                         sys_intake.setVoltage(0);
-                                        sys_indexer.setVoltage(0);
+                                        sys_indexer.until(sys_indexer.checkIR()).setVoltage(0);
                                 }, sys_intake, sys_indexer));
 
                 // Eject note command
