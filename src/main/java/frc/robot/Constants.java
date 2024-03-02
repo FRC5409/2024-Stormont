@@ -109,13 +109,13 @@ public final class Constants {
         public static final int currentLimit = 40;
         public static final int port_irSwitch = 0;
 
-        public static final double kP = 0;
+        public static final double kP = 1;
         public static final double kI = 0;
         public static final double kD = 0;
 
         public static class setpoints {
-            public static final double amp_pos = 0;
-            public static final double trap_pos = 0;
+            public static final double amp_pos = 20;
+            public static final double trap_pos = 60;
             public static final double the_end = 0;
         }
 

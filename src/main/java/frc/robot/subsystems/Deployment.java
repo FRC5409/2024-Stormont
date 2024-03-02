@@ -24,7 +24,7 @@ public class Deployment extends SubsystemBase {
   // motor
   private final CANSparkMax m_motor;
   // controller
-  // private final SparkPIDController m_controller;
+  private final SparkPIDController m_controller;
   // encoder
   private final RelativeEncoder s_encoder;
   // private DigitalInput limitSwitch;
@@ -47,9 +47,9 @@ public class Deployment extends SubsystemBase {
     m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
 
     // initialize controller
-    // m_controller = m_motor.getPIDController();
-    // configPID();
-    // m_controller.setOutputRange(-1, 1);
+    m_controller = m_motor.getPIDController();
+    configPID();
+    m_controller.setOutputRange(-1, 1);
 
     // initialize encoder
     s_encoder = m_motor.getEncoder();
@@ -86,11 +86,11 @@ public class Deployment extends SubsystemBase {
    * @param PID value
    */
 
-  // public void configPID() {
-  // m_controller.setP(Constants.kDeployment.kP);
-  // m_controller.setI(Constants.kDeployment.kI);
-  // m_controller.setD(Constants.kDeployment.kD);
-  // }
+  public void configPID() {
+    m_controller.setP(Constants.kDeployment.kP);
+    m_controller.setI(Constants.kDeployment.kI);
+    m_controller.setD(Constants.kDeployment.kD);
+  }
 
   /**
    * Zero encoder with encoder
@@ -122,10 +122,10 @@ public class Deployment extends SubsystemBase {
    */
 
   public void setpoint(double setpoint) {
-    // m_controller.setReference(setpoint, ControlType.kPosition);
-    if (s_encoder.getPosition() <= Constants.kDeployment.setpoints.the_end) {
-      m_motor.setVoltage(0);
-    }
+    m_controller.setReference(setpoint, ControlType.kPosition);
+    // if (s_encoder.getPosition() <= Constants.kDeployment.setpoints.the_end) {
+    // m_motor.setVoltage(0);
+    // }
   }
 
   /*
