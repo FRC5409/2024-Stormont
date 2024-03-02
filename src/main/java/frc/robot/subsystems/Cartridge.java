@@ -29,10 +29,9 @@ public class Cartridge extends SubsystemBase {
     // motor
     private final CANSparkMax m_motor;
     // Sensor
-    private final DigitalInput irSwitch;
+    // private final DigitalInput irSwitch;
     // shuffleboard
-    private final ShuffleboardTab sb_cartridge;
-    private final GenericEntry irSwitchValue;
+    // private final ShuffleboardTab sb_cartridge;
 
     public Cartridge() {
         // initialize motor
@@ -42,11 +41,11 @@ public class Cartridge extends SubsystemBase {
         m_motor.setSmartCurrentLimit(Constants.kCartridge.currentLimit);
 
         // initialize irSwitch
-        irSwitch = new DigitalInput(0);
+        // irSwitch = new DigitalInput(0);
 
         // shuffleboard
-        sb_cartridge = Shuffleboard.getTab("Cartridge");
-        irSwitchValue = sb_cartridge.add("irSwitch", 0).getEntry(); // true or false
+        // sb_cartridge = Shuffleboard.getTab("Cartridge");
+        // sb_cartridge.addBoolean("irSwitch", () -> !irSwitch.get());
 
     }
 
@@ -70,7 +69,6 @@ public class Cartridge extends SubsystemBase {
 
     @Override
     public void periodic() {
-        irSwitchValue.setBoolean(!irSwitch.get());
         // This method will be called once per scheduler run
 
     }

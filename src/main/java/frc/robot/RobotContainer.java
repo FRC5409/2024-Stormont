@@ -141,15 +141,15 @@ public class RobotContainer {
                                                 () -> sys_deployment.manualExtend(0),
                                                 sys_deployment));
 
-                m_primaryController.x()
-                                .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.amp_pos),
-                                                sys_deployment));
+                // m_primaryController.x()
+                // .onTrue(Commands.runOnce(
+                // () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.amp_pos),
+                // sys_deployment));
 
-                m_primaryController.a()
-                                .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos),
-                                                sys_deployment));
+                // m_primaryController.a()
+                // .onTrue(Commands.runOnce(
+                // () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos),
+                // sys_deployment));
 
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(
