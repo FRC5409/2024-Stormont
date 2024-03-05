@@ -140,15 +140,6 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
                                                 sys_climber));
 
-                // // climber endgame sequence
-                // m_secondaryController.b()
-                // .whileTrue(Commands.runOnce(() ->
-                // sys_climber.setpoint(Constants.kClimber.high),
-                // sys_climber))
-                // .whileFalse(Commands.runOnce(() ->
-                // sys_climber.setpoint(Constants.kClimber.low),
-                // sys_climber));
-
                 m_primaryController.a()
                                 .whileTrue(Commands.runOnce(
                                                 () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
@@ -159,14 +150,18 @@ public class RobotContainer {
 
                 // Intake note command
                 m_primaryController.x()
-                                .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(kIntake.VOLTAGE);
-                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(0);
-                                        sys_indexer.until(sys_indexer.checkIR()).setVoltage(0);
-                                }, sys_intake, sys_indexer));
+                                .whileTrue(Commands.race(
+                                                Commands.startEnd(
+                                                                () -> {
+                                                                        sys_intake.setVoltage(kIntake.VOLTAGE);
+                                                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                                                },
+                                                                () -> {
+                                                                        sys_intake.setVoltage(0);
+                                                                        sys_indexer.setVoltage(0);
+                                                                },
+                                                                sys_intake, sys_indexer),
+                                                Commands.waitUntil(() -> sys_indexer.checkIR())));
 
                 // Eject note command
                 m_primaryController.b()
