@@ -158,16 +158,19 @@ public class RobotContainer {
 
                 // Intake note command
                 m_primaryController.x()
-                                .whileTrue(Commands.startEnd(
-                                        () -> {
-                                                sys_intake.setVoltage(kIntake.VOLTAGE);
-                                                sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                        },
-                                        () -> {
-                                                sys_intake.setVoltage(0);
-                                                sys_indexer.setVoltage(0);
-                                        }, 
-                                        sys_intake, sys_indexer
+                                .whileTrue(Commands.race(
+                                        Commands.startEnd(
+                                                () -> {
+                                                        sys_intake.setVoltage(kIntake.VOLTAGE);
+                                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                                },
+                                                () -> {
+                                                        sys_intake.setVoltage(0);
+                                                        sys_indexer.setVoltage(0);
+                                                }, 
+                                                sys_intake, sys_indexer
+                                        ),
+                                        Commands.waitUntil(() -> sys_indexer.checkIR())
                                 ));
 
 
