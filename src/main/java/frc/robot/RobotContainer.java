@@ -67,10 +67,11 @@ public class RobotContainer {
         // Commands
         private final Command cmd_teleopDrive;
 
-        // private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-        //                 .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-        //                 .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
-        //                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        // private final SwerveRequest.FieldCentric teleopDrive = new
+        // SwerveRequest.FieldCentric()
+        // .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
+        // .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+        // .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         // Shuffleboard
         public final ShuffleboardTab sb_driveteamTab;
@@ -198,6 +199,11 @@ public class RobotContainer {
                                         sys_intake.setVoltage(0);
                                         sys_indexer.setVoltage(0);
                                 }, sys_intake, sys_indexer));
+
+                m_primaryController.povUp()
+                                .onTrue(Commands.runOnce(() -> sys_Cartridge.roll(Constants.kCartridge.voltage),
+                                                sys_Cartridge))
+                                .onFalse(Commands.runOnce(() -> sys_Cartridge.roll(0), sys_Cartridge));
 
         }
 

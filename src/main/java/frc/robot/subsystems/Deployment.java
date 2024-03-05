@@ -52,6 +52,7 @@ public class Deployment extends SubsystemBase {
 
     // initialize encoder
     s_encoder = m_motor.getEncoder();
+    zeroEncoder();
 
     // initiaize snesor
     // limitSwitch = new DigitalInput(Constants.kDeployment.digitalInputPort);
@@ -92,9 +93,9 @@ public class Deployment extends SubsystemBase {
    * @param position
    */
 
-  // public void zeroEncoder() {
-  // s_encoder.setPosition(0);
-  // }
+  public void zeroEncoder() {
+    s_encoder.setPosition(0);
+  }
 
   /**
    * Zero encoder with IR censor
@@ -145,4 +146,5 @@ public class Deployment extends SubsystemBase {
     // fixEncoder();
     // This method will be called once per scheduler run
   }
+
 }

@@ -98,7 +98,7 @@ public final class Constants {
     }
 
     public static class kDeployment {
-        public static final int id_motor = 0;
+        public static final int id_motor = 15;
         public static final int digitalInputPort = 0;
         public static final int voltage = 0;
         public static final int currentLimit = 40;
@@ -116,8 +116,8 @@ public final class Constants {
     }
 
     public static class kCartridge {
-        public static final int id_motor = 0;
-        public static final int voltage = 0;
+        public static final int id_motor = 16;
+        public static final int voltage = 4;
         public static final int currentLimit = 0;
     }
 
