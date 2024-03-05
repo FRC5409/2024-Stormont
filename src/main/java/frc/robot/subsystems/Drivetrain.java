@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kDrive.kAutoAlign;
+import frc.robot.Constants.kDrive.kAutoPathPlanner;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -85,7 +86,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         // shuffleboard
         m_field = new Field2d();
 
-        shuffleboardDebug();
+        setDriveMotorInversions();
     }
 
     private void configurePathPlanner() {
@@ -99,8 +100,11 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 this::seedFieldRelative, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
                 this::driveFromChassisSpeeds, // Consumer of ChassisSpeeds to drive the robot
-                new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
-                        new PIDConstants(10, 0, 0),
+                new HolonomicPathFollowerConfig(
+                        new PIDConstants(kAutoPathPlanner.TRANSLATION_P, kAutoPathPlanner.TRANSLATION_I,
+                                kAutoPathPlanner.TRANSLATION_D),
+                        new PIDConstants(kAutoPathPlanner.ROTATION_P, kAutoPathPlanner.ROTATION_I,
+                                kAutoPathPlanner.ROTATION_D),
                         TunerConstants.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
@@ -245,33 +249,16 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         pathfind.schedule();
     }
 
-    private void shuffleboardDebug() {
+    private void setDriveMotorInversions() {
 
-        if (kRobot.DEBUG_MODE) {
+        for (int i = 0; i < this.ModuleCount; i++) {
+            SwerveModule module = this.getModule(i);
 
-            for (int i = 0; i < this.ModuleCount - 2; i++) { // only show front modules
-
-                SwerveModule module = this.getModule(i);
-
-                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn pos", i + 1),
-                        () -> module.getSteerMotor().getPosition().getValueAsDouble());
-                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn pos cancoder", i + 1),
-                        () -> module.getCANcoder().getPosition().getValueAsDouble());
-
-                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn motor set speed", i + 1),
-                        () -> module.getSteerMotor().get()); // get turn position
-                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn speed", i + 1),
-                        () -> module.getSteerMotor().getVelocity().getValueAsDouble()); // get turn position cancoder
-                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d turn speed cancoder", i + 1),
-                        () -> module.getCANcoder().getVelocity().getValueAsDouble()); // get turn position cancoder
-
-                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d drive set speed", i + 1),
-                        () -> module.getDriveMotor().get());
-                kDrive.DRIVE_SHUFFLEBOARD_TAB.addNumber(String.format("%d drive velocity", i + 1),
-                        () -> module.getDriveMotor().getVelocity().getValueAsDouble());
-
+            if (i % 2 == 0) { // even = left side
+                module.getDriveMotor().setInverted(TunerConstants.kInvertLeftSide);
+            } else { // odd = right side
+                module.getDriveMotor().setInverted(TunerConstants.kInvertRightSide);
             }
-
         }
 
     }
