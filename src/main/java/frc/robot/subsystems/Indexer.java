@@ -25,7 +25,7 @@ public class Indexer extends SubsystemBase {
     // private final DigitalInput irSensor;
 
     // Shuffleboard
-    // private final ShuffleboardTab sb_tab;
+    private final ShuffleboardTab sb_tab;
 
     private Indexer() {
         // Motors
@@ -37,8 +37,8 @@ public class Indexer extends SubsystemBase {
         // irSensor = new DigitalInput(0);
 
         // Shuffleboard
-        // sb_tab = Shuffleboard.getTab("Intake");
-        // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
+        sb_tab = Shuffleboard.getTab("Indexer");
+        sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
     // Get subsystem
@@ -62,9 +62,10 @@ public class Indexer extends SubsystemBase {
      * 
      * @return True if laser is interrupted.
      */
-    // public boolean checkIR() {
-    // return !irSensor.get();
-    // }
+    public boolean checkIR() {
+        // return !irSensor.get();
+        return false;
+    }
 
     /**
      * Set voltage of motor.
