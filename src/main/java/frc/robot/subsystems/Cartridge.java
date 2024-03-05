@@ -29,9 +29,9 @@ public class Cartridge extends SubsystemBase {
     // motor
     private final CANSparkMax m_motor;
     // Sensor
-    // private final DigitalInput irSwitch;
+    private final DigitalInput irSwitch;
     // shuffleboard
-    // private final ShuffleboardTab sb_cartridge;
+    private final ShuffleboardTab sb_cartridge;
 
     public Cartridge() {
         // initialize motor
@@ -41,11 +41,11 @@ public class Cartridge extends SubsystemBase {
         m_motor.setSmartCurrentLimit(Constants.kCartridge.currentLimit);
 
         // initialize irSwitch
-        // irSwitch = new DigitalInput(0);
+        irSwitch = new DigitalInput(1);
 
         // shuffleboard
-        // sb_cartridge = Shuffleboard.getTab("Cartridge");
-        // sb_cartridge.addBoolean("irSwitch", () -> !irSwitch.get());
+        sb_cartridge = Shuffleboard.getTab("Cartridge");
+        sb_cartridge.addBoolean("irSwitch", () -> !irSwitch.get());
 
     }
 
@@ -65,6 +65,10 @@ public class Cartridge extends SubsystemBase {
 
     public void roll(double voltage) {
         m_motor.setVoltage(voltage);
+    }
+
+    public boolean checkir() {
+        return !irSwitch.get();
     }
 
     @Override

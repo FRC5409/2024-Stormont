@@ -132,9 +132,6 @@ public class RobotContainer {
          */
         private void configureBindings() {
 
-                m_primaryController.rightBumper()
-                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
-
                 // Manual climber movement up
                 m_secondaryController.povUp()
                                 .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
@@ -178,32 +175,46 @@ public class RobotContainer {
                 m_primaryController.y()
                                 .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
 
-                // Intake note command
+                m_primaryController.rightBumper()
+                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+
                 m_primaryController.x()
-                                .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(kIntake.VOLTAGE);
-                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(0);
-                                        sys_indexer.setVoltage(0);
-                                }, sys_intake, sys_indexer));
+                                .onTrue(Commands.race(
+                                                Commands.startEnd(
+                                                                () -> sys_Cartridge.roll(-Constants.kCartridge.voltage),
+                                                                () -> sys_Cartridge.roll(0),
+                                                                sys_Cartridge),
+                                                Commands.waitUntil(() -> sys_Cartridge.checkir())));
 
-                // Eject note command
                 m_primaryController.b()
-                                .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(-kIntake.VOLTAGE);
-                                        sys_indexer.setVoltage(-kIndexer.VOLTAGE);
-                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(0);
-                                        sys_indexer.setVoltage(0);
-                                }, sys_intake, sys_indexer));
+                                .onTrue(Commands.sequence(
+                                                Commands.runOnce(
+                                                                () -> sys_Cartridge.roll(-Constants.kCartridge.voltage),
+                                                                sys_Cartridge),
+                                                Commands.waitSeconds(1),
+                                                Commands.runOnce(() -> sys_Cartridge.roll(0), sys_Cartridge)));
 
-                m_primaryController.povUp()
-                                .onTrue(Commands.runOnce(() -> sys_Cartridge.roll(Constants.kCartridge.voltage),
-                                                sys_Cartridge))
-                                .onFalse(Commands.runOnce(() -> sys_Cartridge.roll(0), sys_Cartridge));
+                // Intake note command
+                // m_primaryController.x()
+                // .onTrue(Commands.runOnce(() -> {
+                // sys_intake.setVoltage(kIntake.VOLTAGE);
+                // sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                // }, sys_intake, sys_indexer))
+                // .onFalse(Commands.runOnce(() -> {
+                // sys_intake.setVoltage(0);
+                // sys_indexer.setVoltage(0);
+                // }, sys_intake, sys_indexer));
+
+                // // Eject note command
+                // m_primaryController.b()
+                // .onTrue(Commands.runOnce(() -> {
+                // sys_intake.setVoltage(-kIntake.VOLTAGE);
+                // sys_indexer.setVoltage(-kIndexer.VOLTAGE);
+                // }, sys_intake, sys_indexer))
+                // .onFalse(Commands.runOnce(() -> {
+                // sys_intake.setVoltage(0);
+                // sys_indexer.setVoltage(0);
+                // }, sys_intake, sys_indexer));
 
         }
 
