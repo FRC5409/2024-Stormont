@@ -109,9 +109,9 @@ public final class Constants {
         public static final double kD = 0;
 
         public static class setpoints {
-            public static final double amp_pos = 0;
+            public static final double amp_pos = -35;
             public static final double trap_pos = 0;
-            public static final double the_end = 0;
+            public static final double home = -1;
             public static final double low = -15;
             public static final double high = -30;
 
@@ -120,7 +120,7 @@ public final class Constants {
 
     public static class kCartridge {
         public static final int id_motor = 16;
-        public static final int voltage = 6;
+        public static final int voltage = 3;
         public static final int currentLimit = 0;
     }
 
@@ -160,7 +160,7 @@ public final class Constants {
     }
 
     public static final class kIntake {
-        public static final int CURRENT_LIMIT = 30;
+        public static final int CURRENT_LIMIT = 50;
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 

@@ -68,7 +68,7 @@ public class Deployment extends SubsystemBase {
     kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
     kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
     kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
-    sb_DeploymentTab.addDouble("position", () -> s_encoder.getPosition());
+    sb_DeploymentTab.addDouble("position", () -> getPosition());
     // sb_DeploymentTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_DeploymentTab.addBoolean("limitSwitch", () -> !limitSwitch.get());
 
@@ -85,6 +85,14 @@ public class Deployment extends SubsystemBase {
     m_controller.setP(Constants.kDeployment.kP);
     m_controller.setI(Constants.kDeployment.kI);
     m_controller.setD(Constants.kDeployment.kD);
+  }
+
+  public double getPosition() {
+    return s_encoder.getPosition();
+  }
+
+  public void stopMot() {
+    m_motor.stopMotor();
   }
 
   /**
