@@ -24,7 +24,7 @@ public class Deployment extends SubsystemBase {
   // motor
   private final CANSparkMax m_motor;
   // controller
-  // private final SparkPIDController m_controller;
+  private final SparkPIDController m_controller;
   // encoder
   private final RelativeEncoder s_encoder;
   // sensor
@@ -33,7 +33,7 @@ public class Deployment extends SubsystemBase {
 
   // shuffleboard/generic entry
   private final ShuffleboardTab sb_DeploymentTab;
-  // private final GenericEntry kP, kI, kD;
+  private final GenericEntry kP, kI, kD;
 
   /**
    * Creates a new Deployment.
@@ -47,8 +47,8 @@ public class Deployment extends SubsystemBase {
     m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
 
     // initialize controller
-    // m_controller = m_motor.getPIDController();
-    // configPID();
+    m_controller = m_motor.getPIDController();
+    configPID();
 
     // initialize encoder
     s_encoder = m_motor.getEncoder();
@@ -65,9 +65,9 @@ public class Deployment extends SubsystemBase {
      * IR switch value for distance of the elevator
      */
     sb_DeploymentTab = Shuffleboard.getTab("Deployment");
-    // kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
-    // kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
-    // kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
+    kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
+    kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
+    kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
     sb_DeploymentTab.addDouble("position", () -> s_encoder.getPosition());
     // sb_DeploymentTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_DeploymentTab.addBoolean("limitSwitch", () -> !limitSwitch.get());
@@ -81,11 +81,11 @@ public class Deployment extends SubsystemBase {
    * @param PID value
    */
 
-  // public void configPID() {
-  // m_controller.setP(Constants.kDeployment.kP);
-  // m_controller.setI(Constants.kDeployment.kI);
-  // m_controller.setD(Constants.kDeployment.kD);
-  // }
+  public void configPID() {
+    m_controller.setP(Constants.kDeployment.kP);
+    m_controller.setI(Constants.kDeployment.kI);
+    m_controller.setD(Constants.kDeployment.kD);
+  }
 
   /**
    * Zero encoder with encoder
@@ -116,12 +116,9 @@ public class Deployment extends SubsystemBase {
    * @param outputVolts value 0-12
    */
 
-  // public void setpoint(double setpoint) {
-  // m_controller.setReference(setpoint, ControlType.kPosition);
-  // if (s_encoder.getPosition() <= Constants.kDeployment.setpoints.the_end) {
-  // m_motor.setVoltage(0);
-  // }
-  // }
+  public void setpoint(double setpoint) {
+    m_controller.setReference(setpoint, ControlType.kPosition);
+  }
 
   /**
    * Sets voltage for manual extension

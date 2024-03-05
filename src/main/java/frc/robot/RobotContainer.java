@@ -167,13 +167,13 @@ public class RobotContainer {
                 // sys_climber.setpoint(Constants.kClimber.low),
                 // sys_climber));
 
-                m_primaryController.a()
-                                .whileTrue(Commands.runOnce(
-                                                () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
-                                                                m_primaryController),
-                                                sys_drivetrain));
-                m_primaryController.y()
-                                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
+                // m_primaryController.a()
+                // .whileTrue(Commands.runOnce(
+                // () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
+                // m_primaryController),
+                // sys_drivetrain));
+                // m_primaryController.y()
+                // .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
 
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
@@ -193,6 +193,15 @@ public class RobotContainer {
                                                                 sys_Cartridge),
                                                 Commands.waitSeconds(1),
                                                 Commands.runOnce(() -> sys_Cartridge.roll(0), sys_Cartridge)));
+                m_primaryController.a()
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.low),
+                                                sys_deployment));
+
+                m_primaryController.y()
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.high),
+                                                sys_deployment));
 
                 // Intake note command
                 // m_primaryController.x()

@@ -104,7 +104,7 @@ public final class Constants {
         public static final int currentLimit = 40;
         public static final int port_irSwitch = 0;
 
-        public static final double kP = 0;
+        public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
 
@@ -112,6 +112,9 @@ public final class Constants {
             public static final double amp_pos = 0;
             public static final double trap_pos = 0;
             public static final double the_end = 0;
+            public static final double low = -15;
+            public static final double high = -30;
+
         }
     }
 
