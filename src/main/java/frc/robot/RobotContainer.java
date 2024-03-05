@@ -158,25 +158,32 @@ public class RobotContainer {
 
                 // Intake note command
                 m_primaryController.x()
-                                .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(kIntake.VOLTAGE);
-                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(0);
-                                        sys_indexer.setVoltage(0);
-                                }, sys_intake, sys_indexer));
+                                .whileTrue(Commands.startEnd(
+                                        () -> {
+                                                sys_intake.setVoltage(kIntake.VOLTAGE);
+                                                sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                        },
+                                        () -> {
+                                                sys_intake.setVoltage(0);
+                                                sys_indexer.setVoltage(0);
+                                        }, 
+                                        sys_intake, sys_indexer
+                                ));
+
 
                 // Eject note command
                 m_primaryController.b()
-                                .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(-kIntake.VOLTAGE);
-                                        sys_indexer.setVoltage(-kIndexer.VOLTAGE);
-                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(0);
-                                        sys_indexer.setVoltage(0);
-                                }, sys_intake, sys_indexer));
+                                .whileTrue(Commands.startEnd(
+                                        () -> {
+                                                sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                                sys_indexer.setVoltage(-kIndexer.VOLTAGE);
+                                        },
+                                        () -> {
+                                                sys_intake.setVoltage(0);
+                                                sys_indexer.setVoltage(0);
+                                        }, 
+                                        sys_intake, sys_indexer
+                                ));
 
         }
 
