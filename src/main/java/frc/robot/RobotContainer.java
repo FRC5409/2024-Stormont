@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
+import frc.robot.commands.IntakeToCartridge;
 import frc.robot.commands.Score;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Cartridge;
@@ -173,48 +174,29 @@ public class RobotContainer {
                                 Commands.runOnce(() -> sys_deployment.stopMot(),
                                         sys_deployment)));
 
-        m_primaryController.x()
-                .onTrue(Commands.parallel(
-                        Commands.runOnce(
-                                () -> sys_intake.setVoltage(Constants.kIntake.VOLTAGE),
-                                sys_intake),
-                        Commands.runOnce(
-                                () -> sys_indexer
-                                        .setVoltage(Constants.kIndexer.VOLTAGE),
-                                sys_indexer),
-                        Commands.runOnce(
-                                () -> sys_cartridge.roll(-Constants.kCartridge.voltage),
-                                sys_cartridge)))
-                .onFalse(Commands.parallel(
-                        Commands.runOnce(
-                                () -> sys_intake.setVoltage(0),
-                                sys_intake),
-                        Commands.runOnce(
-                                () -> sys_indexer.setVoltage(0),
-                                sys_indexer),
-                        Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge)));
+        // m_primaryController.x()
+        // .onTrue(Commands.parallel(
+        // Commands.runOnce(
+        // () -> sys_intake.setVoltage(Constants.kIntake.VOLTAGE),
+        // sys_intake),
+        // Commands.runOnce(
+        // () -> sys_indexer
+        // .setVoltage(Constants.kIndexer.VOLTAGE),
+        // sys_indexer),
+        // Commands.runOnce(
+        // () -> sys_cartridge.roll(-Constants.kCartridge.voltage),
+        // sys_cartridge)))
+        // .onFalse(Commands.parallel(
+        // Commands.runOnce(
+        // () -> sys_intake.setVoltage(0),
+        // sys_intake),
+        // Commands.runOnce(
+        // () -> sys_indexer.setVoltage(0),
+        // sys_indexer),
+        // Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge)));
 
         m_primaryController.x()
-                .onTrue(new ConditionalCommand(
-                        Commands.runOnce(
-                                () -> {
-                                    sys_intake.setVoltage(
-                                            Constants.kIntake.VOLTAGE);
-                                    sys_indexer.setVoltage(
-                                            Constants.kIndexer.VOLTAGE);
-                                    sys_cartridge.roll(
-                                            Constants.kCartridge.voltage);
-                                }, sys_intake, sys_indexer, sys_cartridge),
-                        Commands.runOnce(
-                                () -> {
-                                    sys_intake.setVoltage(
-                                            0);
-                                    sys_indexer.setVoltage(
-                                            0);
-                                    sys_cartridge.roll(
-                                            0);
-                                }, sys_intake, sys_indexer, sys_cartridge),
-                        () -> sys_cartridge.checkir()));
+                .onTrue(new IntakeToCartridge(sys_cartridge, sys_intake, sys_indexer));
 
         m_primaryController.povDown()
                 .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-Constants.kIntake.VOLTAGE)))

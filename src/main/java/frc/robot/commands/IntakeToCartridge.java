@@ -24,7 +24,7 @@ public class IntakeToCartridge extends Command {
     private final Indexer sys_Indexer;
     private final Cartridge sys_Cartridge;
 
-    public IntakeToCartridge() {
+    public IntakeToCartridge(Cartridge cartridge, Intake intake, Indexer indexer) {
         sys_Intake = Intake.getInstance();
         sys_Indexer = Indexer.getInstance();
         sys_Cartridge = Cartridge.getInstance();
