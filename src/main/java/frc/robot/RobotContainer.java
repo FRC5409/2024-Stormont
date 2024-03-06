@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -55,7 +56,6 @@ public class RobotContainer {
 
     // Commands
     private final Command cmd_teleopDrive;
-
 
     // SwerveRequest.FieldCentric()
     // .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
@@ -193,6 +193,28 @@ public class RobotContainer {
                                 () -> sys_indexer.setVoltage(0),
                                 sys_indexer),
                         Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge)));
+
+        m_primaryController.x()
+                .onTrue(new ConditionalCommand(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_intake.setVoltage(
+                                            Constants.kIntake.VOLTAGE);
+                                    sys_indexer.setVoltage(
+                                            Constants.kIndexer.VOLTAGE);
+                                    sys_cartridge.roll(
+                                            Constants.kCartridge.voltage);
+                                }, sys_intake, sys_indexer, sys_cartridge),
+                        Commands.runOnce(
+                                () -> {
+                                    sys_intake.setVoltage(
+                                            0);
+                                    sys_indexer.setVoltage(
+                                            0);
+                                    sys_cartridge.roll(
+                                            0);
+                                }, sys_intake, sys_indexer, sys_cartridge),
+                        () -> sys_cartridge.checkir()));
 
         m_primaryController.povDown()
                 .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-Constants.kIntake.VOLTAGE)))
