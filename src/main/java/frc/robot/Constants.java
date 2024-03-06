@@ -70,11 +70,11 @@ public final class Constants {
         public static final double HEADING_D = 0;
 
         public static final class kAutoPathPlanner {
-            public static final double TRANSLATION_P = 0;
+            public static final double TRANSLATION_P = 3;
             public static final double TRANSLATION_I = 0;
             public static final double TRANSLATION_D = 0;
 
-            public static final double ROTATION_P = 0;
+            public static final double ROTATION_P = 5;
             public static final double ROTATION_I = 0;
             public static final double ROTATION_D = 0;
         }
@@ -109,7 +109,7 @@ public final class Constants {
         public static final String FRONT_CAMERA_NAME = "Front Camera";
         public static final String FRONT_CAMERA_ID = "OV2311_FrontCamera";
         public static final String FRONT_CAMERA_URL = "http://photonvision.local:1182/stream.mjpg";
-        public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(new Translation3d(0.3302, 0, 0.2159),
+        public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(new Translation3d(0.3302, 0 + 1, 0.2159),
                 // new Rotation3d(Math.toRadians(90), Math.toRadians(28), 0));
                 new Rotation3d(Math.toRadians(-90), Math.toRadians(-30), 0)); // 0.3302 m towards the front
 
@@ -117,7 +117,7 @@ public final class Constants {
         public static final String BACK_CAMERA_NAME = "Back Camera";
         public static final String BACK_CAMERA_ID = "OV2311_BackCamera";
         public static final String BACK_CAMERA_URL = "placeholder";
-        public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(new Translation3d(0, 0.1524, 0.2159),
+        public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(new Translation3d(0, 0.1524 - 1, 0.2159),
                 new Rotation3d(Math.toRadians(180), Math.toRadians(-57), Math.toRadians(180))); // 0.3556 m towards the
                                                                                                 // BACK and 0.1524 m
         // to the left
