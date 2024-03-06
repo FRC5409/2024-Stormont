@@ -18,6 +18,9 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
@@ -28,7 +31,9 @@ import frc.robot.Constants.kPhotonVision;
 public class PhotonVision extends SubsystemBase {
   AprilTagFieldLayout aprilTagFieldLayout;
   PhotonCamera frontCamera;
-  PhotonPoseEstimator poseEstimator;
+  PhotonCamera backCamera;
+  PhotonPoseEstimator poseEstimatorFront;
+  PhotonPoseEstimator poseEstimatorBack;
 
   public PhotonVision() {
     try {
@@ -36,13 +41,21 @@ public class PhotonVision extends SubsystemBase {
     } catch (Exception ignore) {
     }
 
-    // Arducam 1
+    // Cameras
+    // frontCamera = new PhotonCamera(kCameras.FRONT_CAMERA_ID);
     frontCamera = new PhotonCamera(kCameras.FRONT_CAMERA_ID);
+    backCamera = new PhotonCamera(kCameras.BACK_CAMERA_ID);
 
     // Pose Estimator
-    poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, frontCamera,
+    poseEstimatorFront = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        frontCamera,
         kCameras.FRONT_CAMERA_OFFSET);
-    poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    poseEstimatorFront.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+    poseEstimatorBack = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        backCamera,
+        kCameras.BACK_CAMERA_OFFSET);
+    poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
     // Smart Dashboard
     initDriverCam();
@@ -56,13 +69,37 @@ public class PhotonVision extends SubsystemBase {
    * @return Positioning data
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedPose) {
-    poseEstimator.setReferencePose(prevEstimatedPose);
+    poseEstimatorFront.setReferencePose(prevEstimatedPose);
+    poseEstimatorBack.setReferencePose(prevEstimatedPose);
+
     if (frontCamera.isConnected()) {
-      Optional<EstimatedRobotPose> photonData = poseEstimator.update();
-      if (photonData.isPresent()) {
-        return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) ? photonData
+      Optional<EstimatedRobotPose> photonDataFront = poseEstimatorFront.update();
+      Optional<EstimatedRobotPose> photonDataBack = poseEstimatorBack.update();
+      Optional<EstimatedRobotPose> photonDataOut;
+
+      if (photonDataFront.isPresent() || photonDataBack.isPresent()) {
+
+        if (photonDataFront.isPresent() && photonDataBack.isPresent()) {
+          if (getMeasurementAmbiguity(
+              photonDataFront.get().targetsUsed) < (getMeasurementAmbiguity(photonDataBack.get().targetsUsed))) {
+            photonDataOut = photonDataFront;
+          } else {
+            photonDataOut = photonDataBack;
+            System.out.println("USING BACK DATA");
+          }
+        } else if (photonDataFront.isPresent()) {
+          photonDataOut = photonDataFront;
+        } else {
+          photonDataOut = photonDataBack;
+          System.out.println("USING BACK DATA");
+        }
+
+        return isWithinAmbiguityThreshold(photonDataOut.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
+            ? photonDataOut
             : Optional.empty();
       }
+    } else {
+      System.out.println("CAMERA NOT CONNECTED");
     }
     return Optional.empty();
   }
@@ -77,12 +114,22 @@ public class PhotonVision extends SubsystemBase {
   public boolean isWithinAmbiguityThreshold(List<PhotonTrackedTarget> targets, double threshold) {
     for (PhotonTrackedTarget target : targets) {
       if (target.getPoseAmbiguity() >= threshold) {
-        // System.out.printf("Target REJECTED | Threshold: %.5f, Value: %.5f\n",
+        // System.out.printf("Target REJECTED | Threshold: %.5f, Value: %.5f\n");
         // threshold, target.getPoseAmbiguity());
         return false;
       }
     }
     return true;
+  }
+
+  public double getMeasurementAmbiguity(List<PhotonTrackedTarget> targets) {
+    double lowestAmbiguity = targets.get(0).getPoseAmbiguity();
+    for (PhotonTrackedTarget target : targets) {
+      if (target.getPoseAmbiguity() <= lowestAmbiguity) {
+        lowestAmbiguity = target.getPoseAmbiguity();
+      }
+    }
+    return lowestAmbiguity;
   }
 
   public void initDriverCam() {
