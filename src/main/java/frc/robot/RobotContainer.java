@@ -147,33 +147,8 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
                         sys_climber));
 
-        // // climber endgame sequence
-        // m_secondaryController.b()
-        // .whileTrue(Commands.runOnce(() ->
-        // sys_climber.setpoint(Constants.kClimber.high),
-        // sys_climber))
-        // .whileFalse(Commands.runOnce(() ->
-        // sys_climber.setpoint(Constants.kClimber.low),
-        // sys_climber));
-
-        // m_primaryController.a()
-        // .whileTrue(Commands.runOnce(
-        // () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
-        // m_primaryController),
-        // sys_drivetrain));
-        // m_primaryController.y()
-        // .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
-
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
-
-        // m_primaryController.x()
-        // .onTrue(Commands.race(
-        // Commands.startEnd(
-        // () -> sys_Cartridge.roll(-Constants.kCartridge.voltage),
-        // () -> sys_Cartridge.roll(0),
-        // sys_Cartridge),
-        // Commands.waitUntil(() -> sys_Cartridge.checkir())));
 
         m_primaryController.b()
                 .onTrue(Commands.sequence(
@@ -182,21 +157,21 @@ public class RobotContainer {
                                 sys_cartridge),
                         Commands.waitSeconds(1),
                         Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge)));
-        m_primaryController.a()
-                .onTrue(Commands.runOnce(
-                        () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.low),
-                        sys_deployment));
 
         m_primaryController.y()
                 .onTrue(
                         new SequentialCommandGroup(
                                 new Score(sys_deployment).withTimeout(1),
-                                Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.voltage), sys_cartridge)
+                                Commands.runOnce(() -> sys_cartridge
+                                        .roll(-Constants.kCartridge.voltage),
+                                        sys_cartridge)
                                         .alongWith(new WaitCommand(3)),
-                                Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.home),
+                                Commands.runOnce(() -> sys_deployment.setpoint(
+                                        Constants.kDeployment.setpoints.home),
                                         sys_deployment),
                                 new WaitCommand(1),
-                                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)));
+                                Commands.runOnce(() -> sys_deployment.stopMot(),
+                                        sys_deployment)));
 
         m_primaryController.x()
                 .onTrue(Commands.parallel(
@@ -215,13 +190,9 @@ public class RobotContainer {
                                 () -> sys_intake.setVoltage(0),
                                 sys_intake),
                         Commands.runOnce(
-                                () -> sys_indexer
-                                        .setVoltage(0),
+                                () -> sys_indexer.setVoltage(0),
                                 sys_indexer),
-                        Commands.runOnce(
-                                () -> sys_cartridge
-                                        .roll(0),
-                                sys_cartridge)));
+                        Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge)));
 
         m_primaryController.povDown()
                 .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-Constants.kIntake.VOLTAGE)))
