@@ -120,7 +120,7 @@ public final class Constants {
 
     public static class kCartridge {
         public static final int id_motor = 16;
-        public static final int voltage = 3;
+        public static final int voltage = 7;
         public static final int currentLimit = 0;
     }
 

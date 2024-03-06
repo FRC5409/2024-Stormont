@@ -13,9 +13,11 @@ import frc.robot.subsystems.Deployment;
 public class Score extends Command {
 
     private final Deployment m_deployment;
+    private double setpoint;
 
-    public Score(Deployment deployment) {
+    public Score(Deployment deployment, double setpoint) {
         m_deployment = deployment;
+        this.setpoint = setpoint;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(m_deployment);
@@ -24,7 +26,7 @@ public class Score extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_deployment.setpoint(kDeployment.setpoints.amp_pos);
+        m_deployment.setpoint(setpoint);
     }
 
     // Returns true when the command should end.
