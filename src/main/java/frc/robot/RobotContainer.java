@@ -124,6 +124,7 @@ public class RobotContainer {
 
         // Primary Controller
 
+        // drivetrain
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
@@ -139,12 +140,30 @@ public class RobotContainer {
         m_primaryController.x()
                 .onTrue(new IntakeToCartridge(sys_cartridge, sys_intake, sys_indexer));
 
-        // roll in reverse, spit out note from intake
+        // manual deployment extend down
         m_primaryController.povDown()
-                .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-Constants.kIntake.VOLTAGE)))
-                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0)));
+                .onTrue(Commands.runOnce(() -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
+                        sys_deployment))
+                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
+
+        // manual deployment extend up
+        m_primaryController.povUp()
+                .onTrue(Commands.runOnce(() -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
+                        sys_deployment))
+                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
+
+        // manual cartridge roll backward
+        m_primaryController.povRight()
+                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.manualVoltage), sys_cartridge))
+                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
+
+        // manual cartridge roll forward
+        m_primaryController.povLeft()
+                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(Constants.kCartridge.manualVoltage), sys_cartridge))
+                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
 
         // Secondary Controller
+        // *************************************************************************************************************
 
         // Manual climber movement up
         m_secondaryController.povUp()
@@ -163,6 +182,13 @@ public class RobotContainer {
         // climber setpoint middle
         m_secondaryController.x()
                 .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE), sys_climber));
+
+        // climber setpoint low and extend deployment
+        m_secondaryController.b()
+                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW), sys_climber)
+                        .alongWith(Commands.runOnce(
+                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos),
+                                sys_deployment)));
 
         // climber setpoint low
         m_secondaryController.a()
@@ -198,11 +224,10 @@ public class RobotContainer {
                 new Score(sys_deployment, setpoint).withTimeout(1),
                 Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.voltage), sys_cartridge)
                         .alongWith(new WaitCommand(2)),
-                Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.home),
-                        sys_deployment),
-                new WaitCommand(1),
-                Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge)
-                        .alongWith(Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)));
+                Commands.parallel(
+                        Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.home)),
+                        Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
+                        Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)));
 
     }
 }

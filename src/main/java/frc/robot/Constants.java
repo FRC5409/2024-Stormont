@@ -52,7 +52,7 @@ public final class Constants {
         public static final double DRIVE_GEAR_RATIO = 6.75;
         public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
-        public static final double MAX_DRIVE_VELOCIY = 4.56; // metres per second
+        public static final double MAX_DRIVE_VELOCIY = 1.5; // metres per second
         public static final double MAX_DRIVE_ACCELERATION = 2;
         public static final double MAX_TURN_ANGULAR_VELOCITY = 10;
         public static final double MAX_TURN_ANGULAR_ACCELERATION = 2 * Math.toRadians(360);
@@ -100,7 +100,8 @@ public final class Constants {
     public static class kDeployment {
         public static final int id_motor = 15;
         public static final int digitalInputPort = 0;
-        public static final int voltage = 0;
+        public static final int voltage = 3;
+        public static final int manualVoltage = 3;
         public static final int currentLimit = 40;
         public static final int port_irSwitch = 0;
 
@@ -110,7 +111,7 @@ public final class Constants {
 
         public static class setpoints {
             public static final double amp_pos = -35;
-            public static final double trap_pos = 0;
+            public static final double trap_pos = -43; // highest
             public static final double home = -1;
             public static final double low = -15;
             public static final double high = -30;
@@ -121,6 +122,7 @@ public final class Constants {
     public static class kCartridge {
         public static final int id_motor = 16;
         public static final int voltage = 7;
+        public static final int manualVoltage = 4;
         public static final int currentLimit = 0;
     }
 

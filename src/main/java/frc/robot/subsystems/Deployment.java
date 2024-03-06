@@ -43,7 +43,7 @@ public class Deployment extends SubsystemBase {
     // initialize motor
     m_motor = new CANSparkMax(Constants.kDeployment.id_motor, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
-    m_motor.setIdleMode(IdleMode.kCoast);
+    m_motor.setIdleMode(IdleMode.kBrake);
     m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
 
     // initialize controller
