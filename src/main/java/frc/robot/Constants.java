@@ -115,6 +115,7 @@ public final class Constants {
             public static final double home = -1;
             public static final double low = -15;
             public static final double high = -30;
+            public static final int ampTrigger = -25;
 
         }
     }

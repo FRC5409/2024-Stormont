@@ -12,12 +12,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
 import frc.robot.commands.IntakeToCartridge;
 import frc.robot.commands.Score;
@@ -88,6 +89,7 @@ public class RobotContainer {
         sys_cartridge = Cartridge.getInstance();
 
         // Commands
+
         cmd_teleopDrive = sys_drivetrain.drive(
                 () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
                 () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
@@ -128,9 +130,9 @@ public class RobotContainer {
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-        // extend deployment and roll cartridge for amp
+        // extend deployment and roll cartridge for amp in parallel
         m_primaryController.y()
-                .onTrue(deploymentCartridge(Constants.kDeployment.setpoints.amp_pos));
+                .onTrue(ScoreNote(sys_deployment, sys_cartridge));
 
         // extend deployment and roll cartridge for trap
         m_primaryController.start()
@@ -142,24 +144,28 @@ public class RobotContainer {
 
         // manual deployment extend down
         m_primaryController.povDown()
-                .onTrue(Commands.runOnce(() -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
+                .onTrue(Commands.runOnce(
+                        () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
                         sys_deployment))
                 .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
         // manual deployment extend up
         m_primaryController.povUp()
-                .onTrue(Commands.runOnce(() -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
+                .onTrue(Commands.runOnce(
+                        () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
                         sys_deployment))
                 .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
         // manual cartridge roll backward
         m_primaryController.povRight()
-                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.manualVoltage), sys_cartridge))
+                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.manualVoltage),
+                        sys_cartridge))
                 .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
 
         // manual cartridge roll forward
         m_primaryController.povLeft()
-                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(Constants.kCartridge.manualVoltage), sys_cartridge))
+                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(Constants.kCartridge.manualVoltage),
+                        sys_cartridge))
                 .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
 
         // Secondary Controller
@@ -167,33 +173,61 @@ public class RobotContainer {
 
         // Manual climber movement up
         m_secondaryController.povUp()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE), sys_climber))
+                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
+                        sys_climber))
                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
         // Manual climber movement down
         m_secondaryController.povDown()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE), sys_climber))
+                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
+                        sys_climber))
                 .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
 
         // climber setpoint high
         m_secondaryController.y()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH), sys_climber));
+                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
+                        sys_climber));
 
         // climber setpoint middle
         m_secondaryController.x()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE), sys_climber));
+                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
+                        sys_climber));
 
         // climber setpoint low and extend deployment
         m_secondaryController.b()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW), sys_climber)
+                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                        sys_climber)
                         .alongWith(Commands.runOnce(
-                                () -> sys_deployment.setpoint(Constants.kDeployment.setpoints.trap_pos),
+                                () -> sys_deployment.setpoint(
+                                        Constants.kDeployment.setpoints.trap_pos),
                                 sys_deployment)));
 
         // climber setpoint low
         m_secondaryController.a()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW), sys_climber));
+                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                        sys_climber));
 
+    }
+
+    public Command ScoreNote(Deployment sys_deployment, Cartridge sys_cartridge) {
+        return new SequentialCommandGroup(
+                // Brings the deployment to the amp position
+                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.amp_pos), sys_deployment),
+                Commands.waitUntil(
+                        // waits until it passes the trigger
+                        () -> (Math.abs(sys_deployment.getPosition()) >= Math.abs(kDeployment.setpoints.ampTrigger))),
+                // Rolls the cartridge
+                Commands.runOnce(() -> sys_cartridge.roll(-kCartridge.voltage), sys_cartridge),
+                // Waits until its reached the setpoint
+                Commands.waitUntil(
+                        () -> (Math.abs(sys_deployment.getPosition() - kDeployment.setpoints.amp_pos) <= 2.0)),
+                // go back home
+                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.home), sys_deployment),
+                // stops the rollers
+                Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
+                new WaitCommand(2),
+                // stop the motor to save battery
+                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment));
     }
 
     private void addShuffleboardItems() {
@@ -225,7 +259,8 @@ public class RobotContainer {
                 Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.voltage), sys_cartridge)
                         .alongWith(new WaitCommand(2)),
                 Commands.parallel(
-                        Commands.runOnce(() -> sys_deployment.setpoint(Constants.kDeployment.setpoints.home)),
+                        Commands.runOnce(() -> sys_deployment
+                                .setpoint(Constants.kDeployment.setpoints.home)),
                         Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
                         Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)));
 
