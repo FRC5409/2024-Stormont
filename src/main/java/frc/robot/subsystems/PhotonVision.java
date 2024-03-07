@@ -132,6 +132,10 @@ public class PhotonVision extends SubsystemBase {
     return lowestAmbiguity;
   }
 
+  public AprilTagFieldLayout getFieldLayout() {
+    return aprilTagFieldLayout;
+  }
+
   public void initDriverCam() {
     try {
       // CameraServer.startAutomaticCapture(kCameras.kFrontCameraName,

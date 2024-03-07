@@ -83,13 +83,20 @@ public final class Constants {
             public static final double T_CONTROLLER_P = 5;
             public static final double T_CONTROLLER_I = 0.0;
             public static final double T_CONTROLLER_D = 0.0;
-            public static final double T_CONTROLLER_TOLERANCE = 0.0;
+            public static final double T_CONTROLLER_TOLERANCE = 0.0; // TODO Depricate
 
             public static final double ROTATION_TOLERANCE = 0.1;
 
             public static final double REACHED_POSITION_TIMEOUT = 500; // ms
 
             public static final boolean AUTO_ALIGN_DEBUG = false;
+
+            public static final class kRotation {
+                public static final double R_Controller_P = 3;
+                public static final double R_Controller_I = 3;
+                public static final double R_Controller_D = 3;
+                public static final double R_Controller_TOLARANCE = 3;
+            }
         }
     }
 
@@ -120,16 +127,19 @@ public final class Constants {
         public static final String BACK_CAMERA_URL = "placeholder";
         public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(
                 new Translation3d(-0.2941828, 0.1674622 - 1, 0.2117598),
-                new Rotation3d(Math.toRadians(180), Math.toRadians(-57), Math.toRadians(180))); // 0.3556 m towards the
+                new Rotation3d(Math.toRadians(180), Math.toRadians(-57), Math.toRadians(180))); // 0.3556 m towards
+                                                                                                // the
                                                                                                 // BACK and 0.1524 m
         // to the left
     }
 
     public static final class kWaypoints {
         public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5)); // Variable
-                                                                                                   // positioning name
+                                                                                                   // positioning
+                                                                                                   // name
                                                                                                    // is
-                                                                                                   // releative to f2d
+                                                                                                   // releative to
+                                                                                                   // f2d
                                                                                                    // map on
                                                                                                    // Shuffleboard
         // public static final Pose2d kAmpZoneTest = new Pose2d(14.5, 6.87, new
