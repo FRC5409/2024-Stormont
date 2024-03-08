@@ -20,7 +20,7 @@ import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kWaypoints;
 import frc.robot.commands.AlignToPose;
-import frc.robot.generated.TunerConstants;
+import frc.robot.generated.TunerConstantsComp;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
@@ -70,7 +70,7 @@ public class RobotContainer {
                 DriverStation.silenceJoystickConnectionWarning(true);
 
                 // Subsystems
-                sys_drivetrain = TunerConstants.DriveTrain;
+                sys_drivetrain = TunerConstantsComp.DriveTrain;
                 sys_climber = new Climber();
                 sys_intake = Intake.getInstance();
                 sys_indexer = Indexer.getInstance();

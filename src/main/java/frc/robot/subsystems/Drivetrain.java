@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.Constants.kDrive.kAutoPathPlanner;
-import frc.robot.generated.TunerConstants;
+import frc.robot.generated.TunerConstantsComp;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -104,7 +104,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                                 kAutoPathPlanner.TRANSLATION_D),
                         new PIDConstants(kAutoPathPlanner.ROTATION_P, kAutoPathPlanner.ROTATION_I,
                                 kAutoPathPlanner.ROTATION_D),
-                        TunerConstants.kSpeedAt12VoltsMps,
+                        TunerConstantsComp.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
                 () -> false, // Change this if the path needs to be flipped on red vs blue
@@ -254,9 +254,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             SwerveModule module = this.getModule(i);
 
             if (i % 2 == 0) { // even = left side
-                module.getDriveMotor().setInverted(TunerConstants.kInvertLeftSide);
+                module.getDriveMotor().setInverted(TunerConstantsComp.kInvertLeftSide);
             } else { // odd = right side
-                module.getDriveMotor().setInverted(TunerConstants.kInvertRightSide);
+                module.getDriveMotor().setInverted(TunerConstantsComp.kInvertRightSide);
             }
         }
     }
