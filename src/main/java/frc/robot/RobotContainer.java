@@ -41,228 +41,237 @@ import frc.robot.subsystems.Intake;
  */
 public class RobotContainer {
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    // Joysticks
-    private final CommandXboxController m_primaryController;
-    private final CommandXboxController m_secondaryController;
-
-    // Subsystems
-    public final Drivetrain sys_drivetrain;
-    public final Climber sys_climber;
-    public final Intake sys_intake;
-    public final Indexer sys_indexer;
-    private final Deployment sys_deployment;
-    public final Cartridge sys_cartridge;
-
-    // Commands
-    private final Command cmd_teleopDrive;
-
-    // SwerveRequest.FieldCentric()
-    // .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-    // .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
-    // .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
-    // Shuffleboard
-    public final ShuffleboardTab sb_driveteamTab;
-
-    // Autonomous
-    private final SendableChooser<Command> sc_autoChooser;
-
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    public RobotContainer() {
-
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
         // Joysticks
-        m_primaryController = new CommandXboxController(kControllers.PRIMARY_CONTROLLER);
-        m_secondaryController = new CommandXboxController(kControllers.SECONDARY_CONTROLLER);
-        DriverStation.silenceJoystickConnectionWarning(true);
+        private final CommandXboxController m_primaryController;
+        private final CommandXboxController m_secondaryController;
 
         // Subsystems
-        sys_drivetrain = TunerConstants.DriveTrain;
-        sys_climber = new Climber();
-        sys_intake = Intake.getInstance();
-        sys_indexer = Indexer.getInstance();
-        sys_deployment = new Deployment();
-        sys_cartridge = Cartridge.getInstance();
+        public final Drivetrain sys_drivetrain;
+        public final Climber sys_climber;
+        public final Intake sys_intake;
+        public final Indexer sys_indexer;
+        private final Deployment sys_deployment;
+        public final Cartridge sys_cartridge;
 
         // Commands
+        private final Command cmd_teleopDrive;
 
-        cmd_teleopDrive = sys_drivetrain.drive(
-                () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
-                () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
-                () -> (m_primaryController.getLeftTriggerAxis()
-                        - m_primaryController.getRightTriggerAxis())
-                        * kDrive.MAX_TURN_ANGULAR_VELOCITY);
-
-        sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
+        // SwerveRequest.FieldCentric()
+        // .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
+        // .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+        // .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
         // Shuffleboard
-        sb_driveteamTab = Shuffleboard.getTab("Drive team");
-        sc_autoChooser = AutoBuilder.buildAutoChooser();
-        addShuffleboardItems();
-
-        // Configure the trigger bindings
-        configureBindings();
-    }
-
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be
-     * created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-     * an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-     * {@link
-     * CommandXboxController
-     * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or
-     * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
-     */
-    private void configureBindings() {
-
-        // Primary Controller
-
-        // drivetrain
-        m_primaryController.rightBumper()
-                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
-
-        // extend deployment and roll cartridge for amp in parallel
-        m_primaryController.y()
-                .onTrue(ScoreNote(sys_deployment, sys_cartridge));
-
-        // extend deployment and roll cartridge for trap
-        m_primaryController.start()
-                .onTrue(deploymentCartridge(Constants.kDeployment.setpoints.trap_pos));
-
-        // moves note from intake to deployment
-        m_primaryController.x()
-                .onTrue(new IntakeToCartridge(sys_cartridge, sys_intake, sys_indexer));
-
-        // manual deployment extend down
-        m_primaryController.povDown()
-                .onTrue(Commands.runOnce(
-                        () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
-                        sys_deployment))
-                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
-
-        // manual deployment extend up
-        m_primaryController.povUp()
-                .onTrue(Commands.runOnce(
-                        () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
-                        sys_deployment))
-                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
-
-        // manual cartridge roll backward
-        m_primaryController.povRight()
-                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.manualVoltage),
-                        sys_cartridge))
-                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
-
-        // manual cartridge roll forward
-        m_primaryController.povLeft()
-                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(Constants.kCartridge.manualVoltage),
-                        sys_cartridge))
-                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
-
-        // Secondary Controller
-        // *************************************************************************************************************
-
-        // Manual climber movement up
-        m_secondaryController.povUp()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
-                        sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-        // Manual climber movement down
-        m_secondaryController.povDown()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
-                        sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-        // climber setpoint high
-        m_secondaryController.y()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
-                        sys_climber));
-
-        // climber setpoint middle
-        m_secondaryController.x()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
-                        sys_climber));
-
-        // climber setpoint low and extend deployment
-        m_secondaryController.b()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                        sys_climber)
-                        .alongWith(Commands.runOnce(
-                                () -> sys_deployment.setpoint(
-                                        Constants.kDeployment.setpoints.trap_pos),
-                                sys_deployment)));
-
-        // climber setpoint low
-        m_secondaryController.a()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                        sys_climber));
-
-    }
-
-    public Command ScoreNote(Deployment sys_deployment, Cartridge sys_cartridge) {
-        return new SequentialCommandGroup(
-                // Brings the deployment to the amp position
-                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.amp_pos), sys_deployment),
-                Commands.waitUntil(
-                        // waits until it passes the trigger
-                        () -> (Math.abs(sys_deployment.getPosition()) >= Math.abs(kDeployment.setpoints.ampTrigger))),
-                // Rolls the cartridge
-                Commands.runOnce(() -> sys_cartridge.roll(-kCartridge.voltage), sys_cartridge),
-                // Waits until its reached the setpoint
-                Commands.waitUntil(
-                        () -> (Math.abs(sys_deployment.getPosition() - kDeployment.setpoints.amp_pos) <= 2.0)),
-                // go back home
-                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.home), sys_deployment),
-                // stops the rollers
-                Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
-                new WaitCommand(2),
-                // stop the motor to save battery
-                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment));
-    }
-
-    private void addShuffleboardItems() {
-
-        // Re-zero
-        sb_driveteamTab.add("Seed field relative",
-                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                .withPosition(0, 0);
+        public final ShuffleboardTab sb_driveteamTab;
 
         // Autonomous
-        sb_driveteamTab.add("Choose auto", sc_autoChooser)
-                .withPosition(0, 1)
-                .withSize(3, 1);
+        private final SendableChooser<Command> sc_autoChooser;
 
-    }
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
+        public RobotContainer() {
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        return sc_autoChooser.getSelected();
-    }
+                // Joysticks
+                m_primaryController = new CommandXboxController(kControllers.PRIMARY_CONTROLLER);
+                m_secondaryController = new CommandXboxController(kControllers.SECONDARY_CONTROLLER);
+                DriverStation.silenceJoystickConnectionWarning(true);
 
-    public Command deploymentCartridge(double setpoint) {
-        return new SequentialCommandGroup(
-                new Score(sys_deployment, setpoint).withTimeout(1),
-                Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.voltage), sys_cartridge)
-                        .alongWith(new WaitCommand(2)),
-                Commands.parallel(
-                        Commands.runOnce(() -> sys_deployment
-                                .setpoint(Constants.kDeployment.setpoints.home)),
-                        Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
-                        Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)));
+                // Subsystems
+                sys_drivetrain = TunerConstants.DriveTrain;
+                sys_climber = new Climber();
+                sys_intake = Intake.getInstance();
+                sys_indexer = Indexer.getInstance();
+                sys_deployment = new Deployment();
+                sys_cartridge = Cartridge.getInstance();
 
-    }
+                // Commands
+
+                cmd_teleopDrive = sys_drivetrain.drive(
+                                () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
+                                () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
+                                () -> (m_primaryController.getLeftTriggerAxis()
+                                                - m_primaryController.getRightTriggerAxis())
+                                                * kDrive.MAX_TURN_ANGULAR_VELOCITY);
+
+                sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
+
+                // Shuffleboard
+                sb_driveteamTab = Shuffleboard.getTab("Drive team");
+                sc_autoChooser = AutoBuilder.buildAutoChooser();
+                addShuffleboardItems();
+
+                // Configure the trigger bindings
+                configureBindings();
+        }
+
+        /**
+         * Use this method to define your trigger->command mappings. Triggers can be
+         * created via the
+         * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
+         * an arbitrary
+         * predicate, or via the named factories in {@link
+         * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+         * {@link
+         * CommandXboxController
+         * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+         * PS4} controllers or
+         * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+         * joysticks}.
+         */
+        private void configureBindings() {
+
+                // Primary Controller
+
+                // drivetrain
+                m_primaryController.rightBumper()
+                                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+
+                // extend deployment and roll cartridge for amp in parallel
+                m_primaryController.y()
+                                .onTrue(ScoreNote(sys_deployment, sys_cartridge));
+
+                // extend deployment and roll cartridge for trap
+                m_primaryController.start()
+                                .onTrue(deploymentCartridge(Constants.kDeployment.setpoints.trap_pos));
+
+                // moves note from intake to deployment
+                m_primaryController.x()
+                                .onTrue(new IntakeToCartridge(sys_cartridge, sys_intake, sys_indexer));
+
+                // manual deployment extend down
+                m_primaryController.povDown()
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
+                                                sys_deployment))
+                                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
+
+                // manual deployment extend up
+                m_primaryController.povUp()
+                                .onTrue(Commands.runOnce(
+                                                () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
+                                                sys_deployment))
+                                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
+
+                // manual cartridge roll backward
+                m_primaryController.povRight()
+                                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.manualVoltage),
+                                                sys_cartridge))
+                                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
+
+                // manual cartridge roll forward
+                m_primaryController.povLeft()
+                                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(Constants.kCartridge.manualVoltage),
+                                                sys_cartridge))
+                                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
+
+                // manual intake spit
+                m_primaryController.b()
+                                .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-3), sys_intake))
+                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+
+                // Secondary Controller
+                // *************************************************************************************************************
+
+                // Manual climber movement up
+                m_secondaryController.povUp()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // Manual climber movement down
+                m_secondaryController.povDown()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // climber setpoint high
+                m_secondaryController.y()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
+                                                sys_climber));
+
+                // climber setpoint middle
+                m_secondaryController.x()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
+                                                sys_climber));
+
+                // climber setpoint low and extend deployment
+                m_secondaryController.b()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                                                sys_climber)
+                                                .alongWith(Commands.runOnce(
+                                                                () -> sys_deployment.setpoint(
+                                                                                Constants.kDeployment.setpoints.trap_pos),
+                                                                sys_deployment)));
+
+                // climber setpoint low
+                m_secondaryController.a()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                                                sys_climber));
+
+        }
+
+        public Command ScoreNote(Deployment sys_deployment, Cartridge sys_cartridge) {
+                return new SequentialCommandGroup(
+                                // Brings the deployment to the amp position
+                                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.amp_pos),
+                                                sys_deployment),
+                                Commands.waitUntil(
+                                                // waits until it passes the trigger
+                                                () -> (Math.abs(sys_deployment.getPosition()) >= Math
+                                                                .abs(kDeployment.setpoints.ampTrigger))),
+                                // Rolls the cartridge
+                                Commands.runOnce(() -> sys_cartridge.roll(-kCartridge.voltage), sys_cartridge),
+                                // Waits until its reached the setpoint
+                                Commands.waitUntil(
+                                                () -> (Math.abs(sys_deployment.getPosition()
+                                                                - kDeployment.setpoints.amp_pos) <= 2.0)),
+                                // go back home
+                                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.home),
+                                                sys_deployment),
+                                // stops the rollers
+                                Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
+                                new WaitCommand(2),
+                                // stop the motor to save battery
+                                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment));
+        }
+
+        private void addShuffleboardItems() {
+
+                // Re-zero
+                sb_driveteamTab.add("Seed field relative",
+                                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+                                .withPosition(0, 0);
+
+                // Autonomous
+                sb_driveteamTab.add("Choose auto", sc_autoChooser)
+                                .withPosition(0, 1)
+                                .withSize(3, 1);
+
+        }
+
+        /**
+         * Use this to pass the autonomous command to the main {@link Robot} class.
+         *
+         * @return the command to run in autonomous
+         */
+        public Command getAutonomousCommand() {
+                return sc_autoChooser.getSelected();
+        }
+
+        public Command deploymentCartridge(double setpoint) {
+                return new SequentialCommandGroup(
+                                new Score(sys_deployment, setpoint).withTimeout(1),
+                                Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.voltage), sys_cartridge)
+                                                .alongWith(new WaitCommand(2)),
+                                Commands.parallel(
+                                                Commands.runOnce(() -> sys_deployment
+                                                                .setpoint(Constants.kDeployment.setpoints.home)),
+                                                Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
+                                                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)));
+
+        }
 }

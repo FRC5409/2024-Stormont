@@ -175,7 +175,7 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double VOLTAGE = 6;
+        public static final double VOLTAGE = 10;
     }
 
     public static class kClimber {
