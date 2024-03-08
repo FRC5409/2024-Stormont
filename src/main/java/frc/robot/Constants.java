@@ -32,6 +32,10 @@ public final class Constants {
         public static final int SECONDARY_CONTROLLER = 1;
     }
 
+    public static final class kRobot {
+        public static final boolean IS_BETA_ROBOT = false;
+    }
+
     public static final class kCANID {
         public static final int INTAKE_MOTOR_ID = 20;
 
@@ -39,10 +43,6 @@ public final class Constants {
 
         public static final int CLIMBER_MAIN_ID = 24;
         public static final int CLIMBER_FOLLOWER_ID = 25;
-    }
-
-    public static final class kRobot {
-        public static final boolean DEBUG_MODE = true;
     }
 
     public static final class kDrive {
