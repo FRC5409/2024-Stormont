@@ -85,13 +85,11 @@ public class PhotonVision extends SubsystemBase {
             photonDataOut = photonDataFront;
           } else {
             photonDataOut = photonDataBack;
-            System.out.println("USING BACK DATA");
           }
         } else if (photonDataFront.isPresent()) {
           photonDataOut = photonDataFront;
         } else {
           photonDataOut = photonDataBack;
-          System.out.println("USING BACK DATA");
         }
 
         return isWithinAmbiguityThreshold(photonDataOut.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
