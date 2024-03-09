@@ -133,16 +133,8 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
                 // score command
-                m_primaryController.start()
-                                .onTrue(new ScoreNote(sys_deployment, sys_cartridge));
-
                 m_primaryController.a()
-                                .whileTrue(Commands.runOnce(
-                                                () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
-                                                                m_primaryController),
-                                                sys_drivetrain));
-                m_primaryController.y()
-                                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
+                                .onTrue(new ScoreNote(sys_deployment, sys_cartridge));
 
                 // Intake note command
                 m_primaryController.x()
