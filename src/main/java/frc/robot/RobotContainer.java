@@ -12,18 +12,25 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kWaypoints;
 import frc.robot.commands.AlignToPose;
+import frc.robot.commands.ScoreNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
+import frc.robot.subsystems.Cartridge;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -49,8 +56,10 @@ public class RobotContainer {
         // Subsystems
         public final Drivetrain sys_drivetrain;
         public final Climber sys_climber;
-        private final Intake sys_intake;
-        private final Indexer sys_indexer;
+        public final Intake sys_intake;
+        public final Indexer sys_indexer;
+        private final Deployment sys_deployment;
+        public final Cartridge sys_cartridge;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -72,12 +81,15 @@ public class RobotContainer {
                 DriverStation.silenceJoystickConnectionWarning(true);
 
                 // Subsystems
-                sys_drivetrain = kRobot.IS_BETA_ROBOT
-                                ? TunerConstantsBeta.DriveTrain
-                                : TunerConstantsComp.DriveTrain;
                 sys_climber = new Climber();
                 sys_intake = Intake.getInstance();
                 sys_indexer = Indexer.getInstance();
+                sys_deployment = new Deployment();
+                sys_cartridge = Cartridge.getInstance();
+                // Subsystems
+                sys_drivetrain = kRobot.IS_BETA_ROBOT
+                                ? TunerConstantsBeta.DriveTrain
+                                : TunerConstantsComp.DriveTrain;
 
                 // Commands
                 cmd_teleopDrive = sys_drivetrain.drive(
@@ -114,51 +126,15 @@ public class RobotContainer {
          */
         private void configureBindings() {
 
+                // Primary Controller
+
+                // drivetrain
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-                // Manual climber movement up
-                m_secondaryController.povUp()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
-                                                sys_climber))
-                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-                // Manual climber movement down
-                m_secondaryController.povDown()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
-                                                sys_climber))
-                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-                // climber setpoint high
-                m_secondaryController.y()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
-                                                sys_climber));
-
-                // climber setpoint middle
-                m_secondaryController.x()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
-                                                sys_climber));
-                // climber setpoint low
-                m_secondaryController.a()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                                                sys_climber));
-
-                // // climber endgame sequence
-                // m_secondaryController.b()
-                // .whileTrue(Commands.runOnce(() ->
-                // sys_climber.setpoint(Constants.kClimber.high),
-                // sys_climber))
-                // .whileFalse(Commands.runOnce(() ->
-                // sys_climber.setpoint(Constants.kClimber.low),
-                // sys_climber));
-
+                // score command
                 m_primaryController.a()
-                                .whileTrue(Commands.runOnce(
-                                                () -> sys_drivetrain.navigateTo(kWaypoints.AMP_ZONE_TEST,
-                                                                m_primaryController),
-                                                sys_drivetrain));
-                m_primaryController.y()
-                                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_TEST, sys_drivetrain));
+                                .onTrue(new ScoreNote(sys_deployment, sys_cartridge));
 
                 // Intake note command
                 m_primaryController.x()
@@ -187,6 +163,30 @@ public class RobotContainer {
                                                         sys_indexer.setVoltage(0);
                                                 },
                                                 sys_intake, sys_indexer));
+
+                // Secondary Controller
+                // *************************************************************************************************************
+
+                // Manual climber movement up
+                m_secondaryController.povUp()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // Manual climber movement down
+                m_secondaryController.povDown()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // climber setpoint high
+                m_secondaryController.y()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
+                                                sys_climber));
+                // climber setpoint low
+                m_secondaryController.a()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                                                sys_climber));
 
         }
 
