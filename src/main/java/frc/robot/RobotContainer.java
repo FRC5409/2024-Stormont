@@ -23,8 +23,8 @@ import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kRobot;
-import frc.robot.commands.BringNoteToCartridge;
-import frc.robot.commands.IntakeToDeploy;
+import frc.robot.Constants.kWaypoints;
+import frc.robot.commands.AlignToPose;
 import frc.robot.commands.ScoreNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
@@ -52,7 +52,6 @@ public class RobotContainer {
         // Joysticks
         private final CommandXboxController m_primaryController;
         private final CommandXboxController m_secondaryController;
-        private final CommandXboxController m_testController;
 
         // Subsystems
         public final Drivetrain sys_drivetrain;
@@ -133,88 +132,9 @@ public class RobotContainer {
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-                // manual deployment extend down
-                m_primaryController.povDown()
-                                .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
-                                                sys_deployment))
-                                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
-
-                // manual deployment extend up
-                m_primaryController.povUp()
-                                .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
-                                                sys_deployment))
-                                .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
-
-                // manual cartridge roll backward
-                m_primaryController.povRight()
-                                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.manualVoltage),
-                                                sys_cartridge))
-                                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
-
-                // manual cartridge roll forward
-                m_primaryController.povLeft()
-                                .onTrue(Commands.runOnce(() -> sys_cartridge.roll(Constants.kCartridge.manualVoltage),
-                                                sys_cartridge))
-                                .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
-
-                // manual intake spit
-                m_primaryController.b()
-                                .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-3), sys_intake))
-                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
-
                 // score command
-                m_primaryController.y()
+                m_primaryController.start()
                                 .onTrue(new ScoreNote(sys_deployment, sys_cartridge));
-
-                // extend deployment and roll cartridge for amp in parallel
-
-                // extend deployment and roll cartridge for trap
-                // m_primaryController.start()
-                // .onTrue(deploymentCartridge(Constants.kDeployment.setpoints.trap_pos));
-
-                // moves note from intake to deployment
-                m_primaryController.x()
-                                .onTrue(new IntakeToDeploy(sys_deployment, sys_cartridge, sys_intake, sys_indexer));
-
-                // Secondary Controller
-                // *************************************************************************************************************
-
-                // Manual climber movement up
-                m_secondaryController.povUp()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
-                                                sys_climber))
-                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-                // Manual climber movement down
-                m_secondaryController.povDown()
-                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
-                                                sys_climber))
-                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
-
-                // climber setpoint high
-                m_secondaryController.y()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
-                                                sys_climber));
-
-                // climber setpoint middle
-                m_secondaryController.x()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
-                                                sys_climber));
-                // climber setpoint low
-                m_secondaryController.a()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                                                sys_climber));
-
-                // // climber endgame sequence
-                // m_secondaryController.b()
-                // .whileTrue(Commands.runOnce(() ->
-                // sys_climber.setpoint(Constants.kClimber.high),
-                // sys_climber))
-                // .whileFalse(Commands.runOnce(() ->
-                // sys_climber.setpoint(Constants.kClimber.low),
-                // sys_climber));
 
                 m_primaryController.a()
                                 .whileTrue(Commands.runOnce(
@@ -245,6 +165,30 @@ public class RobotContainer {
                                         sys_intake.setVoltage(0);
                                         sys_indexer.setVoltage(0);
                                 }, sys_intake, sys_indexer));
+
+                // Secondary Controller
+                // *************************************************************************************************************
+
+                // Manual climber movement up
+                m_secondaryController.povUp()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // Manual climber movement down
+                m_secondaryController.povDown()
+                                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
+                                                sys_climber))
+                                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+
+                // climber setpoint high
+                m_secondaryController.y()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
+                                                sys_climber));
+                // climber setpoint low
+                m_secondaryController.a()
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                                                sys_climber));
 
         }
 
