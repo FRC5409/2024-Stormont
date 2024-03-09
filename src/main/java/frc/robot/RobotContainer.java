@@ -25,6 +25,7 @@ import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kWaypoints;
 import frc.robot.commands.AlignToPose;
+import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.ScoreNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
@@ -187,6 +188,9 @@ public class RobotContainer {
                 m_secondaryController.a()
                                 .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
                                                 sys_climber));
+
+                m_secondaryController.b()
+                                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
         }
 
