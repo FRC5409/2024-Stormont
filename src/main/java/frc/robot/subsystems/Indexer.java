@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCANID;
-import frc.robot.Constants.kIntake;
+import frc.robot.Constants.kIndexer;
 
 public class Indexer extends SubsystemBase {
 
@@ -35,7 +35,7 @@ public class Indexer extends SubsystemBase {
         configMotor(motor, false);
 
         // Laser sensor
-        irSensor = new DigitalInput(0);
+        irSensor = new DigitalInput(kIndexer.IR_SENSOR_PORT);
 
         // Shuffleboard
         sb_tab = Shuffleboard.getTab("Indexer");
@@ -53,7 +53,7 @@ public class Indexer extends SubsystemBase {
         motor.restoreFactoryDefaults();
         motor.setInverted(isInverted);
         motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
+        motor.setSmartCurrentLimit(kIndexer.CURRENT_LIMIT);
 
         motor.burnFlash();
     }

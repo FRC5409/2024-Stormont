@@ -21,21 +21,11 @@ public class Intake extends SubsystemBase {
 	// Sensors
 	// private final DigitalInput irSensor;
 
-	// Shuffleboard
-	// private final ShuffleboardTab sb_tab;
-
 	private Intake() {
 		// Motors
 		motor = new CANSparkMax(kCANID.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
 		configMotor(motor, false);
-
-		// Laser sensor
-		// irSensor = new DigitalInput(0);
-
-		// Shuffleboard
-		// sb_tab = Shuffleboard.getTab("Intake");
-		// sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
 	}
 
 	// Get subsystem
@@ -55,15 +45,6 @@ public class Intake extends SubsystemBase {
 	}
 
 	/**
-	 * Gets the IR sensor value.
-	 * 
-	 * @return True if laser is interrupted.
-	 */
-	// public boolean checkIR() {
-	// return !irSensor.get();
-	// }
-
-	/**
 	 * Set voltage of motor.
 	 * 
 	 * @param volts Between -12 to 12.
@@ -75,6 +56,7 @@ public class Intake extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
+
 	}
 
 	@Override

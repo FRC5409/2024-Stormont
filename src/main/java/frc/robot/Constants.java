@@ -172,15 +172,13 @@ public final class Constants {
     public static final class kIntake {
         public static final int CURRENT_LIMIT = 50;
 
-        public static final int IR_SENSOR_PORT = 0; // temporary
-
         public static final double VOLTAGE = 7;
     }
 
     public static final class kIndexer {
         public static final int CURRENT_LIMIT = 30;
 
-        public static final int IR_SENSOR_PORT = 0; // temporary
+        public static final int IR_SENSOR_PORT = 0;
 
         public static final double VOLTAGE = 8;
     }
