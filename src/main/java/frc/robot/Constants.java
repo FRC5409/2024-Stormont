@@ -32,6 +32,10 @@ public final class Constants {
         public static final int SECONDARY_CONTROLLER = 1;
     }
 
+    public static final class kRobot {
+        public static final boolean IS_BETA_ROBOT = false;
+    }
+
     public static final class kCANID {
         public static final int INTAKE_MOTOR_ID = 20;
 
@@ -39,10 +43,6 @@ public final class Constants {
 
         public static final int CLIMBER_MAIN_ID = 24;
         public static final int CLIMBER_FOLLOWER_ID = 25;
-    }
-
-    public static final class kRobot {
-        public static final boolean DEBUG_MODE = true;
     }
 
     public static final class kDrive {
@@ -110,7 +110,7 @@ public final class Constants {
         public static final String FRONT_CAMERA_ID = "OV2311_FrontCamera";
         public static final String FRONT_CAMERA_URL = "http://photonvision.local:1182/stream.mjpg";
         public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(
-                new Translation3d(0.418846, 0 + 1, 0.2234184),
+                new Translation3d(0.418846, 0, 0.2234184),
                 // new Rotation3d(Math.toRadians(90), Math.toRadians(28), 0));
                 new Rotation3d(0, Math.toRadians(-30), 0)); // 0.3302 m towards the front
 
@@ -119,7 +119,7 @@ public final class Constants {
         public static final String BACK_CAMERA_ID = "OV2311_BackCamera";
         public static final String BACK_CAMERA_URL = "placeholder";
         public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(
-                new Translation3d(-0.2941828, 0.1674622 - 1, 0.2117598),
+                new Translation3d(-0.2941828, 0.1674622, 0.2117598),
                 new Rotation3d(0, Math.toRadians(-57), Math.toRadians(180))); // 0.3556 m towards the
                                                                               // BACK and 0.1524 m
         // to the left
