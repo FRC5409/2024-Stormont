@@ -168,12 +168,6 @@ public class RobotContainer {
                 m_primaryController.y()
                                 .onTrue(new ScoreNote(sys_deployment, sys_cartridge));
 
-                // extend deployment and roll cartridge for amp in parallel
-
-                // extend deployment and roll cartridge for trap
-                // m_primaryController.start()
-                // .onTrue(deploymentCartridge(Constants.kDeployment.setpoints.trap_pos));
-
                 // moves note from intake to deployment
                 m_primaryController.x()
                                 .onTrue(new IntakeToDeploy(sys_deployment, sys_cartridge, sys_intake, sys_indexer));
@@ -208,14 +202,13 @@ public class RobotContainer {
                                                 sys_climber));
 
                 // climber setpoint low and extend deployment
-                // m_secondaryController.b()
-                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                // sys_climber)
-                // .alongWith(Commands.runOnce(
-                // () -> sys_deployment.setpoint(
-                // Constants.kDeployment.setpoints.trap_pos),
-                // sys_deployment)));
-                // climber setpoint low
+                m_secondaryController.b()
+                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                sys_climber)
+                .alongWith(Commands.runOnce(
+                () -> sys_deployment.setpoint(
+                Constants.kDeployment.setpoints.trap_pos),
+                sys_deployment)));
 
                 // deployment extend for scoring, spinning index and cartidgan until ir sensor
                 // detection
