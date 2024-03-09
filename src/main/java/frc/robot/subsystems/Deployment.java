@@ -27,6 +27,8 @@ public class Deployment extends SubsystemBase {
   private final SparkPIDController m_controller;
   // encoder
   private final RelativeEncoder s_encoder;
+
+  private static Deployment instance = null;
   // sensor
   // private DigitalInput limitSwitch;
   // private DigitalInput irSwitch;
@@ -75,6 +77,13 @@ public class Deployment extends SubsystemBase {
     m_motor.burnFlash();
   }
 
+  public static Deployment getInstance() {
+    if (instance == null)
+      instance = new Deployment();
+
+    return instance;
+  }
+
   /**
    * Sets PID value for motor controller
    * 
@@ -103,6 +112,10 @@ public class Deployment extends SubsystemBase {
 
   public void zeroEncoder() {
     s_encoder.setPosition(0);
+  }
+
+  public boolean atSetpoint(double setpoint) {
+    return Math.abs(getPosition() - setpoint) <= Constants.kDeployment.kTolerance;
   }
 
   /**

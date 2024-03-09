@@ -4,7 +4,9 @@ package frc.robot.commands;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kIndexer;
@@ -18,33 +20,29 @@ import frc.robot.subsystems.Cartridge;
 /**
  * @author
  */
-public class IntakeToCartridge extends Command {
+public class BringNoteToCartridge extends Command {
 
-    private final Intake sys_Intake;
     private final Indexer sys_Indexer;
     private final Cartridge sys_Cartridge;
 
-    public IntakeToCartridge(Cartridge cartridge, Intake intake, Indexer indexer) {
-        sys_Intake = Intake.getInstance();
+    public BringNoteToCartridge(Cartridge cartridge, Indexer indexer) {
         sys_Indexer = Indexer.getInstance();
         sys_Cartridge = Cartridge.getInstance();
 
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(sys_Intake, sys_Indexer, sys_Cartridge);
-
+        addRequirements(sys_Indexer, sys_Cartridge);
     }
 
     @Override
     public void initialize() {
-        sys_Intake.setVoltage(kIntake.VOLTAGE);
         sys_Indexer.setVoltage(kIndexer.VOLTAGE);
         sys_Cartridge.roll(-kCartridge.voltage);
+
     }
 
     @Override
     public void end(boolean interrupted) {
         sys_Indexer.setVoltage(0);
-        sys_Intake.setVoltage(0);
         sys_Cartridge.roll(0);
     }
 

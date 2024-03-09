@@ -30,6 +30,7 @@ public final class Constants {
     public static final class kControllers {
         public static final int PRIMARY_CONTROLLER = 0;
         public static final int SECONDARY_CONTROLLER = 1;
+        public static final int TEST_CONTROLLER = 2;
     }
 
     public static final class kCANID {
@@ -104,6 +105,7 @@ public final class Constants {
         public static final int manualVoltage = 3;
         public static final int currentLimit = 40;
         public static final int port_irSwitch = 0;
+        public static final double kTolerance = 2;
 
         public static final double kP = 0.1;
         public static final double kI = 0;
@@ -113,9 +115,9 @@ public final class Constants {
             public static final double amp_pos = -35;
             public static final double trap_pos = -43; // highest
             public static final double home = -1;
-            public static final double low = -15;
+            public static final double low = -3;
             public static final double high = -30;
-            public static final int ampTrigger = -25;
+            public static final int ampTrigger = -14;
 
         }
     }
@@ -167,7 +169,7 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double VOLTAGE = 9;
+        public static final double VOLTAGE = 7;
     }
 
     public static final class kIndexer {
@@ -175,7 +177,7 @@ public final class Constants {
 
         public static final int IR_SENSOR_PORT = 0; // temporary
 
-        public static final double VOLTAGE = 10;
+        public static final double VOLTAGE = 8;
     }
 
     public static class kClimber {
@@ -191,7 +193,7 @@ public final class Constants {
 
         public static final double IR_ZERO_DISTANCE = 0;
 
-        public static final double LOW = -1;
+        public static final double LOW = -1; // for comp make them positive, beta is negative
         public static final double MIDDLE = -33;
         public static final double HIGH = -60;
 

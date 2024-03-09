@@ -20,8 +20,9 @@ import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
-import frc.robot.commands.IntakeToCartridge;
-import frc.robot.commands.Score;
+import frc.robot.commands.BringNoteToCartridge;
+import frc.robot.commands.IntakeToDeploy;
+import frc.robot.commands.ScoreNote;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Cartridge;
 import frc.robot.subsystems.Climber;
@@ -47,6 +48,7 @@ public class RobotContainer {
         // Joysticks
         private final CommandXboxController m_primaryController;
         private final CommandXboxController m_secondaryController;
+        private final CommandXboxController m_testController;
 
         // Subsystems
         public final Drivetrain sys_drivetrain;
@@ -78,6 +80,7 @@ public class RobotContainer {
                 // Joysticks
                 m_primaryController = new CommandXboxController(kControllers.PRIMARY_CONTROLLER);
                 m_secondaryController = new CommandXboxController(kControllers.SECONDARY_CONTROLLER);
+                m_testController = new CommandXboxController(kControllers.TEST_CONTROLLER);
                 DriverStation.silenceJoystickConnectionWarning(true);
 
                 // Subsystems
@@ -130,29 +133,17 @@ public class RobotContainer {
                 m_primaryController.rightBumper()
                                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
-                // extend deployment and roll cartridge for amp in parallel
-                m_primaryController.y()
-                                .onTrue(ScoreNote(sys_deployment, sys_cartridge));
-
-                // extend deployment and roll cartridge for trap
-                m_primaryController.start()
-                                .onTrue(deploymentCartridge(Constants.kDeployment.setpoints.trap_pos));
-
-                // moves note from intake to deployment
-                m_primaryController.x()
-                                .onTrue(new IntakeToCartridge(sys_cartridge, sys_intake, sys_indexer));
-
                 // manual deployment extend down
                 m_primaryController.povDown()
                                 .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
+                                                () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
                                                 sys_deployment))
                                 .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
                 // manual deployment extend up
                 m_primaryController.povUp()
                                 .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
+                                                () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
                                                 sys_deployment))
                                 .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
@@ -172,6 +163,20 @@ public class RobotContainer {
                 m_primaryController.b()
                                 .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-3), sys_intake))
                                 .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+
+                // score command
+                m_primaryController.y()
+                                .onTrue(new ScoreNote(sys_deployment, sys_cartridge));
+
+                // extend deployment and roll cartridge for amp in parallel
+
+                // extend deployment and roll cartridge for trap
+                // m_primaryController.start()
+                // .onTrue(deploymentCartridge(Constants.kDeployment.setpoints.trap_pos));
+
+                // moves note from intake to deployment
+                m_primaryController.x()
+                                .onTrue(new IntakeToDeploy(sys_deployment, sys_cartridge, sys_intake, sys_indexer));
 
                 // Secondary Controller
                 // *************************************************************************************************************
@@ -198,45 +203,25 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.MIDDLE),
                                                 sys_climber));
 
-                // climber setpoint low and extend deployment
-                m_secondaryController.b()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                                                sys_climber)
-                                                .alongWith(Commands.runOnce(
-                                                                () -> sys_deployment.setpoint(
-                                                                                Constants.kDeployment.setpoints.trap_pos),
-                                                                sys_deployment)));
-
-                // climber setpoint low
                 m_secondaryController.a()
                                 .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
                                                 sys_climber));
 
-        }
+                // climber setpoint low and extend deployment
+                // m_secondaryController.b()
+                // .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                // sys_climber)
+                // .alongWith(Commands.runOnce(
+                // () -> sys_deployment.setpoint(
+                // Constants.kDeployment.setpoints.trap_pos),
+                // sys_deployment)));
+                // climber setpoint low
 
-        public Command ScoreNote(Deployment sys_deployment, Cartridge sys_cartridge) {
-                return new SequentialCommandGroup(
-                                // Brings the deployment to the amp position
-                                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.amp_pos),
-                                                sys_deployment),
-                                Commands.waitUntil(
-                                                // waits until it passes the trigger
-                                                () -> (Math.abs(sys_deployment.getPosition()) >= Math
-                                                                .abs(kDeployment.setpoints.ampTrigger))),
-                                // Rolls the cartridge
-                                Commands.runOnce(() -> sys_cartridge.roll(-kCartridge.voltage), sys_cartridge),
-                                // Waits until its reached the setpoint
-                                Commands.waitUntil(
-                                                () -> (Math.abs(sys_deployment.getPosition()
-                                                                - kDeployment.setpoints.amp_pos) <= 2.0)),
-                                // go back home
-                                Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.home),
-                                                sys_deployment),
-                                // stops the rollers
-                                Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
-                                new WaitCommand(2),
-                                // stop the motor to save battery
-                                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment));
+                // deployment extend for scoring, spinning index and cartidgan until ir sensor
+                // detection
+                // zero climber, extend to high setpoint climber slow and fast, manual climber,
+                // extend low setpoint
+
         }
 
         private void addShuffleboardItems() {
@@ -260,18 +245,5 @@ public class RobotContainer {
          */
         public Command getAutonomousCommand() {
                 return sc_autoChooser.getSelected();
-        }
-
-        public Command deploymentCartridge(double setpoint) {
-                return new SequentialCommandGroup(
-                                new Score(sys_deployment, setpoint).withTimeout(1),
-                                Commands.runOnce(() -> sys_cartridge.roll(-Constants.kCartridge.voltage), sys_cartridge)
-                                                .alongWith(new WaitCommand(2)),
-                                Commands.parallel(
-                                                Commands.runOnce(() -> sys_deployment
-                                                                .setpoint(Constants.kDeployment.setpoints.home)),
-                                                Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
-                                                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)));
-
         }
 }
