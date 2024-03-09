@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCANID;
 import frc.robot.Constants.kIndexer;
-import frc.robot.Constants.kIntake;
 
 public class Indexer extends SubsystemBase {
 
