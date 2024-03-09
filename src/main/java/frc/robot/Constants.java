@@ -94,10 +94,6 @@ public final class Constants {
         }
     }
 
-    public static class OperatorConstants {
-        public static final int kDriverControllerPort = 0;
-    }
-
     public static class kDeployment {
         public static final int id_motor = 15;
         public static final int digitalInputPort = 0;
