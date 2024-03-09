@@ -35,7 +35,7 @@ public class Indexer extends SubsystemBase {
         configMotor(motor, false);
 
         // Laser sensor
-        irSensor = new DigitalInput(0);
+        irSensor = new DigitalInput(kIndexer.IR_SENSOR_PORT);
 
         // Shuffleboard
         sb_tab = Shuffleboard.getTab("Indexer");
