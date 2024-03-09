@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.kIndexer;
-import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kIndexer;
+import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kWaypoints;
 import frc.robot.commands.AlignToPose;
 import frc.robot.generated.TunerConstants;
@@ -158,25 +158,31 @@ public class RobotContainer {
 
                 // Intake note command
                 m_primaryController.x()
-                                .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setRPM(kIntake.RPM);
-                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(0);
-                                        sys_indexer.setVoltage(0);
-                                }, sys_intake, sys_indexer));
+                                .whileTrue(Commands.race(
+                                                Commands.startEnd(
+                                                                () -> {
+                                                                        sys_intake.setRPM(kIntake.RPM);
+                                                                        sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                                                },
+                                                                () -> {
+                                                                        sys_intake.setVoltage(0);
+                                                                        sys_indexer.setVoltage(0);
+                                                                },
+                                                                sys_intake, sys_indexer),
+                                                Commands.waitUntil(() -> sys_indexer.checkIR())));
 
                 // Eject note command
                 m_primaryController.b()
-                                .onTrue(Commands.runOnce(() -> {
-                                        sys_intake.setRPM(-kIntake.RPM);
-                                        sys_indexer.setVoltage(-kIndexer.VOLTAGE);
-                                }, sys_intake, sys_indexer))
-                                .onFalse(Commands.runOnce(() -> {
-                                        sys_intake.setVoltage(0);
-                                        sys_indexer.setVoltage(0);
-                                }, sys_intake, sys_indexer));
+                                .whileTrue(Commands.startEnd(
+                                                () -> {
+                                                        sys_intake.setRPM(-kIntake.RPM);
+                                                        sys_indexer.setVoltage(-kIndexer.VOLTAGE);
+                                                },
+                                                () -> {
+                                                        sys_intake.setVoltage(0);
+                                                        sys_indexer.setVoltage(0);
+                                                },
+                                                sys_intake, sys_indexer));
 
         }
 

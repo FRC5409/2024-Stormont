@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCANID;
+import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
 
 public class Indexer extends SubsystemBase {
@@ -22,7 +24,7 @@ public class Indexer extends SubsystemBase {
     private final CANSparkMax motor;
 
     // Sensors
-    // private final DigitalInput irSensor;
+    private final DigitalInput irSensor;
 
     // Shuffleboard
     private final ShuffleboardTab sb_tab;
@@ -34,7 +36,7 @@ public class Indexer extends SubsystemBase {
         configMotor(motor, false);
 
         // Laser sensor
-        // irSensor = new DigitalInput(0);
+        irSensor = new DigitalInput(0);
 
         // Shuffleboard
         sb_tab = Shuffleboard.getTab("Indexer");
@@ -52,7 +54,7 @@ public class Indexer extends SubsystemBase {
         motor.restoreFactoryDefaults();
         motor.setInverted(isInverted);
         motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
+        motor.setSmartCurrentLimit(kIndexer.CURRENT_LIMIT);
 
         motor.burnFlash();
     }
@@ -63,8 +65,7 @@ public class Indexer extends SubsystemBase {
      * @return True if laser is interrupted.
      */
     public boolean checkIR() {
-        // return !irSensor.get();
-        return false;
+        return !irSensor.get();
     }
 
     /**

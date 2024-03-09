@@ -25,10 +25,6 @@ public class Intake extends SubsystemBase {
 	// PID
 	private final SparkPIDController controller;
 
-	// Sensors
-	// Temporarily commented-out until IR sensor is attached
-	// private final DigitalInput irSensor;
-
 	// Shuffleboard
 	private final ShuffleboardTab sb_tab;
 
@@ -45,10 +41,6 @@ public class Intake extends SubsystemBase {
 		controller.setFF(kIntake.KFF);
 
 		motor.burnFlash();
-
-		// Laser sensor
-		// Temporarily commented-out until IR sensor is attached
-		// irSensor = new DigitalInput(0);
 
 		// Shuffleboard
 		sb_tab = Shuffleboard.getTab("Intake");
@@ -67,19 +59,9 @@ public class Intake extends SubsystemBase {
 		motor.setInverted(isInverted);
 		motor.setIdleMode(IdleMode.kBrake);
 		motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
-	}
 
-	/**
-	 * Gets the IR sensor value.
-	 * 
-	 * @return True if laser is interrupted.
-	 */
-	// Temporarily commented-out until IR sensor is attached
-	/*
-	 * public boolean checkIR() {
-	 * return !irSensor.get();
-	 * }
-	 */
+		motor.burnFlash();
+	}
 
 	/**
 	 * Gets the velocity of motor in RPM.
