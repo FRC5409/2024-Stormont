@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCANID;
-import frc.robot.Constants.kIntake;
+import frc.robot.Constants.kIndexer;
 
 public class Indexer extends SubsystemBase {
 
@@ -38,7 +38,7 @@ public class Indexer extends SubsystemBase {
         irSensor = new DigitalInput(0);
 
         // Shuffleboard
-        sb_tab = Shuffleboard.getTab("Intake");
+        sb_tab = Shuffleboard.getTab("Indexer");
         sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
@@ -53,7 +53,7 @@ public class Indexer extends SubsystemBase {
         motor.restoreFactoryDefaults();
         motor.setInverted(isInverted);
         motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
+        motor.setSmartCurrentLimit(kIndexer.CURRENT_LIMIT);
 
         motor.burnFlash();
     }
