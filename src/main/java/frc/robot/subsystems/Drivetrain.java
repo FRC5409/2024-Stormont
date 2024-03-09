@@ -191,6 +191,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             // update pose estimator using april tags
             try {
                 this.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(), photonData.get().timestampSeconds);
+                System.out.println(photonData.get().estimatedPose.getX());
             } catch (Exception e) {
                 System.out.println(e);
             }
