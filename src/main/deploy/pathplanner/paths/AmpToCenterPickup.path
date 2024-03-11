@@ -16,19 +16,25 @@
     },
     {
       "anchor": {
-        "x": 7.880704367540154,
-        "y": 7.472661512055521
+        "x": 7.982602324869002,
+        "y": 7.3
       },
       "prevControl": {
-        "x": 6.360013734965597,
-        "y": 7.472661512055521
+        "x": 6.4619116922944455,
+        "y": 7.3
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "CenterPickup"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {

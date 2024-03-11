@@ -3,36 +3,36 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.039411833380958,
-        "y": 5.72232645264625
+        "x": 1.84,
+        "y": 7.667373222608987
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.787837717697116,
-        "y": 4.775099942808616
+        "x": 2.9580339887498948,
+        "y": 7.667373222608987
       },
       "isLocked": false,
-      "linkedName": "CenterNote2"
+      "linkedName": "Amp"
     },
     {
       "anchor": {
-        "x": 8.3053390038404,
-        "y": 0.7367317298737166
+        "x": 8.039411833380958,
+        "y": 5.72232645264625
       },
       "prevControl": {
-        "x": 8.3053390038404,
-        "y": 1.7367317298737166
+        "x": 6.518721200806402,
+        "y": 5.72232645264625
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterNote5"
+      "linkedName": "CenterNote2"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.55,
-      "rotationDegrees": -35.0,
-      "rotateFast": true
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
@@ -45,14 +45,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0,
-    "rotateFast": true
+    "rotation": 0,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
-    "rotation": 0,
-    "velocity": 0
-  },
-  "useDefaultConstraints": true
+  "previewStartingState": null,
+  "useDefaultConstraints": false
 }

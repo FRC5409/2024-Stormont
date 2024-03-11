@@ -71,7 +71,7 @@ public final class Constants {
         public static final double HEADING_D = 0;
 
         public static final class kAutoPathPlanner {
-            public static final double TRANSLATION_P = 3;
+            public static final double TRANSLATION_P = 2;
             public static final double TRANSLATION_I = 0;
             public static final double TRANSLATION_D = 0;
 

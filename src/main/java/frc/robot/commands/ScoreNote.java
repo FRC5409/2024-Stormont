@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 // 5409: The Chargers
 // http://github.com/FRC5409
 
@@ -36,8 +38,9 @@ public class ScoreNote extends SequentialCommandGroup {
                                                 sys_deployment),
                                 // stops the rollers
                                 Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge),
-                                new WaitCommand(1.5),
+                                new WaitCommand(DriverStation.isTeleop() ? 1.5 : 0),
                                 // stop the motor to save battery
-                                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment));
+                                Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)
+                                                .onlyIf(DriverStation::isTeleop));
         }
 }
