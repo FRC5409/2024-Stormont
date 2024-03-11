@@ -183,7 +183,7 @@ public final class Constants {
     public static class kClimber {
         public static final int LIMIT_SWITCH_PORT = 0;
         public static final int IR_SWITCH_PORT = 0;
-        public static final int VOLTAGE = 3;
+        public static final int VOLTAGE = 5;
         public static final int CURRENT_LIMIT = 40;
         public static final double CONVERSION_FACTOR = 0.692;
 

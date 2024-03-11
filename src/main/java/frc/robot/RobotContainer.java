@@ -136,14 +136,14 @@ public class RobotContainer {
                 // manual deployment extend down
                 m_primaryController.povDown()
                                 .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
+                                                () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
                                                 sys_deployment))
                                 .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
                 // manual deployment extend up
                 m_primaryController.povUp()
                                 .onTrue(Commands.runOnce(
-                                                () -> sys_deployment.manualExtend(Constants.kDeployment.manualVoltage),
+                                                () -> sys_deployment.manualExtend(-Constants.kDeployment.manualVoltage),
                                                 sys_deployment))
                                 .onFalse(Commands.runOnce(() -> sys_deployment.manualExtend(0), sys_deployment));
 
@@ -160,9 +160,12 @@ public class RobotContainer {
                                 .onFalse(Commands.runOnce(() -> sys_cartridge.roll(0), sys_cartridge));
 
                 // manual intake spit
+                // m_primaryController.b()
+                // .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-3), sys_intake))
+                // .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+
                 m_primaryController.b()
-                                .onTrue(Commands.runOnce(() -> sys_intake.setVoltage(-3), sys_intake))
-                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+                                .onTrue(Commands.runOnce(() -> sys_deployment.setpoint(-46), sys_deployment));
 
                 // score command
                 m_primaryController.y()
@@ -203,17 +206,19 @@ public class RobotContainer {
 
                 // climber setpoint low and extend deployment
                 m_secondaryController.b()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                sys_climber)
-                .alongWith(Commands.runOnce(
-                () -> sys_deployment.setpoint(
-                Constants.kDeployment.setpoints.trap_pos),
-                sys_deployment)));
+                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                                                sys_climber)
+                                                .alongWith(Commands.runOnce(
+                                                                () -> sys_deployment.setpoint(
+                                                                                Constants.kDeployment.setpoints.trap_pos),
+                                                                sys_deployment)));
 
                 // deployment extend for scoring, spinning index and cartidgan until ir sensor
                 // detection
                 // zero climber, extend to high setpoint climber slow and fast, manual climber,
                 // extend low setpoint
+
+                // tester controller
 
         }
 
