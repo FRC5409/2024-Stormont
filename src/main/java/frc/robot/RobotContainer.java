@@ -23,6 +23,7 @@ import frc.robot.Constants.kDrive;
 import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.IntakeToDeploy;
 import frc.robot.commands.ScoreNote;
+import frc.robot.commands.ScoreTrap;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Cartridge;
 import frc.robot.subsystems.Climber;
@@ -204,14 +205,8 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
                                                 sys_climber));
 
-                // climber setpoint low and extend deployment
-                m_secondaryController.b()
-                                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
-                                                sys_climber)
-                                                .alongWith(Commands.runOnce(
-                                                                () -> sys_deployment.setpoint(
-                                                                                Constants.kDeployment.setpoints.trap_pos),
-                                                                sys_deployment)));
+                m_secondaryController.back()
+                                .onTrue(new ScoreTrap(sys_deployment, sys_cartridge));
 
                 // deployment extend for scoring, spinning index and cartidgan until ir sensor
                 // detection
