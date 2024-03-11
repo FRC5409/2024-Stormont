@@ -18,6 +18,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -46,7 +47,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private double m_lastSimTime;
 
     // subsystem
-    private final PhotonVision sys_photonvision;
+    private final Limelight sys_limelight;
 
     // shuffleboard
     private final Field2d m_field;
@@ -82,7 +83,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         this.seedFieldRelative();
 
         // Subsystems
-        sys_photonvision = new PhotonVision();
+        sys_limelight = new Limelight();
 
         // shuffleboard
         m_field = new Field2d();
@@ -187,16 +188,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * gyro depending on availability
      */
     private void updatePoseEstimator() {
-        var photonData = sys_photonvision.getEstimatedGlobalPose(this.getState().Pose);
-        if (photonData.isPresent()) {
-            // update pose estimator using april tags
-            try {
-                this.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(), photonData.get().timestampSeconds);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        } else {
-
+        Pose3d estimatedPose = sys_limelight.getEstimatedPose();
+        if (estimatedPose.getX() != 0) { // Null reading on limelight is 0 terminated
+            m_odometry.addVisionMeasurement(estimatedPose.toPose2d(), estimatedPose.getRotation().getAngle());
         }
     }
 
