@@ -191,6 +191,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         Pose3d estimatedPose = sys_limelight.getEstimatedPose();
         if (estimatedPose.getX() != 0) { // Null reading on limelight is 0 terminated
             m_odometry.addVisionMeasurement(estimatedPose.toPose2d(), estimatedPose.getRotation().getAngle());
+            System.out.println("[LL] Using vision estimation");
         }
     }
 
