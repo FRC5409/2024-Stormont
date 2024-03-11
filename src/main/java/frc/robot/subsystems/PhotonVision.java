@@ -95,7 +95,7 @@ public class PhotonVision extends SubsystemBase {
             : Optional.empty();
       }
     } else {
-      System.out.println("CAMERA NOT CONNECTED");
+      // System.out.println("CAMERA NOT CONNECTED");
     }
     return Optional.empty();
   }

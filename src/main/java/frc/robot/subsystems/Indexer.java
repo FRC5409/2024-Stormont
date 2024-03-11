@@ -4,12 +4,16 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 // 5409: The Chargers
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCANID;
-import frc.robot.Constants.kIntake;
+import frc.robot.Constants.kIndexer;
 
 public class Indexer extends SubsystemBase {
 
@@ -19,10 +23,10 @@ public class Indexer extends SubsystemBase {
     private final CANSparkMax motor;
 
     // Sensors
-    // private final DigitalInput irSensor;
+    private final DigitalInput irSensor;
 
     // Shuffleboard
-    // private final ShuffleboardTab sb_tab;
+    private final ShuffleboardTab sb_tab;
 
     private Indexer() {
         // Motors
@@ -31,11 +35,11 @@ public class Indexer extends SubsystemBase {
         configMotor(motor, false);
 
         // Laser sensor
-        // irSensor = new DigitalInput(0);
+        irSensor = new DigitalInput(kIndexer.IR_SENSOR_PORT);
 
         // Shuffleboard
-        // sb_tab = Shuffleboard.getTab("Intake");
-        // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
+        sb_tab = Shuffleboard.getTab("Indexer");
+        sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
     // Get subsystem
@@ -49,7 +53,7 @@ public class Indexer extends SubsystemBase {
         motor.restoreFactoryDefaults();
         motor.setInverted(isInverted);
         motor.setIdleMode(IdleMode.kBrake);
-        motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
+        motor.setSmartCurrentLimit(kIndexer.CURRENT_LIMIT);
 
         motor.burnFlash();
     }
@@ -59,9 +63,9 @@ public class Indexer extends SubsystemBase {
      * 
      * @return True if laser is interrupted.
      */
-    // public boolean checkIR() {
-    // return !irSensor.get();
-    // }
+    public boolean checkIR() {
+        return !irSensor.get();
+    }
 
     /**
      * Set voltage of motor.
