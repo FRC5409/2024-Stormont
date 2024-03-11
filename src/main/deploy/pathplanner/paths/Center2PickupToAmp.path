@@ -4,24 +4,40 @@
     {
       "anchor": {
         "x": 8.039411833380958,
-        "y": 5.72232645264625
+        "y": 5.3
       },
       "prevControl": null,
       "nextControl": {
-        "x": 9.157445822130853,
-        "y": 5.72232645264625
+        "x": 8.139411833380958,
+        "y": 5.3
       },
       "isLocked": false,
       "linkedName": "CenterNote2"
     },
     {
       "anchor": {
-        "x": 1.84,
-        "y": 7.3
+        "x": 5.151823254746047,
+        "y": 6.885154691895032
       },
       "prevControl": {
-        "x": 1.84,
-        "y": 5.779309367425443
+        "x": 7.051061834575628,
+        "y": 6.775865798664324
+      },
+      "nextControl": {
+        "x": 3.2525846749164655,
+        "y": 6.99444358512574
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.68,
+        "y": 7.0
+      },
+      "prevControl": {
+        "x": 1.68,
+        "y": 5.479309367425444
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 1.0,
       "rotationDegrees": 0,
       "rotateFast": false
     }

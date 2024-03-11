@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 8.039411833380958,
-        "y": 5.72232645264625
+        "y": 5.3
       },
       "prevControl": null,
       "nextControl": {
         "x": 8.787837717697116,
-        "y": 4.775099942808616
+        "y": 4.352773490162366
       },
       "isLocked": false,
       "linkedName": "CenterNote2"

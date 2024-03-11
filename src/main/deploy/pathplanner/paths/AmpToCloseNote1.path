@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 1.74,
-        "y": 6.650914165136935
+        "y": 7.06746093655452
       },
       "isLocked": false,
       "linkedName": "Amp"
@@ -20,7 +20,7 @@
         "y": 6.9906120684637205
       },
       "prevControl": {
-        "x": 0.5762204082313009,
+        "x": 2.0,
         "y": 6.9906120684637205
       },
       "nextControl": null,
