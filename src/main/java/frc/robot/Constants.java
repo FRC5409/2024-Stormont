@@ -144,7 +144,7 @@ public final class Constants {
         public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(
                 new Translation3d(0.418846, 0, 0.2234184),
                 // new Rotation3d(Math.toRadians(90), Math.toRadians(28), 0));
-                new Rotation3d(0, Math.toRadians(-27), 0)); // 0.3302 m towards the front
+                new Rotation3d(Math.toRadians(180), Math.toRadians(-27), 0)); // 0.3302 m towards the front
 
         // Arducam 2
         public static final String BACK_CAMERA_NAME = "Back Camera";
