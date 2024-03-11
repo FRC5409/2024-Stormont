@@ -34,7 +34,7 @@ public final class Constants {
     }
 
     public static final class kRobot {
-        public static final boolean IS_BETA_ROBOT = false;
+        public static final boolean IS_BETA_ROBOT = true;
     }
 
     public static final class kCANID {

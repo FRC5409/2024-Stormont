@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kRobot;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.Constants.kDrive.kAutoPathPlanner;
 import frc.robot.generated.TunerConstantsBeta;
@@ -188,9 +189,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * gyro depending on availability
      */
     private void updatePoseEstimator() {
-        Pose3d estimatedPose = sys_limelight.getEstimatedPose();
+        PoseEstimate visionEstimate = sys_limelight.getEstimatedPose();
+        Pose2d estimatedPose = visionEstimate.pose;
         if (estimatedPose.getX() != 0) { // Null reading on limelight is 0 terminated
-            m_odometry.addVisionMeasurement(estimatedPose.toPose2d(), estimatedPose.getRotation().getAngle());
+            m_odometry.addVisionMeasurement(estimatedPose, visionEstimate.timestampSeconds);
             System.out.println("[LL] Using vision estimation");
         }
     }
