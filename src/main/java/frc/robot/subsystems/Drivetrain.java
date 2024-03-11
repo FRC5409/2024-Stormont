@@ -17,6 +17,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -190,9 +191,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      */
     private void updatePoseEstimator() {
         PoseEstimate visionEstimate = sys_limelight.getEstimatedPose();
-        Pose2d estimatedPose = visionEstimate.pose;
-        if (estimatedPose.getX() != 0) { // Null reading on limelight is 0 terminated
-            m_odometry.addVisionMeasurement(estimatedPose, visionEstimate.timestampSeconds);
+        if (visionEstimate.tagCount >= 1) {
+            m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, .7));
+            m_odometry.addVisionMeasurement(visionEstimate.pose, visionEstimate.timestampSeconds);
             System.out.println("[LL] Using vision estimation");
         }
     }

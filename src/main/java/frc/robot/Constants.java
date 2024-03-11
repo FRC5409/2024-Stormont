@@ -126,7 +126,7 @@ public final class Constants {
     }
 
     public static final class kLimelight {
-        public static final String LIMELIGHT_ID = "placeholder";
+        public static final String LIMELIGHT_ID = "limelight";
     }
 
     public static final class kCameras {
