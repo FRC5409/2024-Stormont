@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Constants.kCANID;
+
 import com.ctre.phoenix6.signals.ControlModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
@@ -44,10 +46,10 @@ public class Deployment extends SubsystemBase {
    */
   public Deployment() {
     // initialize motor
-    m_motor = new CANSparkMax(Constants.kDeployment.id_motor, MotorType.kBrushless);
+    m_motor = new CANSparkMax(kCANID.DEPLOYMENT_MOTOR_ID, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
     m_motor.setIdleMode(IdleMode.kBrake);
-    m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
+    m_motor.setSmartCurrentLimit(Constants.kDeployment.CURRENT_LIMIT);
 
     // initialize controller
     m_controller = m_motor.getPIDController();
@@ -117,7 +119,7 @@ public class Deployment extends SubsystemBase {
   }
 
   public boolean atSetpoint(double setpoint) {
-    return MathUtil.isNear(setpoint, getPosition(), Constants.kDeployment.kTolerance);
+    return MathUtil.isNear(setpoint, getPosition(), Constants.kDeployment.TOLERANCE);
   }
 
   /**

@@ -24,13 +24,13 @@ public class IntakeToDeploy extends SequentialCommandGroup {
     addCommands(
         Commands.runOnce(() -> sys_intake.setVoltage(Constants.kIntake.VOLTAGE), sys_intake).alongWith(
             Commands.runOnce(() -> sys_indexer.setVoltage(Constants.kIndexer.VOLTAGE), sys_indexer),
-            Commands.runOnce(() -> sys_cartridge.setVoltage(Constants.kCartridge.voltage), sys_cartridge)),
+            Commands.runOnce(() -> sys_cartridge.setVoltage(Constants.kCartridge.VOLTAGE), sys_cartridge)),
         Commands.waitUntil(() -> sys_indexer.checkIR()),
         Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake).alongWith(
             Commands.runOnce(() -> sys_indexer.setVoltage(0), sys_indexer),
             Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge)),
-        Commands.runOnce(() -> sys_deployment.setPosition(Constants.kDeployment.setpoints.low), sys_deployment),
-        Commands.waitUntil(() -> sys_deployment.atSetpoint(Constants.kDeployment.setpoints.low)),
+        Commands.runOnce(() -> sys_deployment.setPosition(Constants.kDeployment.kSetpoints.LOW), sys_deployment),
+        Commands.waitUntil(() -> sys_deployment.atSetpoint(Constants.kDeployment.kSetpoints.LOW)),
         Commands.waitSeconds(1),
         new BringNoteToCartridge(sys_cartridge, sys_indexer));
   }
