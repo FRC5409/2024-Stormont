@@ -16,13 +16,13 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kLimelight;
 import frc.robot.Constants.kRobot;
 import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.Constants.kDrive.kAutoAlign;
@@ -47,6 +48,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+    private double lastVisionTimestamp = 0;
 
     // subsystem
     private final Limelight sys_limelight;
@@ -66,7 +68,13 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
+    private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics,
+            m_pigeon2.getRotation2d(), m_modulePositions, getRobotPose(),
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
+            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(1)));
+
+    public Drivetrain(
+            SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
 
         this.setDriveMotorsNeutralMode(NeutralModeValue.Brake);
@@ -191,10 +199,22 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      */
     private void updatePoseEstimator() {
         PoseEstimate visionEstimate = sys_limelight.getEstimatedPose();
-        if (visionEstimate.tagCount >= 1) {
-            m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, .7));
-            m_odometry.addVisionMeasurement(visionEstimate.pose, visionEstimate.timestampSeconds);
-            System.out.println("[LL] Using vision estimation");
+        if (visionEstimate.tagCount >= 1
+                && (visionEstimate.timestampSeconds - lastVisionTimestamp) > kLimelight.MEASUREMENT_INTERVAL) {
+            try {
+                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.0001, 0.0001, 0.0001));
+                m_poseEstimator.addVisionMeasurement(visionEstimate.pose, visionEstimate.timestampSeconds);
+                lastVisionTimestamp = visionEstimate.timestampSeconds;
+                System.out.printf("Vision Measurement %.3f, %.3f | PoseEstimator: %.3f, %.3f\n",
+                        visionEstimate.pose.getX(),
+                        visionEstimate.pose.getY(), m_poseEstimator.getEstimatedPosition().getX(),
+                        m_poseEstimator.getEstimatedPosition().getY());
+            } catch (Exception e) {
+                System.out.println("[Warn] Odometry buffer overflow");
+            }
+            // System.out.println(visionEstimate.pose.getX());
+        } else {
+            m_poseEstimator.update(m_pigeon2.getRotation2d(), getSwerveModulePositions());
         }
     }
 
@@ -202,7 +222,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * Updates Field2d on shuffleboard
      */
     private void updateFieldMap() {
-        m_field.setRobotPose(m_odometry.getEstimatedPosition());
+        m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());
         SmartDashboard.putData(m_field);
 
         // DEBUG Shuffleboard printouts

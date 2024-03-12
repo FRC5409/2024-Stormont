@@ -127,6 +127,7 @@ public final class Constants {
 
     public static final class kLimelight {
         public static final String LIMELIGHT_ID = "limelight";
+        public static final double MEASUREMENT_INTERVAL = 0.001; // seconds
     }
 
     public static final class kCameras {
