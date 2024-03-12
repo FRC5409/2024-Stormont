@@ -81,9 +81,9 @@ public final class Constants {
         }
 
         public static final class kAutoAlign {
-            public static final double T_CONTROLLER_P = 5;
+            public static final double T_CONTROLLER_P = 4.5;
             public static final double T_CONTROLLER_I = 0.0;
-            public static final double T_CONTROLLER_D = 0.0;
+            public static final double T_CONTROLLER_D = 0.3;
             public static final double T_CONTROLLER_TOLERANCE = 0.0;
 
             public static final double ROTATION_TOLERANCE = 0.1;

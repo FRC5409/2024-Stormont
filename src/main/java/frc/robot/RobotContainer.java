@@ -165,6 +165,9 @@ public class RobotContainer {
                                                 },
                                                 sys_intake, sys_indexer));
 
+                m_primaryController.y()
+                                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_BLUE, sys_drivetrain));
+
                 // Secondary Controller
                 // *************************************************************************************************************
 
