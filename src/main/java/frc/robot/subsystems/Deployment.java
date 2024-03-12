@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Constants.kCANID;
+
 import com.ctre.phoenix6.signals.ControlModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
@@ -14,6 +16,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -43,10 +46,10 @@ public class Deployment extends SubsystemBase {
    */
   public Deployment() {
     // initialize motor
-    m_motor = new CANSparkMax(Constants.kDeployment.id_motor, MotorType.kBrushless);
+    m_motor = new CANSparkMax(kCANID.DEPLOYMENT_MOTOR_ID, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
     m_motor.setIdleMode(IdleMode.kBrake);
-    m_motor.setSmartCurrentLimit(Constants.kDeployment.currentLimit);
+    m_motor.setSmartCurrentLimit(Constants.kDeployment.CURRENT_LIMIT);
 
     // initialize controller
     m_controller = m_motor.getPIDController();
@@ -115,7 +118,7 @@ public class Deployment extends SubsystemBase {
   }
 
   public boolean atSetpoint(double setpoint) {
-    return Math.abs(getPosition() - setpoint) <= Constants.kDeployment.kTolerance;
+    return MathUtil.isNear(setpoint, getPosition(), Constants.kDeployment.TOLERANCE);
   }
 
   /**
@@ -137,7 +140,7 @@ public class Deployment extends SubsystemBase {
    * @param outputVolts value 0-12
    */
 
-  public void setpoint(double setpoint) {
+  public void setPosition(double setpoint) {
     m_controller.setReference(setpoint, ControlType.kPosition);
   }
 
@@ -147,7 +150,7 @@ public class Deployment extends SubsystemBase {
    * @param voltage
    */
 
-  public void manualExtend(double voltage) {
+  public void setVoltage(double voltage) {
     m_motor.setVoltage(voltage);
   }
 

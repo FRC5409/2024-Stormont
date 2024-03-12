@@ -44,6 +44,9 @@ public final class Constants {
 
         public static final int CLIMBER_MAIN_ID = 24;
         public static final int CLIMBER_FOLLOWER_ID = 25;
+
+        public static final int DEPLOYMENT_MOTOR_ID = 15;
+        public static final int CARTRIDGE_MOTOR_ID = 16;
     }
 
     public static final class kDrive {
@@ -71,7 +74,7 @@ public final class Constants {
         public static final double HEADING_D = 0;
 
         public static final class kAutoPathPlanner {
-            public static final double TRANSLATION_P = 3;
+            public static final double TRANSLATION_P = 2.5;
             public static final double TRANSLATION_I = 0;
             public static final double TRANSLATION_D = 0;
 
@@ -95,34 +98,32 @@ public final class Constants {
     }
 
     public static class kDeployment {
-        public static final int id_motor = 15;
-        public static final int digitalInputPort = 0;
-        public static final int voltage = 3;
-        public static final int manualVoltage = 3;
-        public static final int currentLimit = 40;
-        public static final int port_irSwitch = 0;
-        public static final double kTolerance = 2;
+        public static final int DIO_PORT = 0;
+        public static final int VOLTAGE = 3;
+        public static final int MANUAL_VOLTAGE = 3;
+        public static final int CURRENT_LIMIT = 40;
+        public static final int IR_SWITCH_PORT = 0;
+        public static final double TOLERANCE = 2;
 
         public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
 
-        public static class setpoints {
-            public static final double amp_pos = -35;
-            public static final double trap_pos = -43; // highest
-            public static final double home = -0.25;
-            public static final double low = -3;
-            public static final double high = -30;
-            public static final int ampTrigger = -14;
-
+        public static class kSetpoints {
+            public static final double AMP_POSITION = -35;
+            public static final double TRAP_POSITION = -46; // highest
+            public static final double HOME = -0.25;
+            public static final double LOW = -3;
+            public static final double HIGH = -30;
+            public static final double AMP_TRIGGER = -14;
+            public static final double SHOOTING_TRIGGER = -30;
         }
     }
 
     public static class kCartridge {
-        public static final int id_motor = 16;
-        public static final int voltage = 7;
-        public static final int manualVoltage = 4;
-        public static final int currentLimit = 0;
+        public static final int VOLTAGE = 7;
+        public static final int MANUAL_VOLTAGE = 4;
+        public static final int CURRENT_LIMIT = 0;
     }
 
     public static final class kPhotonVision {
@@ -181,24 +182,27 @@ public final class Constants {
     public static class kClimber {
         public static final int LIMIT_SWITCH_PORT = 0;
         public static final int IR_SWITCH_PORT = 0;
-        public static final int VOLTAGE = 3;
+        public static final int VOLTAGE = 5;
         public static final int CURRENT_LIMIT = 40;
         public static final double CONVERSION_FACTOR = 0.692;
 
-        public static final double KP = 1;
-        public static final double KI = 0;
-        public static final double KD = 1;
+        public static final double KP_0 = 1;
+        public static final double KI_0 = 0;
+        public static final double KD_0 = 1;
+
+        public static final double KP_1 = 0.2;
+        public static final double kI_1 = 0;
+        public static final double kD_1 = 0;
+
+        public static final int KFAST_SLOT = 0;
+        public static final int KLOW_SLOT = 1;
 
         public static final double IR_ZERO_DISTANCE = 0;
 
-        public static final double LOW = -1; // for comp make climber setpoints positive, beta is negative
+        public static final double LOW = 0;
         public static final double MIDDLE = -33;
         public static final double HIGH = -60;
-
-        // deployment elevator 23
-        // index 22
-        // intake 20
-        // -63.79 (top when not inverted)
+        public static final double TRAP_TRIGGER_POS = -40;
 
     }
 }

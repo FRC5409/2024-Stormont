@@ -123,7 +123,12 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                                 : TunerConstantsComp.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
-                () -> false, // Change this if the path needs to be flipped on red vs blue
+                () -> {
+                    Optional<Alliance> alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent())
+                        return alliance.get() == Alliance.Red;
+                    return false;
+                }, // Change this if the path needs to be flipped on red vs blue
                 this); // Subsystem for requirements
     }
 
@@ -306,8 +311,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
     public void periodic() {
-        updatePoseEstimator();
-        updateFieldMap();
+        // updatePoseEstimator();
+        // updateFieldMap();
     }
 
 }

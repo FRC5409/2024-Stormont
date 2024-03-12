@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,9 +21,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
-import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
@@ -31,6 +33,8 @@ import frc.robot.commands.ScoreNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
 import frc.robot.subsystems.Cartridge;
+import frc.robot.commands.ScoreTrap;
+import frc.robot.commands.ShootNote;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drivetrain;
@@ -103,6 +107,8 @@ public class RobotContainer {
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
+        registerPathplannerCommands();
+
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sc_autoChooser = AutoBuilder.buildAutoChooser();
@@ -110,6 +116,13 @@ public class RobotContainer {
 
         // Configure the trigger bindings
         configureBindings();
+
+        new Trigger(() -> sys_indexer.checkIR())
+                .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
+                        .setRumble(RumbleType.kBothRumble, 0.3))
+                        .andThen(new WaitCommand(0.75))
+                        .andThen(Commands.runOnce(() -> m_primaryController.getHID()
+                                .setRumble(RumbleType.kBothRumble, 0.0))));
     }
 
     /**
@@ -151,51 +164,67 @@ public class RobotContainer {
                                     sys_indexer.setVoltage(0);
                                 },
                                 sys_intake, sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR())));
+                        Commands.waitUntil(() -> sys_indexer.checkIR())).andThen(
+                                new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                        .onlyIf(() -> Math.abs(sys_deployment
+                                                .getPosition()) <= 2.0)
+                                        .onlyIf(() -> sys_indexer.checkIR())))
+                .onFalse(
+                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                .onlyIf(() -> Math.abs(sys_deployment
+                                        .getPosition()) <= 2.0)
+                                .onlyIf(() -> sys_indexer.checkIR()));
 
         // Eject note command
         m_primaryController.b()
-                .whileTrue(Commands.startEnd(
-                        () -> {
-                            sys_intake.setVoltage(-kIntake.VOLTAGE);
-                            sys_indexer.setVoltage(-kIndexer.VOLTAGE);
-                        },
-                        () -> {
-                            sys_intake.setVoltage(0);
-                            sys_indexer.setVoltage(0);
-                        },
-                        sys_intake, sys_indexer));
+                .onTrue(new ShootNote(sys_deployment, sys_cartridge));
 
-        m_primaryController.y()
-                .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
+        m_primaryController.start()
+                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
         // Secondary Controller
         // *************************************************************************************************************
 
         // Manual climber movement up
         m_secondaryController.povUp()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
+                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(-Constants.kClimber.VOLTAGE),
                         sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // Manual climber movement down
         m_secondaryController.povDown()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
+                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(Constants.kClimber.VOLTAGE),
                         sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // climber setpoint high
         m_secondaryController.y()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
+                .onTrue(Commands.runOnce(
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                Constants.kClimber.KFAST_SLOT),
                         sys_climber));
+
+        // climber setpoint low
+        m_secondaryController.x()
+                .onTrue(Commands.runOnce(
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                Constants.kClimber.KLOW_SLOT),
+                        sys_climber));
+
         // climber setpoint low
         m_secondaryController.a()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                .onTrue(Commands.runOnce(
+                        () -> sys_climber.setPosition(Constants.kClimber.LOW,
+                                Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
-        m_secondaryController.b()
+        // Bring note to cartridge
+        m_secondaryController.back()
                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
+        // Climb, extend and score, endgame sequence
+        m_secondaryController.start()
+                .onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
     }
 
     private void addShuffleboardItems() {
@@ -209,6 +238,28 @@ public class RobotContainer {
         sb_driveteamTab.add("Choose auto", sc_autoChooser)
                 .withPosition(0, 1)
                 .withSize(3, 1);
+
+    }
+
+    public void registerPathplannerCommands() {
+
+        NamedCommands.registerCommand("IntakeFromFloor",
+                Commands.race(
+                        Commands.startEnd(
+                                () -> {
+                                    sys_intake.setVoltage(kIntake.VOLTAGE);
+                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                },
+                                () -> {
+                                    sys_intake.setVoltage(0);
+                                    sys_indexer.setVoltage(0);
+                                },
+                                sys_intake, sys_indexer),
+                        Commands.waitUntil(() -> sys_indexer.checkIR())));
+
+        NamedCommands.registerCommand("BringNoteToCartridge",
+                new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
 
     }
 

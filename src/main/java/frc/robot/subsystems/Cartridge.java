@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.Constants.kCANID;
 import frc.robot.Constants.kCartridge;
 
 import com.ctre.phoenix6.signals.ControlModeValue;
@@ -35,10 +36,10 @@ public class Cartridge extends SubsystemBase {
 
     public Cartridge() {
         // initialize motor
-        m_motor = new CANSparkMax(kCartridge.id_motor, MotorType.kBrushless);
+        m_motor = new CANSparkMax(kCANID.CARTRIDGE_MOTOR_ID, MotorType.kBrushless);
         m_motor.restoreFactoryDefaults();
         m_motor.setIdleMode(IdleMode.kBrake);
-        m_motor.setSmartCurrentLimit(Constants.kCartridge.currentLimit);
+        m_motor.setSmartCurrentLimit(Constants.kCartridge.CURRENT_LIMIT);
 
         // initialize irSwitch
         irSwitch = new DigitalInput(1);
@@ -63,7 +64,7 @@ public class Cartridge extends SubsystemBase {
      * @param voltage
      */
 
-    public void roll(double voltage) {
+    public void setVoltage(double voltage) {
         m_motor.setVoltage(voltage);
     }
 
