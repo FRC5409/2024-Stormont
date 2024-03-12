@@ -211,7 +211,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 System.out.println(e);
             }
         } else {
-
+            m_poseEstimator.update(m_pigeon2.getRotation2d(), getSwerveModulePositions());
         }
     }
 

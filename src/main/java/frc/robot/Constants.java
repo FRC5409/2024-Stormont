@@ -152,7 +152,7 @@ public final class Constants {
         public static final String BACK_CAMERA_URL = "placeholder";
         public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(
                 new Translation3d(-0.2941828, 0.1674622, 0.2117598),
-                new Rotation3d(0, Math.toRadians(-57), Math.toRadians(180))); // 0.3556 m towards the
+                new Rotation3d(0, Math.toRadians(-42), Math.toRadians(180))); // 0.3556 m towards the
                                                                               // BACK and 0.1524 m
         // to the left
     }
