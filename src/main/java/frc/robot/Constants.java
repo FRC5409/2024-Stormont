@@ -196,6 +196,7 @@ public final class Constants {
         public static final double LOW = 0; // for comp make them positive, beta is negative
         public static final double MIDDLE = -33;
         public static final double HIGH = -60;
+        public static final double trapTriggerPos = -40;
 
         // deployment elevator 23
         // index 22

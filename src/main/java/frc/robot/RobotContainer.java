@@ -206,14 +206,12 @@ public class RobotContainer {
                                                 sys_climber));
 
                 m_secondaryController.back()
-                                .onTrue(new ScoreTrap(sys_deployment, sys_cartridge));
+                                .onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
 
                 // deployment extend for scoring, spinning index and cartidgan until ir sensor
                 // detection
                 // zero climber, extend to high setpoint climber slow and fast, manual climber,
                 // extend low setpoint
-
-                // tester controller
 
         }
 
