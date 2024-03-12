@@ -186,24 +186,27 @@ public final class Constants {
     public static class kClimber {
         public static final int LIMIT_SWITCH_PORT = 0;
         public static final int IR_SWITCH_PORT = 0;
-        public static final int VOLTAGE = 3;
+        public static final int VOLTAGE = 5;
         public static final int CURRENT_LIMIT = 40;
         public static final double CONVERSION_FACTOR = 0.692;
 
-        public static final double KP = 1;
-        public static final double KI = 0;
-        public static final double KD = 1;
+        public static final double KP_0 = 1;
+        public static final double KI_0 = 0;
+        public static final double KD_0 = 1;
+
+        public static final double KP_1 = 0.2;
+        public static final double kI_1 = 0;
+        public static final double kD_1 = 0;
+
+        public static final int KFAST_SLOT = 0;
+        public static final int KLOW_SLOT = 1;
 
         public static final double IR_ZERO_DISTANCE = 0;
 
-        public static final double LOW = -1; // for comp make climber setpoints positive, beta is negative
+        public static final double LOW = 0;
         public static final double MIDDLE = -33;
         public static final double HIGH = -60;
-
-        // deployment elevator 23
-        // index 22
-        // intake 20
-        // -63.79 (top when not inverted)
+        public static final double TRAP_TRIGGER_POS = -40;
 
     }
 }

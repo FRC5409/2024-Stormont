@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -17,9 +19,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
-import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
@@ -31,6 +31,7 @@ import frc.robot.commands.ScoreNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
 import frc.robot.subsystems.Cartridge;
+import frc.robot.commands.ScoreTrap;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drivetrain;
@@ -173,28 +174,41 @@ public class RobotContainer {
 
         // Manual climber movement up
         m_secondaryController.povUp()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(-Constants.kClimber.VOLTAGE),
+                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(-Constants.kClimber.VOLTAGE),
                         sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // Manual climber movement down
         m_secondaryController.povDown()
-                .onTrue(Commands.runOnce(() -> sys_climber.manualExtend(Constants.kClimber.VOLTAGE),
+                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(Constants.kClimber.VOLTAGE),
                         sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.manualExtend(0), sys_climber));
+                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // climber setpoint high
         m_secondaryController.y()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
-                        sys_climber));
-        // climber setpoint low
-        m_secondaryController.a()
-                .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                .onTrue(Commands.runOnce(
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
+        // climber setpoint low
+        m_secondaryController.x()
+                .onTrue(Commands.runOnce(
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
+                        sys_climber));
+
+        // climber setpoint low
+        m_secondaryController.a()
+                .onTrue(Commands.runOnce(
+                        () -> sys_climber.setPosition(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT),
+                        sys_climber));
+
+        // Bring note to cartridge
         m_secondaryController.b()
                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
+        // Climb, extend and score, endgame sequence
+        m_secondaryController.back()
+                .onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
     }
 
     private void addShuffleboardItems() {
@@ -227,7 +241,8 @@ public class RobotContainer {
                                 sys_intake, sys_indexer),
                         Commands.waitUntil(() -> sys_indexer.checkIR())));
 
-        NamedCommands.registerCommand("BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        NamedCommands.registerCommand("BringNoteToCartridge",
+                new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
 
     }

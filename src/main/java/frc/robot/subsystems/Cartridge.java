@@ -63,7 +63,7 @@ public class Cartridge extends SubsystemBase {
      * @param voltage
      */
 
-    public void roll(double voltage) {
+    public void setVoltage(double voltage) {
         m_motor.setVoltage(voltage);
     }
 

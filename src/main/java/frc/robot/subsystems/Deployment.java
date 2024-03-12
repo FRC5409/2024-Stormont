@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -94,6 +95,7 @@ public class Deployment extends SubsystemBase {
     m_controller.setP(Constants.kDeployment.kP);
     m_controller.setI(Constants.kDeployment.kI);
     m_controller.setD(Constants.kDeployment.kD);
+    m_controller.setOutputRange(-0.5, 0.5);
   }
 
   public double getPosition() {
@@ -115,7 +117,7 @@ public class Deployment extends SubsystemBase {
   }
 
   public boolean atSetpoint(double setpoint) {
-    return Math.abs(getPosition() - setpoint) <= Constants.kDeployment.kTolerance;
+    return MathUtil.isNear(setpoint, getPosition(), Constants.kDeployment.kTolerance);
   }
 
   /**
@@ -137,7 +139,7 @@ public class Deployment extends SubsystemBase {
    * @param outputVolts value 0-12
    */
 
-  public void setpoint(double setpoint) {
+  public void setPosition(double setpoint) {
     m_controller.setReference(setpoint, ControlType.kPosition);
   }
 
@@ -147,7 +149,7 @@ public class Deployment extends SubsystemBase {
    * @param voltage
    */
 
-  public void manualExtend(double voltage) {
+  public void setVoltage(double voltage) {
     m_motor.setVoltage(voltage);
   }
 
