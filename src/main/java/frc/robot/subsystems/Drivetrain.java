@@ -17,10 +17,13 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -63,6 +66,11 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
             .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+    private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics,
+            m_pigeon2.getRotation2d(), m_modulePositions, getRobotPose(),
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
+            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(1)));
 
     public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
@@ -177,6 +185,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         return m_odometry.getEstimatedPosition();
     }
 
+    public Pose2d getAutoRobotPose() {
+        return m_poseEstimator.getEstimatedPosition();
+    }
+
     public void driveWheelsAt(double speed) {
         for (SwerveModule module : this.Modules) {
             module.getDriveMotor().set(speed);
@@ -192,7 +204,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         if (photonData.isPresent()) {
             // update pose estimator using april tags
             try {
-                this.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(), photonData.get().timestampSeconds);
+                m_poseEstimator.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(),
+                        photonData.get().timestampSeconds);
                 System.out.println(photonData.get().estimatedPose.getX());
             } catch (Exception e) {
                 System.out.println(e);
@@ -206,7 +219,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * Updates Field2d on shuffleboard
      */
     private void updateFieldMap() {
-        m_field.setRobotPose(m_odometry.getEstimatedPosition());
+        m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());
         SmartDashboard.putData(m_field);
 
         // DEBUG Shuffleboard printouts
