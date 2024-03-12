@@ -206,7 +206,7 @@ public final class Constants {
         public static final double LOW = 0;
         public static final double MIDDLE = -33;
         public static final double HIGH = -60;
-        public static final double trapTriggerPos = -40;
+        public static final double TRAP_TRIGGER_POS = -40;
 
     }
 }
