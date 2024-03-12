@@ -127,7 +127,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public void driveFromChassisSpeeds(ChassisSpeeds speeds) {
         SmartDashboard.putNumber("Xspeed", speeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("Yspeed", speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("Yspeed", speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("deg/s", Math.toDegrees(speeds.omegaRadiansPerSecond));
         this.setControl(autoRequest.withSpeeds(speeds));
     }
@@ -185,6 +185,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public Pose2d getRobotPose() {
         return m_odometry.getEstimatedPosition();
+    }
+
+    public Pose2d getAutoRobotPose() {
+        return m_poseEstimator.getEstimatedPosition();
     }
 
     public void driveWheelsAt(double speed) {

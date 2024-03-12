@@ -81,14 +81,14 @@ public final class Constants {
         }
 
         public static final class kAutoAlign {
-            public static final double T_CONTROLLER_P = 5;
+            public static final double T_CONTROLLER_P = 4.5;
             public static final double T_CONTROLLER_I = 0.0;
-            public static final double T_CONTROLLER_D = 0.0;
+            public static final double T_CONTROLLER_D = .3;
             public static final double T_CONTROLLER_TOLERANCE = 0.0;
 
-            public static final double ROTATION_TOLERANCE = 0.1;
+            public static final double ROTATION_TOLERANCE = 0.05;
 
-            public static final double REACHED_POSITION_TIMEOUT = 500; // ms
+            public static final double REACHED_POSITION_TIMEOUT = 1000; // ms
 
             public static final boolean AUTO_ALIGN_DEBUG = false;
         }
@@ -156,12 +156,16 @@ public final class Constants {
     }
 
     public static final class kWaypoints {
-        public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5)); // Variable
-                                                                                                   // positioning name
-                                                                                                   // is
-                                                                                                   // releative to f2d
-                                                                                                   // map on
-                                                                                                   // Shuffleboard
+        // USING NEGATIVE ANGLES IN SETPOINTS CAN CAUSE ISSUES!!!
+        public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5));
+        public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.75, 7.55, new Rotation2d(0, Math.toRadians(90)));
+        public static final Pose2d TRAP_ZONE_15 = new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
+        // Variable
+        // positioning name
+        // is
+        // releative to f2d
+        // map on
+        // Shuffleboard
         // public static final Pose2d kAmpZoneTest = new Pose2d(14.5, 6.87, new
         // Rotation2d(0, .5)); //Variable positioning name is releative to f2d map on
         // Shuffleboard
