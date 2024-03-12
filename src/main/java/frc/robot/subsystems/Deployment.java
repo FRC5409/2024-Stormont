@@ -139,7 +139,7 @@ public class Deployment extends SubsystemBase {
    * @param outputVolts value 0-12
    */
 
-  public void setpoint(double setpoint) {
+  public void setPosition(double setpoint) {
     m_controller.setReference(setpoint, ControlType.kPosition);
   }
 
@@ -149,7 +149,7 @@ public class Deployment extends SubsystemBase {
    * @param voltage
    */
 
-  public void manualExtend(double voltage) {
+  public void setVoltage(double voltage) {
     m_motor.setVoltage(voltage);
   }
 
