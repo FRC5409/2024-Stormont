@@ -189,6 +189,11 @@ public class RobotContainer {
                     .onTrue(Commands.runOnce(
                               () -> sys_climber.setpoint(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT),
                               sys_climber));
+          
+          m_secondaryController.x()
+                    .onTrue(Commands.runOnce(
+                              () -> sys_climber.setpoint(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
+                              sys_climber));
 
           // climber setpoint low
           m_secondaryController.a()
@@ -199,10 +204,12 @@ public class RobotContainer {
           // Bring note to cartridge
           m_secondaryController.b()
                     .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+          
 
           // Climb, extend and score, endgame sequence
           m_secondaryController.back()
                     .onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
+          
 
           // deployment extend for scoring, spinning index and cartidgan until ir sensor
           // detection

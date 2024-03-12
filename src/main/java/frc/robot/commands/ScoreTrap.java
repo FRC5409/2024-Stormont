@@ -19,7 +19,8 @@ public class ScoreTrap extends SequentialCommandGroup {
 
     public ScoreTrap(Deployment sys_deployment, Cartridge sys_cartridge, Climber sys_climber) {
         addCommands(
-                Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT), sys_climber),
+                Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT),
+                        sys_climber),
                 Commands.waitUntil(
                         () -> Math.abs(sys_climber.getPosition()) >= Math.abs(Constants.kClimber.trapTriggerPos)),
                 Commands.runOnce(() -> sys_deployment.setpoint(kDeployment.setpoints.trap_pos), sys_cartridge),
