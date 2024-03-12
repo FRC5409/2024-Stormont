@@ -28,7 +28,7 @@ public class BringNoteToCartridge extends Command {
     @Override
     public void initialize() {
         sys_Indexer.setVoltage(kIndexer.VOLTAGE);
-        sys_Cartridge.setVoltage(-kCartridge.voltage);
+        sys_Cartridge.setVoltage(-kCartridge.VOLTAGE);
 
     }
 

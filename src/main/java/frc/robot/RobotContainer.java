@@ -187,19 +187,22 @@ public class RobotContainer {
         // climber setpoint high
         m_secondaryController.y()
                 .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT),
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
         // climber setpoint low
         m_secondaryController.x()
                 .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                Constants.kClimber.KLOW_SLOT),
                         sys_climber));
 
         // climber setpoint low
         m_secondaryController.a()
                 .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT),
+                        () -> sys_climber.setPosition(Constants.kClimber.LOW,
+                                Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
         // Bring note to cartridge
@@ -207,7 +210,7 @@ public class RobotContainer {
                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
         // Climb, extend and score, endgame sequence
-        m_secondaryController.back()
+        m_secondaryController.start()
                 .onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
     }
 

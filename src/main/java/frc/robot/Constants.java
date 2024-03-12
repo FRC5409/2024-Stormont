@@ -44,6 +44,9 @@ public final class Constants {
 
         public static final int CLIMBER_MAIN_ID = 24;
         public static final int CLIMBER_FOLLOWER_ID = 25;
+
+        public static final int DEPLOYMENT_MOTOR_ID = 15;
+        public static final int CARTRIDGE_MOTOR_ID = 16;
     }
 
     public static final class kDrive {
@@ -95,34 +98,32 @@ public final class Constants {
     }
 
     public static class kDeployment {
-        public static final int id_motor = 15;
-        public static final int digitalInputPort = 0;
-        public static final int voltage = 3;
-        public static final int manualVoltage = 3;
-        public static final int currentLimit = 40;
-        public static final int port_irSwitch = 0;
-        public static final double kTolerance = 2;
+        public static final int DIO_PORT = 0;
+        public static final int VOLTAGE = 3;
+        public static final int MANUAL_VOLTAGE = 3;
+        public static final int CURRENT_LIMIT = 40;
+        public static final int IR_SWITCH_PORT = 0;
+        public static final double TOLERANCE = 2;
 
         public static final double kP = 0.1;
         public static final double kI = 0;
         public static final double kD = 0;
 
-        public static class setpoints {
-            public static final double amp_pos = -35;
-            public static final double trap_pos = -43; // highest
-            public static final double home = -0.25;
-            public static final double low = -3;
-            public static final double high = -30;
-            public static final int ampTrigger = -14;
+        public static class kSetpoints {
+            public static final double AMP_POSITION = -35;
+            public static final double TRAP_POSITION = -46; // highest
+            public static final double HOME = -0.25;
+            public static final double LOW = -3;
+            public static final double HIGH = -30;
+            public static final int AMP_TRIGGER = -14;
 
         }
     }
 
     public static class kCartridge {
-        public static final int id_motor = 16;
-        public static final int voltage = 7;
-        public static final int manualVoltage = 4;
-        public static final int currentLimit = 0;
+        public static final int VOLTAGE = 7;
+        public static final int MANUAL_VOLTAGE = 4;
+        public static final int CURRENT_LIMIT = 0;
     }
 
     public static final class kPhotonVision {
