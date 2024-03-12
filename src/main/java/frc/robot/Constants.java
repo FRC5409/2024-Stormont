@@ -115,8 +115,8 @@ public final class Constants {
             public static final double HOME = -0.25;
             public static final double LOW = -3;
             public static final double HIGH = -30;
-            public static final int AMP_TRIGGER = -14;
-
+            public static final double AMP_TRIGGER = -14;
+            public static final double SHOOTING_TRIGGER = -30;
         }
     }
 

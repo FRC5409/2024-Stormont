@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -32,6 +33,7 @@ import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
 import frc.robot.subsystems.Cartridge;
 import frc.robot.commands.ScoreTrap;
+import frc.robot.commands.ShootNote;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drivetrain;
@@ -113,6 +115,13 @@ public class RobotContainer {
 
         // Configure the trigger bindings
         configureBindings();
+
+        new Trigger(() -> sys_indexer.checkIR())
+                .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
+                        .setRumble(RumbleType.kBothRumble, 0.3))
+                        .andThen(new WaitCommand(0.75))
+                        .andThen(Commands.runOnce(() -> m_primaryController.getHID()
+                                .setRumble(RumbleType.kBothRumble, 0.0))));
     }
 
     /**
@@ -154,20 +163,23 @@ public class RobotContainer {
                                     sys_indexer.setVoltage(0);
                                 },
                                 sys_intake, sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR())));
+                        Commands.waitUntil(() -> sys_indexer.checkIR())).andThen(
+                                new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                        .onlyIf(() -> Math.abs(sys_deployment
+                                                .getPosition()) <= 2.0)
+                                        .onlyIf(() -> sys_indexer.checkIR())))
+                .onFalse(
+                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                .onlyIf(() -> Math.abs(sys_deployment
+                                        .getPosition()) <= 2.0)
+                                .onlyIf(() -> sys_indexer.checkIR()));
 
         // Eject note command
         m_primaryController.b()
-                .whileTrue(Commands.startEnd(
-                        () -> {
-                            sys_intake.setVoltage(-kIntake.VOLTAGE);
-                            sys_indexer.setVoltage(-kIndexer.VOLTAGE);
-                        },
-                        () -> {
-                            sys_intake.setVoltage(0);
-                            sys_indexer.setVoltage(0);
-                        },
-                        sys_intake, sys_indexer));
+                .onTrue(new ShootNote(sys_deployment, sys_cartridge));
+
+        m_primaryController.start()
+                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -206,7 +218,7 @@ public class RobotContainer {
                         sys_climber));
 
         // Bring note to cartridge
-        m_secondaryController.b()
+        m_secondaryController.back()
                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
         // Climb, extend and score, endgame sequence
