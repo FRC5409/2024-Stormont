@@ -211,13 +211,15 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.0001, 0.0001, 0.0001));
                 m_poseEstimator.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(),
                         photonData.get().timestampSeconds);
-                System.out.println(photonData.get().estimatedPose.getX());
             } catch (Exception e) {
                 System.out.println(e);
             }
         } else {
             m_poseEstimator.update(m_pigeon2.getRotation2d(), getSwerveModulePositions());
         }
+        // System.out.printf("x: %.1f | y: %.1f\n",
+        // m_poseEstimator.getEstimatedPosition().getX(),
+        // m_poseEstimator.getEstimatedPosition().getY());
     }
 
     /**
