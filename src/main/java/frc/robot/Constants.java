@@ -109,7 +109,7 @@ public final class Constants {
 
         public static class setpoints {
             public static final double amp_pos = -35;
-            public static final double trap_pos = -43; // highest
+            public static final double trap_pos = -46; // highest
             public static final double home = -0.25;
             public static final double low = -3;
             public static final double high = -30;
