@@ -97,7 +97,6 @@ public class Deployment extends SubsystemBase {
     m_controller.setP(Constants.kDeployment.kP);
     m_controller.setI(Constants.kDeployment.kI);
     m_controller.setD(Constants.kDeployment.kD);
-    m_controller.setOutputRange(-0.5, 0.5);
   }
 
   public double getPosition() {
