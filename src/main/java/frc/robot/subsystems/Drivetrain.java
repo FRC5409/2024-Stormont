@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -24,8 +25,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -34,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kRobot;
+import frc.robot.Constants.kWaypoints;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.Constants.kDrive.kAutoPathPlanner;
 import frc.robot.generated.TunerConstantsBeta;
@@ -204,6 +208,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         if (photonData.isPresent()) {
             // update pose estimator using april tags
             try {
+                m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.0001, 0.0001, 0.0001));
                 m_poseEstimator.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(),
                         photonData.get().timestampSeconds);
                 System.out.println(photonData.get().estimatedPose.getX());
@@ -283,6 +288,19 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                                 : TunerConstantsComp.kInvertRightSide);
             }
         }
+    }
+
+    public Pose2d getAmpWaypoint() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            if (alliance.get() == Alliance.Red) {
+                return kWaypoints.AMP_ZONE_RED;
+            } else if (alliance.get() == Alliance.Blue) {
+                return kWaypoints.AMP_ZONE_BLUE;
+            }
+        }
+        System.out.println("[AMP ALIGN] Alliance not specified. Defaulting to BLUE");
+        return kWaypoints.AMP_ZONE_BLUE;
     }
 
     public void periodic() {

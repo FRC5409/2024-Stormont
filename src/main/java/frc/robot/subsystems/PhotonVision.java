@@ -70,7 +70,7 @@ public class PhotonVision extends SubsystemBase {
     poseEstimatorFront.setReferencePose(prevEstimatedPose);
     poseEstimatorBack.setReferencePose(prevEstimatedPose);
 
-    if (frontCamera.isConnected()) {
+    if (backCamera.isConnected()) {
       Optional<EstimatedRobotPose> photonDataFront = poseEstimatorFront.update();
       Optional<EstimatedRobotPose> photonDataBack = poseEstimatorBack.update();
       Optional<EstimatedRobotPose> photonDataOut;
@@ -81,13 +81,17 @@ public class PhotonVision extends SubsystemBase {
           if (getMeasurementAmbiguity(
               photonDataFront.get().targetsUsed) < (getMeasurementAmbiguity(photonDataBack.get().targetsUsed))) {
             photonDataOut = photonDataFront;
+            System.out.println("Sending front");
           } else {
             photonDataOut = photonDataBack;
+            System.out.println("Sending Back");
           }
         } else if (photonDataFront.isPresent()) {
           photonDataOut = photonDataFront;
+          System.out.println("Sending Front");
         } else {
           photonDataOut = photonDataBack;
+          System.out.println("Sending Back");
         }
 
         return isWithinAmbiguityThreshold(photonDataOut.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)

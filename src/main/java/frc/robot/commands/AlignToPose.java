@@ -10,6 +10,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.subsystems.Drivetrain;
@@ -77,10 +79,18 @@ public class AlignToPose extends Command {
         double xControllerOutput = m_xController.calculate(currentPose.getX());
         double yControllerOutput = m_yController.calculate(currentPose.getY());
 
+        // Invert for field centric if alliance is red
+        if (DriverStation.getAlliance().isPresent()) {
+            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                xControllerOutput = -xControllerOutput;
+                yControllerOutput = -yControllerOutput;
+            }
+        }
+
         // Applying PID values to drivetrain
         FieldCentricFacingAngle driveCommand = sys_drivetrain.teleopDriveWithAngle
-                .withVelocityX(-xControllerOutput)
-                .withVelocityY(-yControllerOutput)
+                .withVelocityX(xControllerOutput)
+                .withVelocityY(yControllerOutput)
                 .withTargetDirection(angle);
         sys_drivetrain.runRequest(() -> driveCommand);
     }

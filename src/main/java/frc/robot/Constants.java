@@ -160,6 +160,7 @@ public final class Constants {
     public static final class kWaypoints {
         public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5));
         public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.75, 7.55, new Rotation2d(0, Math.toRadians(90)));
+        public static final Pose2d AMP_ZONE_RED = new Pose2d(1.75, 7.55, new Rotation2d(0, Math.toRadians(90)));
         public static final Pose2d TRAP_ZONE_15 = new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
     }
 

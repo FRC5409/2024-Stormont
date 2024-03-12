@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -166,7 +167,7 @@ public class RobotContainer {
                                                 sys_intake, sys_indexer));
 
                 m_primaryController.y()
-                                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_BLUE, sys_drivetrain));
+                                .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
 
                 // Secondary Controller
                 // *************************************************************************************************************
