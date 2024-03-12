@@ -104,7 +104,7 @@ public class Climber extends SubsystemBase {
    * 
    * @param setpoint value
    */
-  public void setPosition(double setpoint, int slot) {
+  public void setpoint(double setpoint, int slot) {
     m_controller.setReference(setpoint, ControlType.kPosition, slot);
   }
 
@@ -113,7 +113,7 @@ public class Climber extends SubsystemBase {
    * 
    * @param voltage value
    */
-  public void setVoltage(double voltage) {
+  public void manualExtend(double voltage) {
     m_main.setVoltage(voltage);
   }
 

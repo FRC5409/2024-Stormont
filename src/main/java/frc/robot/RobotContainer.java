@@ -14,9 +14,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;import du.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;import rc.robot.Constants.kControllers;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
@@ -183,12 +186,14 @@ public class RobotContainer {
 
           // climber setpoint high
           m_secondaryController.y()
-                    .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.HIGH),
+                    .onTrue(Commands.runOnce(
+                              () -> sys_climber.setpoint(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT),
                               sys_climber));
 
           // climber setpoint low
           m_secondaryController.a()
-                    .onTrue(Commands.runOnce(() -> sys_climber.setpoint(Constants.kClimber.LOW),
+                    .onTrue(Commands.runOnce(
+                              () -> sys_climber.setpoint(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT),
                               sys_climber));
 
           // Bring note to cartridge
@@ -251,8 +256,3 @@ public class RobotContainer {
           return sc_autoChooser.getSelected();
      }
 }
-
-
-     
-
-     
