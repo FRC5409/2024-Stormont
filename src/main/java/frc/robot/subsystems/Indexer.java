@@ -40,6 +40,8 @@ public class Indexer extends SubsystemBase {
         // Shuffleboard
         sb_tab = Shuffleboard.getTab("Indexer");
         sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
+        sb_tab = Shuffleboard.getTab("Indexer");
+        sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
     // Get subsystem

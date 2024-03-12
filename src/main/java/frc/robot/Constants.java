@@ -53,7 +53,7 @@ public final class Constants {
         public static final double DRIVE_GEAR_RATIO = 6.75;
         public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
-        public static final double MAX_DRIVE_VELOCIY = 4.56; // metres per second
+        public static final double MAX_DRIVE_VELOCIY = 1.5; // metres per second
         public static final double MAX_DRIVE_ACCELERATION = 2;
         public static final double MAX_TURN_ANGULAR_VELOCITY = 10 / 2;
         public static final double MAX_TURN_ANGULAR_ACCELERATION = 2 * Math.toRadians(360);
@@ -186,7 +186,7 @@ public final class Constants {
     public static class kClimber {
         public static final int LIMIT_SWITCH_PORT = 0;
         public static final int IR_SWITCH_PORT = 0;
-        public static final int VOLTAGE = 3;
+        public static final int VOLTAGE = 5;
         public static final int CURRENT_LIMIT = 40;
         public static final double CONVERSION_FACTOR = 0.692;
 
@@ -196,9 +196,10 @@ public final class Constants {
 
         public static final double IR_ZERO_DISTANCE = 0;
 
-        public static final double LOW = -1; // for comp make climber setpoints positive, beta is negative
+        public static final double LOW = 0; // for comp make them positive, beta is negative
         public static final double MIDDLE = -33;
         public static final double HIGH = -60;
+        public static final double trapTriggerPos = -40;
 
         // deployment elevator 23
         // index 22
