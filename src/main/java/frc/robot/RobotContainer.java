@@ -196,7 +196,7 @@ public class RobotContainer {
                                                 sys_climber));
 
                 m_secondaryController.povLeft().onTrue(Commands.runOnce(
-                                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
+                                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KSLOW_SLOT),
                                 sys_climber));
 
                 // Manual climber movement down

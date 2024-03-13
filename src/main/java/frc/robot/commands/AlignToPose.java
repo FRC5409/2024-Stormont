@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -19,6 +20,7 @@ import frc.robot.subsystems.Drivetrain;
 public class AlignToPose extends Command {
     private final PIDController m_xController;
     private final PIDController m_yController;
+    private final PIDController m_rController;
 
     private final Drivetrain sys_drivetrain;
     private final Pose2d targetPose;
@@ -48,6 +50,12 @@ public class AlignToPose extends Command {
                 kAutoAlign.T_CONTROLLER_D);
         m_yController.setSetpoint(targetPose.getY());
         m_yController.setTolerance(kAutoAlign.T_CONTROLLER_TOLERANCE);
+
+        m_rController = new PIDController(kAutoAlign.R_CONTROLLER_P, kAutoAlign.R_CONTROLLER_I,
+                kAutoAlign.R_CONTROLLER_D);
+        m_rController.setSetpoint(targetPose.getRotation().getRadians());
+        // m_rController.setTolerance(kAutoAlign.ROTATION_TOLERANCE);
+        m_rController.enableContinuousInput(0, Math.PI * 2);
     }
 
     /**
@@ -68,11 +76,7 @@ public class AlignToPose extends Command {
      */
     public void moveToPose(Pose2d targetPose) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
-        Rotation2d angle = targetPose.getRotation();
-        System.out.printf("xDiff: %.2f | yDiff: %.2f\n",
-                Math.abs(currentPose.getX() - targetPose.getX()), Math.abs(currentPose.getY() - targetPose.getY()));
-        // System.out.println(calculateHeadingDifference(currentPose.getRotation().getRadians(),
-        // angle.getRadians()));
+        // Rotation2d angle = targetPose.getRotation();
 
         m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
@@ -82,6 +86,11 @@ public class AlignToPose extends Command {
                 kAutoAlign.T_CONTROLLER_FF);
         double yControllerOutput = applyFeatForward(m_yController.calculate(currentPose.getY()),
                 kAutoAlign.T_CONTROLLER_FF);
+        double rControllerOutput = applyTolerance(
+                applyFeatForward(m_rController.calculate(currentPose.getRotation().getRadians()),
+                        kAutoAlign.R_CONTROLLER_FF),
+                currentPose.getRotation().getRadians(),
+                targetPose.getRotation().getRadians(), kAutoAlign.ROTATION_TOLERANCE);
 
         // Invert for field centric if alliance is red
         if (DriverStation.getAlliance().isPresent()) {
@@ -92,10 +101,11 @@ public class AlignToPose extends Command {
         }
 
         // Applying PID values to drivetrain
-        FieldCentricFacingAngle driveCommand = sys_drivetrain.teleopDriveWithAngle
+        FieldCentric driveCommand = sys_drivetrain.teleopDrive
                 .withVelocityX(xControllerOutput)
                 .withVelocityY(yControllerOutput)
-                .withTargetDirection(angle);
+                .withRotationalRate(rControllerOutput);
+
         sys_drivetrain.runRequest(() -> driveCommand);
     }
 
@@ -143,6 +153,13 @@ public class AlignToPose extends Command {
                 Units.radiansToDegrees(heading1), Units.radiansToDegrees(heading2),
                 difference);
         return difference;
+    }
+
+    public double applyTolerance(double input, double current, double target, double tolerance) {
+        if (Math.abs(current - target) < tolerance) {
+            return 0;
+        }
+        return input;
     }
 
     // Called when the command is initially scheduled.
