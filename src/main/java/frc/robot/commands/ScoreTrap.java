@@ -23,6 +23,7 @@ public class ScoreTrap extends SequentialCommandGroup {
                                                 () -> sys_climber.setPosition(Constants.kClimber.LOW,
                                                                 Constants.kClimber.KFAST_SLOT),
                                                 sys_climber),
+                                Commands.waitSeconds(0.1),
                                 Commands.waitUntil(
                                                 () -> Math.abs(sys_climber.getPosition()) >= Math
                                                                 .abs(Constants.kClimber.TRAP_TRIGGER_POS)),
