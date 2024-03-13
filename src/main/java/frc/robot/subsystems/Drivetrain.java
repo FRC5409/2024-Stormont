@@ -303,10 +303,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             if (alliance.get() == Alliance.Red) {
                 return kWaypoints.AMP_ZONE_RED;
             } else if (alliance.get() == Alliance.Blue) {
+                System.out.println("Returned blue");
                 return kWaypoints.AMP_ZONE_BLUE;
             }
         }
-        System.out.println("[AMP ALIGN] Alliance not specified. Defaulting to BLUE");
         return kWaypoints.AMP_ZONE_BLUE;
     }
 
