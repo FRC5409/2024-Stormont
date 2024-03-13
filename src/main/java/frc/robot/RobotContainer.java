@@ -40,6 +40,7 @@ import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.PhotonVision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -66,6 +67,7 @@ public class RobotContainer {
         public final Indexer sys_indexer;
         private final Deployment sys_deployment;
         public final Cartridge sys_cartridge;
+        public final PhotonVision sys_photonvision;
 
         // Commands
         private final Command cmd_teleopDrive;
@@ -92,6 +94,8 @@ public class RobotContainer {
                 sys_indexer = Indexer.getInstance();
                 sys_deployment = new Deployment();
                 sys_cartridge = Cartridge.getInstance();
+                sys_photonvision = PhotonVision.getInstance();
+
                 // Subsystems
                 sys_drivetrain = kRobot.IS_BETA_ROBOT
                                 ? TunerConstantsBeta.DriveTrain
@@ -183,7 +187,10 @@ public class RobotContainer {
                                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
                 m_primaryController.y()
-                                .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
+                                .whileTrue(new AlignToPose(
+                                                sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain,
+                                                                kWaypoints.TRAP_OFFSET),
+                                                sys_drivetrain));
 
                 // Secondary Controller
                 // *************************************************************************************************************

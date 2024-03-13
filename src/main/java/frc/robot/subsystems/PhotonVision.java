@@ -12,11 +12,13 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.proto.Photon;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -33,6 +35,7 @@ public class PhotonVision extends SubsystemBase {
   PhotonCamera backCamera;
   PhotonPoseEstimator poseEstimatorFront;
   PhotonPoseEstimator poseEstimatorBack;
+  private static PhotonVision instance = null;
 
   public PhotonVision() {
     try {
@@ -140,10 +143,22 @@ public class PhotonVision extends SubsystemBase {
       }
     }
 
+    // Calculating target pose
+    double x = closestTag.pose.getX() + offset * Math.cos(closestTag.pose.getRotation().getAngle());
+    double y = closestTag.pose.getY() + offset * Math.sin(closestTag.pose.getRotation().getAngle());
+
+    return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
   }
 
   private double getPoseDelta(Pose2d pose1, Pose2d pose2) {
     return Math.abs(pose1.getX() - pose2.getX()) + Math.abs(pose1.getY() - pose2.getY());
+  }
+
+  public static PhotonVision getInstance() {
+    if (instance == null) {
+      instance = new PhotonVision();
+    }
+    return instance;
   }
 
   @Override

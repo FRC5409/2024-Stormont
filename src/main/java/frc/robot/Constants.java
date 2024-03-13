@@ -164,6 +164,7 @@ public final class Constants {
         public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.8, 7.7, new Rotation2d(0, Math.toRadians(90)));
         public static final Pose2d AMP_ZONE_RED = new Pose2d(14.7, 7.7, new Rotation2d(0, Math.toRadians(90)));
         public static final Pose2d TRAP_ZONE_15 = new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
+        public static final double TRAP_OFFSET = 2;
     }
 
     public static final class kIntake {
