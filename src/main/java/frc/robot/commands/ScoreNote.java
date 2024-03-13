@@ -32,7 +32,8 @@ public class ScoreNote extends SequentialCommandGroup {
                                 // Waits until its reached the setpoint
                                 Commands.waitUntil(
                                                 () -> (sys_deployment.atSetpoint(kDeployment.kSetpoints.AMP_POSITION))),
-                                Commands.waitSeconds(0.25),
+                                Commands.waitSeconds(0.45),
+
                                 // go back home
                                 Commands.runOnce(() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME),
                                                 sys_deployment),
