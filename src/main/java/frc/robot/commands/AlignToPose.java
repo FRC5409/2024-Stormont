@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle;
 
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.PhotonVision;
 
 public class AlignToPose extends Command {
     private final PIDController m_xController;
@@ -23,7 +26,8 @@ public class AlignToPose extends Command {
     private final PIDController m_rController;
 
     private final Drivetrain sys_drivetrain;
-    private final Pose2d targetPose;
+    private Pose2d targetPose;
+    private final Supplier<Pose2d> targetPoseSupplier;
     private double notInLineTime;
 
     /**
@@ -32,10 +36,11 @@ public class AlignToPose extends Command {
      * @param targetPose     Target position to navigate to
      * @param sys_Drivetrain Drivetrain
      */
-    public AlignToPose(Pose2d targetPose, Drivetrain sys_Drivetrain) {
+    public AlignToPose(Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain) {
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
-        this.targetPose = targetPose;
+        this.targetPose = targetPoseSupplier.get();
+        this.targetPoseSupplier = targetPoseSupplier;
 
         // Initializing PID Controllers
         m_xController = new PIDController(kAutoAlign.T_CONTROLLER_P, kAutoAlign.T_CONTROLLER_I,
@@ -77,6 +82,8 @@ public class AlignToPose extends Command {
     public void moveToPose(Pose2d targetPose) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         // Rotation2d angle = targetPose.getRotation();
+
+        System.out.printf("x: %.2f | y: %.2f\n", targetPose.getX(), targetPose.getY());
 
         m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
@@ -165,12 +172,14 @@ public class AlignToPose extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        this.targetPose = targetPoseSupplier.get();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         moveToPose(targetPose);
+        // PhotonVision.getInstance().getNearestTagPoseWithOffset(sys_drivetrain, 0);
     }
 
     // Called once the command ends or is interrupted.

@@ -128,14 +128,15 @@ public class PhotonVision extends SubsystemBase {
   }
 
   public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset) {
+    System.out.println("reached12345");
     Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
     List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
     AprilTag closestTag = aprilTagFieldLayout.getTags().get(0);
-    double closestDistance = getPoseDelta(currentPose, closestTag.pose.toPose2d());
+    double closestDistance = getPoseDistance(currentPose, closestTag.pose.toPose2d());
 
     // Determining closest tag
     for (AprilTag tag : aprilTags) {
-      double distance = getPoseDelta(currentPose, tag.pose.toPose2d());
+      double distance = getPoseDistance(currentPose, tag.pose.toPose2d());
 
       if (distance < closestDistance) {
         closestDistance = distance;
@@ -143,15 +144,17 @@ public class PhotonVision extends SubsystemBase {
       }
     }
 
+    System.out.println("=========================================");
+    System.out.println(closestTag.ID);
+    System.out.printf("X: %.2f Y: %.2f\n", currentPose.getX(), currentPose.getY());
     // Calculating target pose
     double x = closestTag.pose.getX() + offset * Math.cos(closestTag.pose.getRotation().getAngle());
     double y = closestTag.pose.getY() + offset * Math.sin(closestTag.pose.getRotation().getAngle());
-
     return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
   }
 
-  private double getPoseDelta(Pose2d pose1, Pose2d pose2) {
-    return Math.abs(pose1.getX() - pose2.getX()) + Math.abs(pose1.getY() - pose2.getY());
+  private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
+    return Math.sqrt(Math.pow(pose2.getX() - pose1.getX(), 2) + Math.pow(pose2.getY() - pose1.getY(), 2));
   }
 
   public static PhotonVision getInstance() {
