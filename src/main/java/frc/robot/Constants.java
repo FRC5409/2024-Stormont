@@ -112,7 +112,7 @@ public final class Constants {
 
         public static class kSetpoints {
             public static final double AMP_POSITION = -35;
-            public static final double TRAP_POSITION = -46; // highest
+            public static final double TRAP_POSITION = -47; // highest
             public static final double HOME = -0.25;
             public static final double LOW = -3;
             public static final double HIGH = -30;
@@ -196,7 +196,7 @@ public final class Constants {
         public static final double kD_1 = 0;
 
         public static final int KFAST_SLOT = 0;
-        public static final int KLOW_SLOT = 1;
+        public static final int KSLOW_SLOT = 1;
 
         public static final double IR_ZERO_DISTANCE = 0;
 
