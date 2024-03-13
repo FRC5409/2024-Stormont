@@ -305,7 +305,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public void periodic() {
         updatePoseEstimator();
-        // updateFieldMap();
+        updateFieldMap();
     }
 
 }

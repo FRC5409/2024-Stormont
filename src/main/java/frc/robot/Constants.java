@@ -88,9 +88,9 @@ public final class Constants {
         public static final class kAutoAlign {
             public static final double T_CONTROLLER_P = 4.7;
             public static final double T_CONTROLLER_I = 0;
-            public static final double T_CONTROLLER_D = 0.5;
-            public static final double T_CONTROLLER_FF = .54;
-            public static final double T_CONTROLLER_TOLERANCE = 0.02;
+            public static final double T_CONTROLLER_D = .5;
+            public static final double T_CONTROLLER_FF = .55;
+            public static final double T_CONTROLLER_TOLERANCE = 0.1;
 
             public static final double R_CONTROLLER_P = 10;
             public static final double R_CONTROLLER_I = 0;
@@ -152,7 +152,7 @@ public final class Constants {
         public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(
                 new Translation3d(0.418846, 0, 0.2234184),
                 // new Rotation3d(Math.toRadians(90), Math.toRadians(28), 0));
-                new Rotation3d(Math.toRadians(180), Math.toRadians(-30), 0)); // 0.3302 m towards the front
+                new Rotation3d(0, Math.toRadians(-30), 0)); // 0.3302 m towards the front
 
         // Arducam 2
         public static final String BACK_CAMERA_NAME = "Back Camera";

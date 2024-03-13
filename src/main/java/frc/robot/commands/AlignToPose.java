@@ -7,18 +7,15 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.PhotonVision;
 
 public class AlignToPose extends Command {
     private final PIDController m_xController;
@@ -83,16 +80,14 @@ public class AlignToPose extends Command {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         // Rotation2d angle = targetPose.getRotation();
 
-        System.out.printf("x: %.2f | y: %.2f\n", targetPose.getX(), targetPose.getY());
-
         m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
 
         // Updating PID controllers
-        double xControllerOutput = applyFeatForward(m_xController.calculate(currentPose.getX()),
-                kAutoAlign.T_CONTROLLER_FF);
-        double yControllerOutput = applyFeatForward(m_yController.calculate(currentPose.getY()),
-                kAutoAlign.T_CONTROLLER_FF);
+        double xControllerOutput = applyTolerance(applyFeatForward(m_xController.calculate(currentPose.getX()),
+                kAutoAlign.T_CONTROLLER_FF), currentPose.getX(), targetPose.getX(), kAutoAlign.T_CONTROLLER_TOLERANCE);
+        double yControllerOutput = applyTolerance(applyFeatForward(m_yController.calculate(currentPose.getY()),
+                kAutoAlign.T_CONTROLLER_FF), currentPose.getY(), targetPose.getY(), kAutoAlign.T_CONTROLLER_TOLERANCE);
         double rControllerOutput = applyTolerance(
                 applyFeatForward(m_rController.calculate(currentPose.getRotation().getRadians()),
                         kAutoAlign.R_CONTROLLER_FF),
@@ -155,10 +150,6 @@ public class AlignToPose extends Command {
         if (difference > 180) {
             difference = 360 - difference;
         }
-
-        System.out.printf("TargetHeading: %.1f | CurrentHeading: %.1f | Difference: %.1f\n",
-                Units.radiansToDegrees(heading1), Units.radiansToDegrees(heading2),
-                difference);
         return difference;
     }
 

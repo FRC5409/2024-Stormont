@@ -10,21 +10,13 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.proto.Photon;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTablesJNI;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -109,8 +101,6 @@ public class PhotonVision extends SubsystemBase {
   public boolean isWithinAmbiguityThreshold(List<PhotonTrackedTarget> targets, double threshold) {
     for (PhotonTrackedTarget target : targets) {
       if (target.getPoseAmbiguity() >= threshold) {
-        // System.out.printf("Target REJECTED | Threshold: %.5f, Value: %.5f\n");
-        // threshold, target.getPoseAmbiguity());
         return false;
       }
     }
@@ -128,7 +118,6 @@ public class PhotonVision extends SubsystemBase {
   }
 
   public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset) {
-    System.out.println("reached12345");
     Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
     List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
     AprilTag closestTag = aprilTagFieldLayout.getTags().get(0);
@@ -144,9 +133,6 @@ public class PhotonVision extends SubsystemBase {
       }
     }
 
-    System.out.println("=========================================");
-    System.out.println(closestTag.ID);
-    System.out.printf("X: %.2f Y: %.2f\n", currentPose.getX(), currentPose.getY());
     // Calculating target pose
     double x = closestTag.pose.getX() + offset * Math.cos(closestTag.pose.getRotation().getAngle());
     double y = closestTag.pose.getY() + offset * Math.sin(closestTag.pose.getRotation().getAngle());
