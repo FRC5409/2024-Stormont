@@ -193,7 +193,7 @@ public class RobotContainer {
 
         // Climber setpoint high slow
         m_secondaryController.povLeft().onTrue(Commands.runOnce(
-                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT), sys_climber));
+                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KSLOW_SLOT), sys_climber));
 
         // Climber setpoint low fast
         m_secondaryController.povDown()
