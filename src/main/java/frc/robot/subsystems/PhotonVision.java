@@ -14,6 +14,7 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTable;
@@ -126,6 +127,28 @@ public class PhotonVision extends SubsystemBase {
       }
     }
     return lowestAmbiguity;
+  }
+
+  public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset) {
+    Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
+    List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
+    AprilTag closestTag = aprilTagFieldLayout.getTags().get(0);
+    double closestDistance = getPoseDelta(currentPose, closestTag.pose.toPose2d());
+
+    // Determining closest tag
+    for (AprilTag tag : aprilTags) {
+      double distance = getPoseDelta(currentPose, tag.pose.toPose2d());
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestTag = tag;
+      }
+    }
+
+  }
+
+  private double getPoseDelta(Pose2d pose1, Pose2d pose2) {
+    return Math.abs(pose1.getX() - pose2.getX()) + Math.abs(pose1.getY() - pose2.getY());
   }
 
   public void initDriverCam() {
