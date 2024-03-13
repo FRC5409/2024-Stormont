@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
@@ -122,7 +123,8 @@ public class RobotContainer {
                         .setRumble(RumbleType.kBothRumble, 0.3))
                         .andThen(new WaitCommand(0.75))
                         .andThen(Commands.runOnce(() -> m_primaryController.getHID()
-                                .setRumble(RumbleType.kBothRumble, 0.0))));
+                                .setRumble(RumbleType.kBothRumble, 0.0))))
+                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
     }
 
     /**
@@ -164,16 +166,7 @@ public class RobotContainer {
                                     sys_indexer.setVoltage(0);
                                 },
                                 sys_intake, sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR())).andThen(
-                                new BringNoteToCartridge(sys_cartridge, sys_indexer)
-                                        .onlyIf(() -> Math.abs(sys_deployment
-                                                .getPosition()) <= 2.0)
-                                        .onlyIf(() -> sys_indexer.checkIR())))
-                .onFalse(
-                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
-                                .onlyIf(() -> Math.abs(sys_deployment
-                                        .getPosition()) <= 2.0)
-                                .onlyIf(() -> sys_indexer.checkIR()));
+                        Commands.waitUntil(() -> sys_indexer.checkIR())));
 
         // Eject note command
         m_primaryController.b()
@@ -182,8 +175,12 @@ public class RobotContainer {
         m_primaryController.start()
                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
-        m_primaryController.y()
-                .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
+        m_primaryController.leftBumper()
+                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer).andThen(Commands.runOnce(
+                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.AMP_POSITION),
+                        sys_deployment)))
+                // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
+                .whileTrue(new AlignToPose(kWaypoints.AMP_ZONE_BLUE, sys_drivetrain));
 
         // Secondary Controller
         // *************************************************************************************************************

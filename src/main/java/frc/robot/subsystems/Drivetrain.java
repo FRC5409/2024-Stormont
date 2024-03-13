@@ -209,7 +209,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * gyro depending on availability
      */
     private void updatePoseEstimator() {
-        var photonData = sys_photonvision.getEstimatedGlobalPose(this.getState().Pose);
+        var photonData = sys_photonvision.getEstimatedGlobalPose();
         if (photonData.isPresent()) {
             // update pose estimator using april tags
             try {
@@ -299,7 +299,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public Pose2d getAmpWaypoint() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
+        if (alliance.isPresent() && kRobot.IS_HOME_FIELD == false) {
             if (alliance.get() == Alliance.Red) {
                 return kWaypoints.AMP_ZONE_RED;
             } else if (alliance.get() == Alliance.Blue) {
