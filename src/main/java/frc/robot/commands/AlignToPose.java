@@ -131,10 +131,11 @@ public class AlignToPose extends Command {
         double currentTime = System.currentTimeMillis();
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
 
-        double poseDelta = getPoseDelta(currentPose, targetPose);
+        // double poseDelta = getPoseDelta(currentPose, targetPose);
+        double poseDelta = getPoseDistance(currentPose, targetPose);
         double rotationDelta = Math.abs(targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
 
-        if (poseDelta >= kAutoAlign.T_CONTROLLER_TOLERANCE || rotationDelta >= kAutoAlign.ROTATION_TOLERANCE) {
+        if (poseDelta >= kAutoAlign.REACHED_POSITION_TOLERANCE || rotationDelta >= kAutoAlign.ROTATION_TOLERANCE) {
             notInLineTime = System.currentTimeMillis();
         } else {
             if ((currentTime - notInLineTime) >= kAutoAlign.REACHED_POSITION_TIMEOUT) {
@@ -142,6 +143,10 @@ public class AlignToPose extends Command {
             }
         }
         return false;
+    }
+
+    private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
+        return Math.sqrt(Math.pow(pose2.getX() - pose1.getX(), 2) + Math.pow(pose2.getY() - pose1.getY(), 2));
     }
 
     public double calculateHeadingDifference(double heading1, double heading2) {
