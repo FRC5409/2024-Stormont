@@ -26,7 +26,7 @@ public class Indexer extends SubsystemBase {
     private final DigitalInput irSensor;
 
     // Shuffleboard
-    private final ShuffleboardTab sb_tab;
+    // private final ShuffleboardTab sb_tab;
 
     private Indexer() {
         // Motors
@@ -38,8 +38,8 @@ public class Indexer extends SubsystemBase {
         irSensor = new DigitalInput(kIndexer.IR_SENSOR_PORT);
 
         // Shuffleboard
-        sb_tab = Shuffleboard.getTab("Indexer");
-        sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
+        // sb_tab = Shuffleboard.getTab("Indexer");
+        // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
     // Get subsystem

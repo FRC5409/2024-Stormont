@@ -37,8 +37,8 @@ public class Deployment extends SubsystemBase {
   // private DigitalInput irSwitch;
 
   // shuffleboard/generic entry
-  private final ShuffleboardTab sb_DeploymentTab;
-  private final GenericEntry kP, kI, kD;
+  // private final ShuffleboardTab sb_DeploymentTab;
+  // private final GenericEntry kP, kI, kD;
 
   /**
    * Creates a new Deployment.
@@ -69,11 +69,11 @@ public class Deployment extends SubsystemBase {
      * position of motor
      * IR switch value for distance of the elevator
      */
-    sb_DeploymentTab = Shuffleboard.getTab("Deployment");
-    kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
-    kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
-    kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
-    sb_DeploymentTab.addDouble("position", () -> getPosition());
+    // sb_DeploymentTab = Shuffleboard.getTab("Deployment");
+    // kP = sb_DeploymentTab.add("kP", Constants.kDeployment.kP).getEntry();
+    // kI = sb_DeploymentTab.add("kI", Constants.kDeployment.kI).getEntry();
+    // kD = sb_DeploymentTab.add("kD", Constants.kDeployment.kD).getEntry();
+    // sb_DeploymentTab.addDouble("position", () -> getPosition());
     // sb_DeploymentTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_DeploymentTab.addBoolean("limitSwitch", () -> !limitSwitch.get());
 

@@ -27,7 +27,7 @@ public class Climber extends SubsystemBase {
   // private DigitalInput limitSwitch;
   // private DigitalInput irSwitch;
 
-  private final ShuffleboardTab sb_climberTab;
+  // private final ShuffleboardTab sb_climberTab;
 
   /** Creates a new Climber. */
   public Climber() {
@@ -60,11 +60,11 @@ public class Climber extends SubsystemBase {
     // irSwitch = new DigitalInput(kClimber.port_irSwitch);
 
     // Shuffleboard
-    sb_climberTab = Shuffleboard.getTab("Climber");
-    sb_climberTab.addDouble("kP", () -> m_controller.getP());
-    sb_climberTab.addDouble("kI", () -> m_controller.getI());
-    sb_climberTab.addDouble("kD", () -> m_controller.getD());
-    sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
+    // sb_climberTab = Shuffleboard.getTab("Climber");
+    // sb_climberTab.addDouble("kP", () -> m_controller.getP());
+    // sb_climberTab.addDouble("kI", () -> m_controller.getI());
+    // sb_climberTab.addDouble("kD", () -> m_controller.getD());
+    // sb_climberTab.addDouble("position", () -> s_encoder.getPosition());
     // sb_climberTab.addBoolean("irSwitch", () -> !irSwitch.get());
     // sb_climberTab.addBoolean("limitSwitch", () -> limitSwitch.get());
 

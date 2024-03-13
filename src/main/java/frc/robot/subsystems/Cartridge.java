@@ -32,7 +32,7 @@ public class Cartridge extends SubsystemBase {
     // Sensor
     private final DigitalInput irSwitch;
     // shuffleboard
-    private final ShuffleboardTab sb_cartridge;
+    // private final ShuffleboardTab sb_cartridge;
 
     public Cartridge() {
         // initialize motor
@@ -45,8 +45,8 @@ public class Cartridge extends SubsystemBase {
         irSwitch = new DigitalInput(1);
 
         // shuffleboard
-        sb_cartridge = Shuffleboard.getTab("Cartridge");
-        sb_cartridge.addBoolean("irSwitch", () -> !irSwitch.get());
+        // sb_cartridge = Shuffleboard.getTab("Cartridge");
+        // sb_cartridge.addBoolean("irSwitch", () -> !irSwitch.get());
 
     }
 
