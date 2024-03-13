@@ -209,7 +209,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * gyro depending on availability
      */
     private void updatePoseEstimator() {
-        var photonData = sys_photonvision.getEstimatedGlobalPose(this.getState().Pose);
+        var photonData = sys_photonvision.getEstimatedGlobalPose();
         if (photonData.isPresent()) {
             // update pose estimator using april tags
             try {
