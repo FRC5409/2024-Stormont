@@ -10,18 +10,13 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTablesJNI;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -32,6 +27,7 @@ public class PhotonVision extends SubsystemBase {
   PhotonCamera backCamera;
   PhotonPoseEstimator poseEstimatorFront;
   PhotonPoseEstimator poseEstimatorBack;
+  private static PhotonVision instance = null;
 
   public PhotonVision() {
     try {
@@ -105,8 +101,6 @@ public class PhotonVision extends SubsystemBase {
   public boolean isWithinAmbiguityThreshold(List<PhotonTrackedTarget> targets, double threshold) {
     for (PhotonTrackedTarget target : targets) {
       if (target.getPoseAmbiguity() >= threshold) {
-        // System.out.printf("Target REJECTED | Threshold: %.5f, Value: %.5f\n");
-        // threshold, target.getPoseAmbiguity());
         return false;
       }
     }
@@ -121,6 +115,39 @@ public class PhotonVision extends SubsystemBase {
       }
     }
     return lowestAmbiguity;
+  }
+
+  public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset) {
+    Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
+    List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
+    AprilTag closestTag = aprilTagFieldLayout.getTags().get(0);
+    double closestDistance = getPoseDistance(currentPose, closestTag.pose.toPose2d());
+
+    // Determining closest tag
+    for (AprilTag tag : aprilTags) {
+      double distance = getPoseDistance(currentPose, tag.pose.toPose2d());
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestTag = tag;
+      }
+    }
+
+    // Calculating target pose
+    double x = closestTag.pose.getX() + offset * Math.cos(closestTag.pose.getRotation().getAngle());
+    double y = closestTag.pose.getY() + offset * Math.sin(closestTag.pose.getRotation().getAngle());
+    return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
+  }
+
+  private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
+    return Math.sqrt(Math.pow(pose2.getX() - pose1.getX(), 2) + Math.pow(pose2.getY() - pose1.getY(), 2));
+  }
+
+  public static PhotonVision getInstance() {
+    if (instance == null) {
+      instance = new PhotonVision();
+    }
+    return instance;
   }
 
   @Override

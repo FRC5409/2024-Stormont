@@ -88,7 +88,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         this.seedFieldRelative();
 
         // Subsystems
-        sys_photonvision = new PhotonVision();
+        this.sys_photonvision = PhotonVision.getInstance();
 
         // shuffleboard
         m_field = new Field2d();
@@ -305,7 +305,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public void periodic() {
         updatePoseEstimator();
-        // updateFieldMap();
+        updateFieldMap();
     }
 
 }

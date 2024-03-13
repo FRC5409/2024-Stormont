@@ -4,12 +4,12 @@
 
 package frc.robot.commands;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -23,7 +23,8 @@ public class AlignToPose extends Command {
     private final PIDController m_rController;
 
     private final Drivetrain sys_drivetrain;
-    private final Pose2d targetPose;
+    private Pose2d targetPose;
+    private final Supplier<Pose2d> targetPoseSupplier;
     private double notInLineTime;
 
     /**
@@ -32,10 +33,11 @@ public class AlignToPose extends Command {
      * @param targetPose     Target position to navigate to
      * @param sys_Drivetrain Drivetrain
      */
-    public AlignToPose(Pose2d targetPose, Drivetrain sys_Drivetrain) {
+    public AlignToPose(Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain) {
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
-        this.targetPose = targetPose;
+        this.targetPose = targetPoseSupplier.get();
+        this.targetPoseSupplier = targetPoseSupplier;
 
         // Initializing PID Controllers
         m_xController = new PIDController(kAutoAlign.T_CONTROLLER_P, kAutoAlign.T_CONTROLLER_I,
@@ -82,10 +84,10 @@ public class AlignToPose extends Command {
         m_yController.setSetpoint(targetPose.getY());
 
         // Updating PID controllers
-        double xControllerOutput = applyFeatForward(m_xController.calculate(currentPose.getX()),
-                kAutoAlign.T_CONTROLLER_FF);
-        double yControllerOutput = applyFeatForward(m_yController.calculate(currentPose.getY()),
-                kAutoAlign.T_CONTROLLER_FF);
+        double xControllerOutput = applyTolerance(applyFeatForward(m_xController.calculate(currentPose.getX()),
+                kAutoAlign.T_CONTROLLER_FF), currentPose.getX(), targetPose.getX(), kAutoAlign.T_CONTROLLER_TOLERANCE);
+        double yControllerOutput = applyTolerance(applyFeatForward(m_yController.calculate(currentPose.getY()),
+                kAutoAlign.T_CONTROLLER_FF), currentPose.getY(), targetPose.getY(), kAutoAlign.T_CONTROLLER_TOLERANCE);
         double rControllerOutput = applyTolerance(
                 applyFeatForward(m_rController.calculate(currentPose.getRotation().getRadians()),
                         kAutoAlign.R_CONTROLLER_FF),
@@ -148,10 +150,6 @@ public class AlignToPose extends Command {
         if (difference > 180) {
             difference = 360 - difference;
         }
-
-        System.out.printf("TargetHeading: %.1f | CurrentHeading: %.1f | Difference: %.1f\n",
-                Units.radiansToDegrees(heading1), Units.radiansToDegrees(heading2),
-                difference);
         return difference;
     }
 
@@ -165,12 +163,14 @@ public class AlignToPose extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        this.targetPose = targetPoseSupplier.get();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         moveToPose(targetPose);
+        // PhotonVision.getInstance().getNearestTagPoseWithOffset(sys_drivetrain, 0);
     }
 
     // Called once the command ends or is interrupted.
