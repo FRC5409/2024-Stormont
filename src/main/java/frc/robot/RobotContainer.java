@@ -52,7 +52,6 @@ import frc.robot.subsystems.Intake;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
