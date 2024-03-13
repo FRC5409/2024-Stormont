@@ -122,11 +122,12 @@ public class PhotonVision extends SubsystemBase {
   private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(PhotonCamera camera, PhotonPoseEstimator poseEstimator) {
     if (camera.isConnected()) {
       Optional<EstimatedRobotPose> photonData = poseEstimator.update();
-      return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) ? photonData
-          : Optional.empty();
-    } else {
-      return Optional.empty();
+      if (photonData.isPresent()) {
+        return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) ? photonData
+            : Optional.empty();
+      }
     }
+    return Optional.empty();
   }
 
   /**
