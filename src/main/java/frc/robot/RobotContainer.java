@@ -192,27 +192,43 @@ public class RobotContainer {
         // Secondary Controller
         // *************************************************************************************************************
 
-        // Manual climber movement up
+        // Climber setpoint high fast
         m_secondaryController.povUp()
                 .onTrue(Commands.runOnce(
                         () -> sys_climber.setPosition(Constants.kClimber.HIGH,
                                 Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
+        // Climber setpoint high slow
         m_secondaryController.povLeft().onTrue(Commands.runOnce(
                 () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KSLOW_SLOT),
                 sys_climber));
 
-        // Manual climber movement down
+        // Climber setpoint low fast
         m_secondaryController.povDown()
                 .onTrue(Commands.runOnce(
                         () -> sys_climber.setPosition(Constants.kClimber.LOW,
                                 Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
+        // Climber manual down
+        m_secondaryController.leftBumper()
+                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(Constants.kClimber.VOLTAGE), sys_climber))
+                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
+
+        // Climber manual up
+        m_secondaryController.rightBumper()
+                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(-Constants.kClimber.VOLTAGE), sys_climber))
+                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
+
+        // turns off climber pid
+        m_secondaryController.start().onTrue(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
+
+        // Bring note from indexer to cartridge, when stuck
         m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
-        m_secondaryController.start().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
+        // Climb, extend and score, endgame sequence
+        m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
 
     }
 

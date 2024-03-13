@@ -90,14 +90,15 @@ public final class Constants {
             public static final double T_CONTROLLER_I = 0;
             public static final double T_CONTROLLER_D = .5;
             public static final double T_CONTROLLER_FF = .55;
-            public static final double T_CONTROLLER_TOLERANCE = 0.1;
+            public static final double T_CONTROLLER_TOLERANCE = 0.03;
 
             public static final double R_CONTROLLER_P = 10;
             public static final double R_CONTROLLER_I = 0;
             public static final double R_CONTROLLER_D = 1;
             public static final double R_CONTROLLER_FF = .45;
-            public static final double ROTATION_TOLERANCE = 0.05;
+            public static final double ROTATION_TOLERANCE = 0.045;
 
+            public static final double REACHED_POSITION_TOLERANCE = 0.04;
             public static final double REACHED_POSITION_TIMEOUT = 500; // ms
 
             public static final boolean AUTO_ALIGN_DEBUG = false;
