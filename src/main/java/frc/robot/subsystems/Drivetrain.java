@@ -19,6 +19,8 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -66,11 +68,6 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    public final SwerveRequest.FieldCentricFacingAngle teleopDriveWithAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
-            .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
     private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics,
             m_pigeon2.getRotation2d(), m_modulePositions, getRobotPose(),
             VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
@@ -88,14 +85,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             startSimThread();
         }
 
-        teleopDriveWithAngle.HeadingController.setPID(kDrive.HEADING_P, kDrive.HEADING_I, kDrive.HEADING_D);
-        teleopDriveWithAngle.HeadingController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
-        teleopDriveWithAngle.HeadingController.setTolerance(Math.toRadians(.01));
-
         this.seedFieldRelative();
 
         // Subsystems
-        sys_photonvision = new PhotonVision();
+        this.sys_photonvision = PhotonVision.getInstance();
 
         // shuffleboard
         m_field = new Field2d();
@@ -209,7 +202,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * gyro depending on availability
      */
     private void updatePoseEstimator() {
-        var photonData = sys_photonvision.getEstimatedGlobalPose(this.getState().Pose);
+        var photonData = sys_photonvision.getEstimatedGlobalPose();
         if (photonData.isPresent()) {
             // update pose estimator using april tags
             try {
@@ -299,7 +292,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public Pose2d getAmpWaypoint() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
+        if (alliance.isPresent() && kRobot.IS_HOME_FIELD == false) {
             if (alliance.get() == Alliance.Red) {
                 return kWaypoints.AMP_ZONE_RED;
             } else if (alliance.get() == Alliance.Blue) {
@@ -312,7 +305,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public void periodic() {
         updatePoseEstimator();
-        // updateFieldMap();
+        updateFieldMap();
     }
 
 }

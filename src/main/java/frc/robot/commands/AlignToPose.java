@@ -4,11 +4,12 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle;
+import java.util.function.Supplier;
+
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -19,9 +20,11 @@ import frc.robot.subsystems.Drivetrain;
 public class AlignToPose extends Command {
     private final PIDController m_xController;
     private final PIDController m_yController;
+    private final PIDController m_rController;
 
     private final Drivetrain sys_drivetrain;
-    private final Pose2d targetPose;
+    private Pose2d targetPose;
+    private final Supplier<Pose2d> targetPoseSupplier;
     private double notInLineTime;
 
     /**
@@ -30,10 +33,11 @@ public class AlignToPose extends Command {
      * @param targetPose     Target position to navigate to
      * @param sys_Drivetrain Drivetrain
      */
-    public AlignToPose(Pose2d targetPose, Drivetrain sys_Drivetrain) {
+    public AlignToPose(Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain) {
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
-        this.targetPose = targetPose;
+        this.targetPose = targetPoseSupplier.get();
+        this.targetPoseSupplier = targetPoseSupplier;
 
         // Initializing PID Controllers
         m_xController = new PIDController(kAutoAlign.T_CONTROLLER_P, kAutoAlign.T_CONTROLLER_I,
@@ -48,6 +52,12 @@ public class AlignToPose extends Command {
                 kAutoAlign.T_CONTROLLER_D);
         m_yController.setSetpoint(targetPose.getY());
         m_yController.setTolerance(kAutoAlign.T_CONTROLLER_TOLERANCE);
+
+        m_rController = new PIDController(kAutoAlign.R_CONTROLLER_P, kAutoAlign.R_CONTROLLER_I,
+                kAutoAlign.R_CONTROLLER_D);
+        m_rController.setSetpoint(targetPose.getRotation().getRadians());
+        // m_rController.setTolerance(kAutoAlign.ROTATION_TOLERANCE);
+        m_rController.enableContinuousInput(0, Math.PI * 2);
     }
 
     /**
@@ -68,16 +78,21 @@ public class AlignToPose extends Command {
      */
     public void moveToPose(Pose2d targetPose) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
-        Rotation2d angle = targetPose.getRotation();
-        // System.out.println(calculateHeadingDifference(currentPose.getRotation().getRadians(),
-        // angle.getRadians()));
+        // Rotation2d angle = targetPose.getRotation();
 
         m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
 
         // Updating PID controllers
-        double xControllerOutput = m_xController.calculate(currentPose.getX());
-        double yControllerOutput = m_yController.calculate(currentPose.getY());
+        double xControllerOutput = applyTolerance(applyFeatForward(m_xController.calculate(currentPose.getX()),
+                kAutoAlign.T_CONTROLLER_FF), currentPose.getX(), targetPose.getX(), kAutoAlign.T_CONTROLLER_TOLERANCE);
+        double yControllerOutput = applyTolerance(applyFeatForward(m_yController.calculate(currentPose.getY()),
+                kAutoAlign.T_CONTROLLER_FF), currentPose.getY(), targetPose.getY(), kAutoAlign.T_CONTROLLER_TOLERANCE);
+        double rControllerOutput = applyTolerance(
+                applyFeatForward(m_rController.calculate(currentPose.getRotation().getRadians()),
+                        kAutoAlign.R_CONTROLLER_FF),
+                currentPose.getRotation().getRadians(),
+                targetPose.getRotation().getRadians(), kAutoAlign.ROTATION_TOLERANCE);
 
         // Invert for field centric if alliance is red
         if (DriverStation.getAlliance().isPresent()) {
@@ -88,11 +103,21 @@ public class AlignToPose extends Command {
         }
 
         // Applying PID values to drivetrain
-        FieldCentricFacingAngle driveCommand = sys_drivetrain.teleopDriveWithAngle
+        FieldCentric driveCommand = sys_drivetrain.teleopDrive
                 .withVelocityX(xControllerOutput)
                 .withVelocityY(yControllerOutput)
-                .withTargetDirection(angle);
+                .withRotationalRate(rControllerOutput);
+
         sys_drivetrain.runRequest(() -> driveCommand);
+    }
+
+    private double applyFeatForward(double input, double featForward) {
+        if (input < 0) {
+            return input - featForward;
+        } else if (input > 0) {
+            return input + featForward;
+        }
+        return 0;
     }
 
     /**
@@ -125,22 +150,27 @@ public class AlignToPose extends Command {
         if (difference > 180) {
             difference = 360 - difference;
         }
-
-        System.out.printf("TargetHeading: %.1f | CurrentHeading: %.1f | Difference: %.1f\n",
-                Units.radiansToDegrees(heading1), Units.radiansToDegrees(heading2),
-                difference);
         return difference;
+    }
+
+    public double applyTolerance(double input, double current, double target, double tolerance) {
+        if (Math.abs(current - target) < tolerance) {
+            return 0;
+        }
+        return input;
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        this.targetPose = targetPoseSupplier.get();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         moveToPose(targetPose);
+        // PhotonVision.getInstance().getNearestTagPoseWithOffset(sys_drivetrain, 0);
     }
 
     // Called once the command ends or is interrupted.

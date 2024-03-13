@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
@@ -40,6 +41,7 @@ import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.PhotonVision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -51,7 +53,6 @@ import frc.robot.subsystems.Intake;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -66,6 +67,7 @@ public class RobotContainer {
     public final Indexer sys_indexer;
     private final Deployment sys_deployment;
     public final Cartridge sys_cartridge;
+    public final PhotonVision sys_photonvision;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -92,6 +94,8 @@ public class RobotContainer {
         sys_indexer = Indexer.getInstance();
         sys_deployment = new Deployment();
         sys_cartridge = Cartridge.getInstance();
+        sys_photonvision = PhotonVision.getInstance();
+
         // Subsystems
         sys_drivetrain = kRobot.IS_BETA_ROBOT
                 ? TunerConstantsBeta.DriveTrain
@@ -122,7 +126,8 @@ public class RobotContainer {
                         .setRumble(RumbleType.kBothRumble, 0.3))
                         .andThen(new WaitCommand(0.75))
                         .andThen(Commands.runOnce(() -> m_primaryController.getHID()
-                                .setRumble(RumbleType.kBothRumble, 0.0))));
+                                .setRumble(RumbleType.kBothRumble, 0.0))))
+                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
     }
 
     /**
@@ -164,16 +169,7 @@ public class RobotContainer {
                                     sys_indexer.setVoltage(0);
                                 },
                                 sys_intake, sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR())).andThen(
-                                new BringNoteToCartridge(sys_cartridge, sys_indexer)
-                                        .onlyIf(() -> Math.abs(sys_deployment
-                                                .getPosition()) <= 2.0)
-                                        .onlyIf(() -> sys_indexer.checkIR())))
-                .onFalse(
-                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
-                                .onlyIf(() -> Math.abs(sys_deployment
-                                        .getPosition()) <= 2.0)
-                                .onlyIf(() -> sys_indexer.checkIR()));
+                        Commands.waitUntil(() -> sys_indexer.checkIR())));
 
         // Eject note command
         m_primaryController.b()
@@ -182,8 +178,16 @@ public class RobotContainer {
         m_primaryController.start()
                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
-        m_primaryController.y()
-                .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
+        m_primaryController.leftBumper()
+                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer).andThen(Commands.runOnce(
+                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.AMP_POSITION),
+                        sys_deployment)))
+                // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
+                .whileTrue(new AlignToPose(() -> kWaypoints.AMP_ZONE_BLUE, sys_drivetrain));
+
+        m_primaryController.y().whileTrue(new AlignToPose(
+                () -> sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain, 0),
+                sys_drivetrain));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -196,14 +200,14 @@ public class RobotContainer {
                         sys_climber));
 
         m_secondaryController.povLeft().onTrue(Commands.runOnce(
-                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
+                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KSLOW_SLOT),
                 sys_climber));
 
         // Manual climber movement down
         m_secondaryController.povDown()
                 .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
-                                Constants.kClimber.KLOW_SLOT),
+                        () -> sys_climber.setPosition(Constants.kClimber.LOW,
+                                Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
         m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
@@ -245,7 +249,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("BringNoteToCartridge",
                 new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2)
-                .alongWith(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain)));
+                .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain)));
 
     }
 

@@ -35,6 +35,7 @@ public final class Constants {
 
     public static final class kRobot {
         public static final boolean IS_BETA_ROBOT = false;
+        public static final boolean IS_HOME_FIELD = true;
     }
 
     public static final class kCANID {
@@ -69,9 +70,10 @@ public final class Constants {
 
         public static final double HEADING_SNAP = Math.toRadians(45);
 
-        public static final double HEADING_P = 5;
+        public static final double HEADING_P = 3;
         public static final double HEADING_I = 0;
         public static final double HEADING_D = 0;
+        public static final double HEADING_FF = 0.4;
 
         public static final class kAutoPathPlanner {
             public static final double TRANSLATION_P = 2.5;
@@ -85,11 +87,16 @@ public final class Constants {
 
         public static final class kAutoAlign {
             public static final double T_CONTROLLER_P = 4.7;
-            public static final double T_CONTROLLER_I = 0.0;
-            public static final double T_CONTROLLER_D = 0.3;
-            public static final double T_CONTROLLER_TOLERANCE = 0.0;
+            public static final double T_CONTROLLER_I = 0;
+            public static final double T_CONTROLLER_D = .5;
+            public static final double T_CONTROLLER_FF = .55;
+            public static final double T_CONTROLLER_TOLERANCE = 0.1;
 
-            public static final double ROTATION_TOLERANCE = 0.1;
+            public static final double R_CONTROLLER_P = 10;
+            public static final double R_CONTROLLER_I = 0;
+            public static final double R_CONTROLLER_D = 1;
+            public static final double R_CONTROLLER_FF = .45;
+            public static final double ROTATION_TOLERANCE = 0.05;
 
             public static final double REACHED_POSITION_TIMEOUT = 500; // ms
 
@@ -111,7 +118,7 @@ public final class Constants {
 
         public static class kSetpoints {
             public static final double AMP_POSITION = -35;
-            public static final double TRAP_POSITION = -46; // highest
+            public static final double TRAP_POSITION = -47; // highest
             public static final double HOME = -0.25;
             public static final double LOW = -3;
             public static final double HIGH = -30;
@@ -145,7 +152,7 @@ public final class Constants {
         public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(
                 new Translation3d(0.418846, 0, 0.2234184),
                 // new Rotation3d(Math.toRadians(90), Math.toRadians(28), 0));
-                new Rotation3d(Math.toRadians(180), Math.toRadians(-27), 0)); // 0.3302 m towards the front
+                new Rotation3d(0, Math.toRadians(-30), 0)); // 0.3302 m towards the front
 
         // Arducam 2
         public static final String BACK_CAMERA_NAME = "Back Camera";
@@ -160,9 +167,10 @@ public final class Constants {
 
     public static final class kWaypoints {
         public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5));
-        public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.75, 7.7, new Rotation2d(0, Math.toRadians(-90)));
-        public static final Pose2d AMP_ZONE_RED = new Pose2d(14.7, 7.7, new Rotation2d(0, Math.toRadians(90)));
+        public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.82, 7.73, new Rotation2d(0, Math.toRadians(-90)));
+        public static final Pose2d AMP_ZONE_RED = new Pose2d(14.7, 7.73, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 = new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
+        public static final double TRAP_OFFSET = 2;
     }
 
     public static final class kIntake {
@@ -195,7 +203,7 @@ public final class Constants {
         public static final double kD_1 = 0;
 
         public static final int KFAST_SLOT = 0;
-        public static final int KLOW_SLOT = 1;
+        public static final int KSLOW_SLOT = 1;
 
         public static final double IR_ZERO_DISTANCE = 0;
 

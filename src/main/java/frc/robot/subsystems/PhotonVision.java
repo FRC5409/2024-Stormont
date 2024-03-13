@@ -10,18 +10,13 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTablesJNI;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -32,6 +27,7 @@ public class PhotonVision extends SubsystemBase {
   PhotonCamera backCamera;
   PhotonPoseEstimator poseEstimatorFront;
   PhotonPoseEstimator poseEstimatorBack;
+  private static PhotonVision instance = null;
 
   public PhotonVision() {
     try {
@@ -54,48 +50,43 @@ public class PhotonVision extends SubsystemBase {
         backCamera,
         kCameras.BACK_CAMERA_OFFSET);
     poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
-    // Smart Dashboard
-    initDriverCam();
   }
 
   /**
    * Returns Optional containing positioning data retrieved through april tags. If
    * there are no april tags visible, an empty optional will be returned.
    * 
-   * @param prevEstimatedPose Lsat estimated position //TODO depricate
    * @return Positioning data
    */
-  public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedPose) {
-    poseEstimatorFront.setReferencePose(prevEstimatedPose);
-    poseEstimatorBack.setReferencePose(prevEstimatedPose);
+  public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+    Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront);
+    Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
+    Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
-    if (backCamera.isConnected()) {
-      Optional<EstimatedRobotPose> photonDataFront = poseEstimatorFront.update();
-      Optional<EstimatedRobotPose> photonDataBack = poseEstimatorBack.update();
-      Optional<EstimatedRobotPose> photonDataOut;
+    if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
+      // pick one with better ambiguity
+      if (getMeasurementAmbiguity(poseEstimateFront.get().targetsUsed) < getMeasurementAmbiguity(
+          poseEstimateBack.get().targetsUsed)) {
+        poseEstimateOut = poseEstimateFront;
+      } else {
+        poseEstimateOut = poseEstimateBack;
+      }
+    } else if (poseEstimateFront.isPresent()) {
+      poseEstimateOut = poseEstimateFront;
+    } else if (poseEstimateBack.isPresent()) {
+      poseEstimateOut = poseEstimateBack;
+    }
 
-      if (photonDataFront.isPresent() || photonDataBack.isPresent()) {
+    return poseEstimateOut;
+  }
 
-        if (photonDataFront.isPresent() && photonDataBack.isPresent()) {
-          if (getMeasurementAmbiguity(
-              photonDataFront.get().targetsUsed) < (getMeasurementAmbiguity(photonDataBack.get().targetsUsed))) {
-            photonDataOut = photonDataFront;
-          } else {
-            photonDataOut = photonDataBack;
-          }
-        } else if (photonDataFront.isPresent()) {
-          photonDataOut = photonDataFront;
-        } else {
-          photonDataOut = photonDataBack;
-        }
-
-        return isWithinAmbiguityThreshold(photonDataOut.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
-            ? photonDataOut
+  private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(PhotonCamera camera, PhotonPoseEstimator poseEstimator) {
+    if (camera.isConnected()) {
+      Optional<EstimatedRobotPose> photonData = poseEstimator.update();
+      if (photonData.isPresent()) {
+        return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) ? photonData
             : Optional.empty();
       }
-    } else {
-      // System.out.println("CAMERA NOT CONNECTED");
     }
     return Optional.empty();
   }
@@ -110,8 +101,6 @@ public class PhotonVision extends SubsystemBase {
   public boolean isWithinAmbiguityThreshold(List<PhotonTrackedTarget> targets, double threshold) {
     for (PhotonTrackedTarget target : targets) {
       if (target.getPoseAmbiguity() >= threshold) {
-        // System.out.printf("Target REJECTED | Threshold: %.5f, Value: %.5f\n");
-        // threshold, target.getPoseAmbiguity());
         return false;
       }
     }
@@ -128,19 +117,37 @@ public class PhotonVision extends SubsystemBase {
     return lowestAmbiguity;
   }
 
-  public void initDriverCam() {
-    try {
-      // CameraServer.startAutomaticCapture(kCameras.kFrontCameraName,
-      // kCameras.kFrontCameraURL);
-      // CameraServer.startAutomaticCapture(kCameras.kBackCameraName,
-      // kCameras.kBackCameraURL);
-      // CameraServer.startAutomaticCapture(kCameras.kFrontCameraURL);
-      // final HttpCamera camera = new HttpCamera("Camera", kCameras.kFrontCameraURL,
-      // HttpCamera.HttpCameraKind.kMJPGStreamer);
-      // CameraServer.addCamera(camera);
-    } catch (Exception e) {
-      System.out.printf("Failed initialize smart dashboard IP cameras: %s\n", e);
+  public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset) {
+    Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
+    List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
+    AprilTag closestTag = aprilTagFieldLayout.getTags().get(0);
+    double closestDistance = getPoseDistance(currentPose, closestTag.pose.toPose2d());
+
+    // Determining closest tag
+    for (AprilTag tag : aprilTags) {
+      double distance = getPoseDistance(currentPose, tag.pose.toPose2d());
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestTag = tag;
+      }
     }
+
+    // Calculating target pose
+    double x = closestTag.pose.getX() + offset * Math.cos(closestTag.pose.getRotation().getAngle());
+    double y = closestTag.pose.getY() + offset * Math.sin(closestTag.pose.getRotation().getAngle());
+    return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
+  }
+
+  private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
+    return Math.sqrt(Math.pow(pose2.getX() - pose1.getX(), 2) + Math.pow(pose2.getY() - pose1.getY(), 2));
+  }
+
+  public static PhotonVision getInstance() {
+    if (instance == null) {
+      instance = new PhotonVision();
+    }
+    return instance;
   }
 
   @Override
