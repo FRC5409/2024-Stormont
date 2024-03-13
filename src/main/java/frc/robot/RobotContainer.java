@@ -191,16 +191,19 @@ public class RobotContainer {
         // Manual climber movement up
         m_secondaryController.povUp()
                 .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT),
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                Constants.kClimber.KFAST_SLOT),
                         sys_climber));
 
         m_secondaryController.povLeft().onTrue(Commands.runOnce(
-                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT), sys_climber));
+                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
+                sys_climber));
 
         // Manual climber movement down
         m_secondaryController.povDown()
                 .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
+                                Constants.kClimber.KLOW_SLOT),
                         sys_climber));
 
         m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
@@ -241,7 +244,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("BringNoteToCartridge",
                 new BringNoteToCartridge(sys_cartridge, sys_indexer));
-        NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
+        NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2)
+                .alongWith(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain)));
 
     }
 
