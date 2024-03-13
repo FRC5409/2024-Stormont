@@ -55,48 +55,43 @@ public class PhotonVision extends SubsystemBase {
         backCamera,
         kCameras.BACK_CAMERA_OFFSET);
     poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
-    // Smart Dashboard
-    initDriverCam();
   }
 
   /**
    * Returns Optional containing positioning data retrieved through april tags. If
    * there are no april tags visible, an empty optional will be returned.
    * 
-   * @param prevEstimatedPose Lsat estimated position //TODO depricate
    * @return Positioning data
    */
-  public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedPose) {
-    poseEstimatorFront.setReferencePose(prevEstimatedPose);
-    poseEstimatorBack.setReferencePose(prevEstimatedPose);
+  public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+    Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront);
+    Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
+    Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
-    if (backCamera.isConnected()) {
-      Optional<EstimatedRobotPose> photonDataFront = poseEstimatorFront.update();
-      Optional<EstimatedRobotPose> photonDataBack = poseEstimatorBack.update();
-      Optional<EstimatedRobotPose> photonDataOut;
+    if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
+      // pick one with better ambiguity
+      if (getMeasurementAmbiguity(poseEstimateFront.get().targetsUsed) < getMeasurementAmbiguity(
+          poseEstimateBack.get().targetsUsed)) {
+        poseEstimateOut = poseEstimateFront;
+      } else {
+        poseEstimateOut = poseEstimateBack;
+      }
+    } else if (poseEstimateFront.isPresent()) {
+      poseEstimateOut = poseEstimateFront;
+    } else if (poseEstimateBack.isPresent()) {
+      poseEstimateOut = poseEstimateBack;
+    }
 
-      if (photonDataFront.isPresent() || photonDataBack.isPresent()) {
+    return poseEstimateOut;
+  }
 
-        if (photonDataFront.isPresent() && photonDataBack.isPresent()) {
-          if (getMeasurementAmbiguity(
-              photonDataFront.get().targetsUsed) < (getMeasurementAmbiguity(photonDataBack.get().targetsUsed))) {
-            photonDataOut = photonDataFront;
-          } else {
-            photonDataOut = photonDataBack;
-          }
-        } else if (photonDataFront.isPresent()) {
-          photonDataOut = photonDataFront;
-        } else {
-          photonDataOut = photonDataBack;
-        }
-
-        return isWithinAmbiguityThreshold(photonDataOut.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
-            ? photonDataOut
+  private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(PhotonCamera camera, PhotonPoseEstimator poseEstimator) {
+    if (camera.isConnected()) {
+      Optional<EstimatedRobotPose> photonData = poseEstimator.update();
+      if (photonData.isPresent()) {
+        return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) ? photonData
             : Optional.empty();
       }
-    } else {
-      // System.out.println("CAMERA NOT CONNECTED");
     }
     return Optional.empty();
   }
@@ -149,21 +144,6 @@ public class PhotonVision extends SubsystemBase {
 
   private double getPoseDelta(Pose2d pose1, Pose2d pose2) {
     return Math.abs(pose1.getX() - pose2.getX()) + Math.abs(pose1.getY() - pose2.getY());
-  }
-
-  public void initDriverCam() {
-    try {
-      // CameraServer.startAutomaticCapture(kCameras.kFrontCameraName,
-      // kCameras.kFrontCameraURL);
-      // CameraServer.startAutomaticCapture(kCameras.kBackCameraName,
-      // kCameras.kBackCameraURL);
-      // CameraServer.startAutomaticCapture(kCameras.kFrontCameraURL);
-      // final HttpCamera camera = new HttpCamera("Camera", kCameras.kFrontCameraURL,
-      // HttpCamera.HttpCameraKind.kMJPGStreamer);
-      // CameraServer.addCamera(camera);
-    } catch (Exception e) {
-      System.out.printf("Failed initialize smart dashboard IP cameras: %s\n", e);
-    }
   }
 
   @Override
