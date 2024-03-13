@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -181,49 +182,31 @@ public class RobotContainer {
         m_primaryController.start()
                 .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
+        m_primaryController.y()
+                .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
+
         // Secondary Controller
         // *************************************************************************************************************
 
         // Manual climber movement up
         m_secondaryController.povUp()
-                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(-Constants.kClimber.VOLTAGE),
-                        sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
+                .onTrue(Commands.runOnce(
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT),
+                        sys_climber));
+
+        m_secondaryController.povLeft().onTrue(Commands.runOnce(
+                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT), sys_climber));
 
         // Manual climber movement down
         m_secondaryController.povDown()
-                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(Constants.kClimber.VOLTAGE),
-                        sys_climber))
-                .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
-
-        // climber setpoint high
-        m_secondaryController.y()
                 .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
-                                Constants.kClimber.KFAST_SLOT),
+                        () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KLOW_SLOT),
                         sys_climber));
 
-        // climber setpoint low
-        m_secondaryController.x()
-                .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
-                                Constants.kClimber.KLOW_SLOT),
-                        sys_climber));
+        m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
-        // climber setpoint low
-        m_secondaryController.a()
-                .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.LOW,
-                                Constants.kClimber.KFAST_SLOT),
-                        sys_climber));
+        m_secondaryController.start().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
 
-        // Bring note to cartridge
-        m_secondaryController.back()
-                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
-
-        // Climb, extend and score, endgame sequence
-        m_secondaryController.start()
-                .onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
     }
 
     private void addShuffleboardItems() {

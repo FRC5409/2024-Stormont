@@ -9,6 +9,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.subsystems.Drivetrain;
@@ -64,8 +67,10 @@ public class AlignToPose extends Command {
      * @param targetPose Target position to move to
      */
     public void moveToPose(Pose2d targetPose) {
-        Pose2d currentPose = sys_drivetrain.getRobotPose();
+        Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         Rotation2d angle = targetPose.getRotation();
+        // System.out.println(calculateHeadingDifference(currentPose.getRotation().getRadians(),
+        // angle.getRadians()));
 
         m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
@@ -74,10 +79,18 @@ public class AlignToPose extends Command {
         double xControllerOutput = m_xController.calculate(currentPose.getX());
         double yControllerOutput = m_yController.calculate(currentPose.getY());
 
+        // Invert for field centric if alliance is red
+        if (DriverStation.getAlliance().isPresent()) {
+            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                xControllerOutput = -xControllerOutput;
+                yControllerOutput = -yControllerOutput;
+            }
+        }
+
         // Applying PID values to drivetrain
         FieldCentricFacingAngle driveCommand = sys_drivetrain.teleopDriveWithAngle
-                .withVelocityX(-xControllerOutput)
-                .withVelocityY(-yControllerOutput)
+                .withVelocityX(xControllerOutput)
+                .withVelocityY(yControllerOutput)
                 .withTargetDirection(angle);
         sys_drivetrain.runRequest(() -> driveCommand);
     }
@@ -91,7 +104,7 @@ public class AlignToPose extends Command {
      */
     private boolean isAligned(Pose2d targetPose) {
         double currentTime = System.currentTimeMillis();
-        Pose2d currentPose = sys_drivetrain.getRobotPose();
+        Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
 
         double poseDelta = getPoseDelta(currentPose, targetPose);
         double rotationDelta = Math.abs(targetPose.getRotation().getRadians() - currentPose.getRotation().getRadians());
@@ -104,6 +117,19 @@ public class AlignToPose extends Command {
             }
         }
         return false;
+    }
+
+    public double calculateHeadingDifference(double heading1, double heading2) {
+        double difference = Math.abs(Units.radiansToDegrees(heading1) - Units.radiansToDegrees(heading2));
+
+        if (difference > 180) {
+            difference = 360 - difference;
+        }
+
+        System.out.printf("TargetHeading: %.1f | CurrentHeading: %.1f | Difference: %.1f\n",
+                Units.radiansToDegrees(heading1), Units.radiansToDegrees(heading2),
+                difference);
+        return difference;
     }
 
     // Called when the command is initially scheduled.

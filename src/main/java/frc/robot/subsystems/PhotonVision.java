@@ -10,11 +10,18 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTablesJNI;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -63,7 +70,7 @@ public class PhotonVision extends SubsystemBase {
     poseEstimatorFront.setReferencePose(prevEstimatedPose);
     poseEstimatorBack.setReferencePose(prevEstimatedPose);
 
-    if (frontCamera.isConnected()) {
+    if (backCamera.isConnected()) {
       Optional<EstimatedRobotPose> photonDataFront = poseEstimatorFront.update();
       Optional<EstimatedRobotPose> photonDataBack = poseEstimatorBack.update();
       Optional<EstimatedRobotPose> photonDataOut;
