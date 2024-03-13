@@ -69,6 +69,8 @@ public class AlignToPose extends Command {
     public void moveToPose(Pose2d targetPose) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         Rotation2d angle = targetPose.getRotation();
+        System.out.printf("xDiff: %.2f | yDiff: %.2f\n",
+                Math.abs(currentPose.getX() - targetPose.getX()), Math.abs(currentPose.getY() - targetPose.getY()));
         // System.out.println(calculateHeadingDifference(currentPose.getRotation().getRadians(),
         // angle.getRadians()));
 
@@ -76,8 +78,10 @@ public class AlignToPose extends Command {
         m_yController.setSetpoint(targetPose.getY());
 
         // Updating PID controllers
-        double xControllerOutput = m_xController.calculate(currentPose.getX());
-        double yControllerOutput = m_yController.calculate(currentPose.getY());
+        double xControllerOutput = applyFeatForward(m_xController.calculate(currentPose.getX()),
+                kAutoAlign.T_CONTROLLER_FF);
+        double yControllerOutput = applyFeatForward(m_yController.calculate(currentPose.getY()),
+                kAutoAlign.T_CONTROLLER_FF);
 
         // Invert for field centric if alliance is red
         if (DriverStation.getAlliance().isPresent()) {
@@ -93,6 +97,15 @@ public class AlignToPose extends Command {
                 .withVelocityY(yControllerOutput)
                 .withTargetDirection(angle);
         sys_drivetrain.runRequest(() -> driveCommand);
+    }
+
+    private double applyFeatForward(double input, double featForward) {
+        if (input < 0) {
+            return input - featForward;
+        } else if (input > 0) {
+            return input + featForward;
+        }
+        return 0;
     }
 
     /**

@@ -88,7 +88,8 @@ public final class Constants {
             public static final double T_CONTROLLER_P = 4.7;
             public static final double T_CONTROLLER_I = 0;
             public static final double T_CONTROLLER_D = .5;
-            public static final double T_CONTROLLER_TOLERANCE = 0.0;
+            public static final double T_CONTROLLER_FF = .2;
+            public static final double T_CONTROLLER_TOLERANCE = 0.02;
 
             public static final double ROTATION_TOLERANCE = 0.1;
 
@@ -161,8 +162,8 @@ public final class Constants {
 
     public static final class kWaypoints {
         public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5));
-        public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.8, 7.7, new Rotation2d(0, Math.toRadians(90)));
-        public static final Pose2d AMP_ZONE_RED = new Pose2d(14.7, 7.7, new Rotation2d(0, Math.toRadians(90)));
+        public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.82, 7.73, new Rotation2d(0, Math.toRadians(90)));
+        public static final Pose2d AMP_ZONE_RED = new Pose2d(14.7, 7.73, new Rotation2d(0, Math.toRadians(90)));
         public static final Pose2d TRAP_ZONE_15 = new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
     }
 
