@@ -22,7 +22,8 @@ public class ShootNote extends SequentialCommandGroup {
                 Commands.runOnce(() -> sys_cartridge.setVoltage(-12), sys_cartridge),
                 // Waits until its reached the setpoint
                 Commands.waitUntil(
-                        () -> (sys_deployment.atSetpoint(kDeployment.kSetpoints.TRAP_POSITION))),
+                        () -> (sys_deployment
+                                .atSetpoint(kDeployment.kSetpoints.TRAP_POSITION))),
                 // go back home
                 Commands.runOnce(() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME),
                         sys_deployment),
