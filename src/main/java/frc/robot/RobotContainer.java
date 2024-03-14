@@ -252,7 +252,7 @@ public class RobotContainer {
                         .until(sys_indexer::checkIR));
 
         NamedCommands.registerCommand("BringNoteToCartridge",
-                new BringNoteToCartridge(sys_cartridge, sys_indexer));
+                new BringNoteToCartridge(sys_cartridge, sys_indexer).withTimeout(3));
         NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));

@@ -80,7 +80,7 @@ public final class Constants {
             public static final double TRANSLATION_I = 0;
             public static final double TRANSLATION_D = 0;
 
-            public static final double ROTATION_P = 5;
+            public static final double ROTATION_P = 3.7;
             public static final double ROTATION_I = 0;
             public static final double ROTATION_D = 0;
         }
