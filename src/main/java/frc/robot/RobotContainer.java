@@ -121,13 +121,14 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
-        new Trigger(() -> sys_indexer.checkIR())
-                .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
-                        .setRumble(RumbleType.kBothRumble, 0.3))
-                        .andThen(new WaitCommand(0.75))
-                        .andThen(Commands.runOnce(() -> m_primaryController.getHID()
-                                .setRumble(RumbleType.kBothRumble, 0.0))))
-                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        // new Trigger(() -> sys_indexer.checkIR())
+        // .and(DriverStation::isTeleop)
+        // .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer))
+        // .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
+        // .setRumble(RumbleType.kBothRumble, 0.3))
+        // .andThen(new WaitCommand(0.75))
+        // .andThen(Commands.runOnce(() -> m_primaryController.getHID()
+        // .setRumble(RumbleType.kBothRumble, 0.0))));
     }
 
     /**
@@ -249,23 +250,18 @@ public class RobotContainer {
     public void registerPathplannerCommands() {
 
         NamedCommands.registerCommand("IntakeFromFloor",
-                Commands.race(
-                        Commands.startEnd(
-                                () -> {
-                                    sys_intake.setVoltage(kIntake.VOLTAGE);
-                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                },
-                                () -> {
-                                    sys_intake.setVoltage(0);
-                                    sys_indexer.setVoltage(0);
-                                },
-                                sys_intake, sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR())));
+                Commands.run(
+                        () -> {
+                            sys_intake.setVoltage(kIntake.VOLTAGE);
+                            sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                        }, sys_intake, sys_indexer)
+                        .until(sys_indexer::checkIR));
 
         NamedCommands.registerCommand("BringNoteToCartridge",
                 new BringNoteToCartridge(sys_cartridge, sys_indexer));
-        NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2)
-                .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain)));
+        NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
+        // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
+        // sys_drivetrain)));
 
     }
 
