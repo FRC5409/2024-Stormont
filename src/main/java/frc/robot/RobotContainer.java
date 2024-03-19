@@ -122,13 +122,23 @@ public class RobotContainer {
         configureBindings();
 
         new Trigger(() -> sys_indexer.checkIR())
-        .and(DriverStation::isTeleop)
-        .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer))
-        .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
-        .setRumble(RumbleType.kBothRumble, 0.3))
-        .andThen(new WaitCommand(0.75))
-        .andThen(Commands.runOnce(() -> m_primaryController.getHID()
-        .setRumble(RumbleType.kBothRumble, 0.0))));
+                .and(DriverStation::isTeleop)
+                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer))
+                .onTrue(
+                        Commands.runOnce(
+                                        () ->
+                                                m_primaryController
+                                                        .getHID()
+                                                        .setRumble(RumbleType.kBothRumble, 0.3))
+                                .andThen(new WaitCommand(0.75))
+                                .andThen(
+                                        Commands.runOnce(
+                                                () ->
+                                                        m_primaryController
+                                                                .getHID()
+                                                                .setRumble(
+                                                                        RumbleType.kBothRumble,
+                                                                        0.0))));
     }
 
     /**
