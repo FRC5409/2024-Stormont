@@ -5,8 +5,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
@@ -26,7 +24,7 @@ public class Indexer extends SubsystemBase {
     private final DigitalInput irSensor;
 
     // Shuffleboard
-    private final ShuffleboardTab sb_tab;
+    // private final ShuffleboardTab sb_tab;
 
     private Indexer() {
         // Motors
@@ -38,14 +36,13 @@ public class Indexer extends SubsystemBase {
         irSensor = new DigitalInput(kIndexer.IR_SENSOR_PORT);
 
         // Shuffleboard
-        sb_tab = Shuffleboard.getTab("Indexer");
-        sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
+        // sb_tab = Shuffleboard.getTab("Indexer");
+        // sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
     }
 
     // Get subsystem
     public static Indexer getInstance() {
-        if (instance == null)
-            instance = new Indexer();
+        if (instance == null) instance = new Indexer();
         return instance;
     }
 
@@ -60,7 +57,7 @@ public class Indexer extends SubsystemBase {
 
     /**
      * Gets the IR sensor value.
-     * 
+     *
      * @return True if laser is interrupted.
      */
     public boolean checkIR() {
@@ -69,7 +66,7 @@ public class Indexer extends SubsystemBase {
 
     /**
      * Set voltage of motor.
-     * 
+     *
      * @param volts Between -12 to 12.
      */
     public void setVoltage(double volts) {
@@ -87,5 +84,4 @@ public class Indexer extends SubsystemBase {
         // This method will be called once per scheduler run during simulation
 
     }
-
 }

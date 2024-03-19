@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -17,10 +18,15 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -29,9 +35,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.kDrive;
-import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.Constants.kDrive.kAutoPathPlanner;
+import frc.robot.Constants.kRobot;
+import frc.robot.Constants.kWaypoints;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
 
@@ -51,19 +58,26 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     // shuffleboard
     private final Field2d m_field;
 
-    private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
+    private final SwerveRequest.ApplyChassisSpeeds autoRequest =
+            new SwerveRequest.ApplyChassisSpeeds();
 
-    public final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
-            .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    public final SwerveRequest.FieldCentric teleopDrive =
+            new SwerveRequest.FieldCentric()
+                    .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
+                    .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
+                    .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    public final SwerveRequest.FieldCentricFacingAngle teleopDriveWithAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1)
-            .withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    private final SwerveDrivePoseEstimator m_poseEstimator =
+            new SwerveDrivePoseEstimator(
+                    m_kinematics,
+                    m_pigeon2.getRotation2d(),
+                    m_modulePositions,
+                    getRobotPose(),
+                    VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
+                    VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(1)));
 
-    public Drivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
+    public Drivetrain(
+            SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
 
         this.setDriveMotorsNeutralMode(NeutralModeValue.Brake);
@@ -75,14 +89,10 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             startSimThread();
         }
 
-        teleopDriveWithAngle.HeadingController.setPID(kDrive.HEADING_P, kDrive.HEADING_I, kDrive.HEADING_D);
-        teleopDriveWithAngle.HeadingController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
-        teleopDriveWithAngle.HeadingController.setTolerance(Math.toRadians(.01));
-
         this.seedFieldRelative();
 
         // Subsystems
-        sys_photonvision = new PhotonVision();
+        this.sys_photonvision = PhotonVision.getInstance();
 
         // shuffleboard
         m_field = new Field2d();
@@ -97,20 +107,29 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
 
         AutoBuilder.configureHolonomic(
-                () -> this.getState().Pose, // Supplier of current robot pose
+                this::getAutoRobotPose, // Supplier of current robot pose
                 this::seedFieldRelative, // Consumer for seeding pose against auto
                 this::getCurrentRobotChassisSpeeds,
                 this::driveFromChassisSpeeds, // Consumer of ChassisSpeeds to drive the robot
                 new HolonomicPathFollowerConfig(
-                        new PIDConstants(kAutoPathPlanner.TRANSLATION_P, kAutoPathPlanner.TRANSLATION_I,
+                        new PIDConstants(
+                                kAutoPathPlanner.TRANSLATION_P,
+                                kAutoPathPlanner.TRANSLATION_I,
                                 kAutoPathPlanner.TRANSLATION_D),
-                        new PIDConstants(kAutoPathPlanner.ROTATION_P, kAutoPathPlanner.ROTATION_I,
+                        new PIDConstants(
+                                kAutoPathPlanner.ROTATION_P,
+                                kAutoPathPlanner.ROTATION_I,
                                 kAutoPathPlanner.ROTATION_D),
-                        kRobot.IS_BETA_ROBOT ? TunerConstantsBeta.kSpeedAt12VoltsMps
+                        kRobot.IS_BETA_ROBOT
+                                ? TunerConstantsBeta.kSpeedAt12VoltsMps
                                 : TunerConstantsComp.kSpeedAt12VoltsMps,
                         driveBaseRadius,
                         new ReplanningConfig()),
-                () -> false, // Change this if the path needs to be flipped on red vs blue
+                () -> {
+                    Optional<Alliance> alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) return alliance.get() == Alliance.Red;
+                    return false;
+                }, // Change this if the path needs to be flipped on red vs blue
                 this); // Subsystem for requirements
     }
 
@@ -150,30 +169,41 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         this.setTurnMotorsNeutralMode(mode);
     }
 
-    public Command drive(Supplier<Double> velocityX, Supplier<Double> velocityY, Supplier<Double> rotationalRate) {
-        return this.applyRequest(() -> this.teleopDrive
-                .withVelocityX(velocityX.get())
-                .withVelocityY(velocityY.get())
-                .withRotationalRate(rotationalRate.get()));
+    public Command drive(
+            Supplier<Double> velocityX,
+            Supplier<Double> velocityY,
+            Supplier<Double> rotationalRate) {
+        return this.applyRequest(
+                () ->
+                        this.teleopDrive
+                                .withVelocityX(velocityX.get())
+                                .withVelocityY(velocityY.get())
+                                .withRotationalRate(rotationalRate.get()));
     }
 
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();
 
         /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
+        m_simNotifier =
+                new Notifier(
+                        () -> {
+                            final double currentTime = Utils.getCurrentTimeSeconds();
+                            double deltaTime = currentTime - m_lastSimTime;
+                            m_lastSimTime = currentTime;
 
-            /* use the measured time delta, get battery voltage from WPILib */
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        });
+                            /* use the measured time delta, get battery voltage from WPILib */
+                            updateSimState(deltaTime, RobotController.getBatteryVoltage());
+                        });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
     public Pose2d getRobotPose() {
         return m_odometry.getEstimatedPosition();
+    }
+
+    public Pose2d getAutoRobotPose() {
+        return m_poseEstimator.getEstimatedPosition();
     }
 
     public void driveWheelsAt(double speed) {
@@ -187,24 +217,31 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
      * gyro depending on availability
      */
     private void updatePoseEstimator() {
-        var photonData = sys_photonvision.getEstimatedGlobalPose(this.getState().Pose);
+        var photonData = sys_photonvision.getEstimatedGlobalPose();
         if (photonData.isPresent()) {
             // update pose estimator using april tags
             try {
-                this.addVisionMeasurement(photonData.get().estimatedPose.toPose2d(), photonData.get().timestampSeconds);
+                m_poseEstimator.setVisionMeasurementStdDevs(
+                        VecBuilder.fill(0.0001, 0.0001, 0.0001));
+                m_poseEstimator.addVisionMeasurement(
+                        photonData.get().estimatedPose.toPose2d(),
+                        photonData.get().timestampSeconds);
             } catch (Exception e) {
                 System.out.println(e);
             }
         } else {
-
+            m_poseEstimator.update(m_pigeon2.getRotation2d(), getSwerveModulePositions());
         }
+        // System.out.printf("x: %.1f | y: %.1f\n",
+        // m_poseEstimator.getEstimatedPosition().getX(),
+        // m_poseEstimator.getEstimatedPosition().getY());
     }
 
     /**
      * Updates Field2d on shuffleboard
      */
     private void updateFieldMap() {
-        m_field.setRobotPose(m_odometry.getEstimatedPosition());
+        m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());
         SmartDashboard.putData(m_field);
 
         // DEBUG Shuffleboard printouts
@@ -216,7 +253,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     /**
      * Returns list with positions of all swerve modules on robot
-     * 
+     *
      * @return Position of all swerve modules
      */
     public SwerveModulePosition[] getSwerveModulePositions() {
@@ -239,15 +276,20 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     /**
      * Pathfinds and Navigates the robot to a given position
-     * 
+     *
      * @param targetPose   Target position tso navigate to
      * @param m_controller Primary driver controller
      */
     public void navigateTo(Pose2d targetPose, CommandXboxController m_controller) {
-        PathConstraints constraints = new PathConstraints(kDrive.MAX_DRIVE_VELOCIY, kDrive.MAX_DRIVE_ACCELERATION,
-                kDrive.MAX_TURN_ANGULAR_VELOCITY, kDrive.MAX_TURN_ANGULAR_ACCELERATION);
+        PathConstraints constraints =
+                new PathConstraints(
+                        kDrive.MAX_DRIVE_VELOCIY,
+                        kDrive.MAX_DRIVE_ACCELERATION,
+                        kDrive.MAX_TURN_ANGULAR_VELOCITY,
+                        kDrive.MAX_TURN_ANGULAR_ACCELERATION);
         BooleanSupplier isAPressed = () -> m_controller.a().getAsBoolean();
-        Command pathfind = AutoBuilder.pathfindToPose(targetPose, constraints, 0, 0).onlyWhile(isAPressed);
+        Command pathfind =
+                AutoBuilder.pathfindToPose(targetPose, constraints, 0, 0).onlyWhile(isAPressed);
         pathfind.schedule();
     }
 
@@ -257,22 +299,36 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
             SwerveModule module = this.getModule(i);
 
             if (i % 2 == 0) { // even = left side
-                module.getDriveMotor().setInverted(
-                        kRobot.IS_BETA_ROBOT
-                                ? TunerConstantsBeta.kInvertLeftSide
-                                : TunerConstantsComp.kInvertLeftSide);
+                module.getDriveMotor()
+                        .setInverted(
+                                kRobot.IS_BETA_ROBOT
+                                        ? TunerConstantsBeta.kInvertLeftSide
+                                        : TunerConstantsComp.kInvertLeftSide);
             } else { // odd = right side
-                module.getDriveMotor().setInverted(
-                        kRobot.IS_BETA_ROBOT
-                                ? TunerConstantsBeta.kInvertRightSide
-                                : TunerConstantsComp.kInvertRightSide);
+                module.getDriveMotor()
+                        .setInverted(
+                                kRobot.IS_BETA_ROBOT
+                                        ? TunerConstantsBeta.kInvertRightSide
+                                        : TunerConstantsComp.kInvertRightSide);
             }
         }
+    }
+
+    public Pose2d getAmpWaypoint() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && kRobot.IS_HOME_FIELD == false) {
+            if (alliance.get() == Alliance.Red) {
+                return kWaypoints.AMP_ZONE_RED;
+            } else if (alliance.get() == Alliance.Blue) {
+                System.out.println("Returned blue");
+                return kWaypoints.AMP_ZONE_BLUE;
+            }
+        }
+        return kWaypoints.AMP_ZONE_BLUE;
     }
 
     public void periodic() {
         updatePoseEstimator();
         updateFieldMap();
     }
-
 }
