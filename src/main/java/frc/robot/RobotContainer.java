@@ -8,11 +8,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kControllers;
@@ -118,14 +120,14 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
-        // new Trigger(() -> sys_indexer.checkIR())
-        // .and(DriverStation::isTeleop)
-        // .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer))
-        // .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
-        // .setRumble(RumbleType.kBothRumble, 0.3))
-        // .andThen(new WaitCommand(0.75))
-        // .andThen(Commands.runOnce(() -> m_primaryController.getHID()
-        // .setRumble(RumbleType.kBothRumble, 0.0))));
+        new Trigger(() -> sys_indexer.checkIR())
+        .and(DriverStation::isTeleop)
+        .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer))
+        .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
+        .setRumble(RumbleType.kBothRumble, 0.3))
+        .andThen(new WaitCommand(0.75))
+        .andThen(Commands.runOnce(() -> m_primaryController.getHID()
+        .setRumble(RumbleType.kBothRumble, 0.0))));
     }
 
     /**
