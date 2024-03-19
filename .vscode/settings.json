@@ -28,7 +28,7 @@
         },
     ],
     "java.test.defaultConfig": "WPIlibUnitTests",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "workbench.tree.indent": 8,
     "editor.detectIndentation": false,
     "editor.indentSize": 4
