@@ -4,10 +4,10 @@ package frc.robot.commands;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kCartridge;
-import frc.robot.subsystems.Indexer;
+import frc.robot.Constants.kIndexer;
 import frc.robot.subsystems.Cartridge;
+import frc.robot.subsystems.Indexer;
 
 /**
  * @author
@@ -29,7 +29,6 @@ public class BringNoteToCartridge extends Command {
     public void initialize() {
         sys_Indexer.setVoltage(kIndexer.VOLTAGE);
         sys_Cartridge.setVoltage(-kCartridge.VOLTAGE);
-
     }
 
     @Override
@@ -42,5 +41,4 @@ public class BringNoteToCartridge extends Command {
     public boolean isFinished() {
         return sys_Cartridge.checkir();
     }
-
 }

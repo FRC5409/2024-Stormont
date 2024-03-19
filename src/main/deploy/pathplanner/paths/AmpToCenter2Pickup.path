@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.84,
-        "y": 7.3
+        "x": 1.74,
+        "y": 7.67
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9580339887498948,
-        "y": 7.3
+        "x": 2.8580339887498947,
+        "y": 7.67
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Amp"
     },
     {
       "anchor": {
@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 8.039411833380958,
-        "y": 5.3
+        "x": 7.980161998084413,
+        "y": 5.845157007371307
       },
       "prevControl": {
-        "x": 6.519411833380959,
-        "y": 5.3
+        "x": 6.460161998084414,
+        "y": 5.845157007371307
       },
       "nextControl": null,
       "isLocked": false,
