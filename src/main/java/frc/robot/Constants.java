@@ -150,27 +150,35 @@ public final class Constants {
         public static final String FRONT_CAMERA_NAME = "Front Camera";
         public static final String FRONT_CAMERA_ID = "OV2311_FrontCamera";
         public static final String FRONT_CAMERA_URL = "http://photonvision.local:1182/stream.mjpg";
-        public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(
-                new Translation3d(0.418846, 0, 0.2234184),
-                // new Rotation3d(Math.toRadians(90), Math.toRadians(28), 0));
-                new Rotation3d(0, Math.toRadians(-30), 0)); // 0.3302 m towards the front
+        public static final Transform3d FRONT_CAMERA_OFFSET =
+                new Transform3d(
+                        new Translation3d(0.418846, 0, 0.2234184),
+                        // new Rotation3d(Math.toRadians(90), Math.toRadians(28), 0));
+                        new Rotation3d(0, Math.toRadians(-30), 0)); // 0.3302 m towards the front
 
         // Arducam 2
         public static final String BACK_CAMERA_NAME = "Back Camera";
         public static final String BACK_CAMERA_ID = "OV2311_BackCamera";
         public static final String BACK_CAMERA_URL = "placeholder";
-        public static final Transform3d BACK_CAMERA_OFFSET = new Transform3d(
-                new Translation3d(-0.2941828, 0.1674622, 0.2117598),
-                new Rotation3d(0, Math.toRadians(-42), Math.toRadians(180))); // 0.3556 m towards the
-                                                                              // BACK and 0.1524 m
+        public static final Transform3d BACK_CAMERA_OFFSET =
+                new Transform3d(
+                        new Translation3d(-0.2941828, 0.1674622, 0.2117598),
+                        new Rotation3d(
+                                0,
+                                Math.toRadians(-42),
+                                Math.toRadians(180))); // 0.3556 m towards the
+        // BACK and 0.1524 m
         // to the left
     }
 
     public static final class kWaypoints {
         public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5));
-        public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.82, 7.73, new Rotation2d(0, Math.toRadians(-90)));
-        public static final Pose2d AMP_ZONE_RED = new Pose2d(14.7, 7.73, new Rotation2d(0, Math.toRadians(-90)));
-        public static final Pose2d TRAP_ZONE_15 = new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
+        public static final Pose2d AMP_ZONE_BLUE =
+                new Pose2d(1.82, 7.73, new Rotation2d(0, Math.toRadians(-90)));
+        public static final Pose2d AMP_ZONE_RED =
+                new Pose2d(14.7, 7.73, new Rotation2d(0, Math.toRadians(-90)));
+        public static final Pose2d TRAP_ZONE_15 =
+                new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
         public static final double TRAP_OFFSET = 2;
     }
 
@@ -212,6 +220,5 @@ public final class Constants {
         public static final double MIDDLE = -33;
         public static final double HIGH = -60;
         public static final double TRAP_TRIGGER_POS = -40;
-
     }
 }

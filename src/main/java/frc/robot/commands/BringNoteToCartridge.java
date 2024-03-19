@@ -29,7 +29,6 @@ public class BringNoteToCartridge extends Command {
     public void initialize() {
         sys_Indexer.setVoltage(kIndexer.VOLTAGE);
         sys_Cartridge.setVoltage(-kCartridge.VOLTAGE);
-
     }
 
     @Override
@@ -42,5 +41,4 @@ public class BringNoteToCartridge extends Command {
     public boolean isFinished() {
         return sys_Cartridge.checkir();
     }
-
 }

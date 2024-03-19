@@ -20,6 +20,7 @@ public class Cartridge extends SubsystemBase {
     private final CANSparkMax m_motor;
     // Sensor
     private final DigitalInput irSwitch;
+
     // shuffleboard
     // private final ShuffleboardTab sb_cartridge;
 
@@ -41,18 +42,16 @@ public class Cartridge extends SubsystemBase {
 
     // Get subsystem
     public static Cartridge getInstance() {
-        if (instance == null)
-            instance = new Cartridge();
+        if (instance == null) instance = new Cartridge();
 
         return instance;
     }
 
     /**
      * Sets voltage for manual extension
-     * 
+     *
      * @param voltage
      */
-
     public void setVoltage(double voltage) {
         m_motor.setVoltage(voltage);
     }
@@ -72,5 +71,4 @@ public class Cartridge extends SubsystemBase {
         // This method will be called once per scheduler run during simulation
 
     }
-
 }
