@@ -52,6 +52,7 @@ public class RobotContainer {
      */
     // Joysticks
     private final CommandXboxController m_primaryController;
+
     private final CommandXboxController m_secondaryController;
 
     // Subsystems
@@ -91,17 +92,20 @@ public class RobotContainer {
         sys_photonvision = PhotonVision.getInstance();
 
         // Subsystems
-        sys_drivetrain = kRobot.IS_BETA_ROBOT
-                ? TunerConstantsBeta.DriveTrain
-                : TunerConstantsComp.DriveTrain;
+        sys_drivetrain =
+                kRobot.IS_BETA_ROBOT
+                        ? TunerConstantsBeta.DriveTrain
+                        : TunerConstantsComp.DriveTrain;
 
         // Commands
-        cmd_teleopDrive = sys_drivetrain.drive(
-                () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
-                () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
-                () -> (m_primaryController.getLeftTriggerAxis()
-                        - m_primaryController.getRightTriggerAxis())
-                        * kDrive.MAX_TURN_ANGULAR_VELOCITY);
+        cmd_teleopDrive =
+                sys_drivetrain.drive(
+                        () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
+                        () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
+                        () ->
+                                (m_primaryController.getLeftTriggerAxis()
+                                                - m_primaryController.getRightTriggerAxis())
+                                        * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -144,116 +148,156 @@ public class RobotContainer {
         // Primary Controller
 
         // drivetrain
-        m_primaryController.rightBumper()
+        m_primaryController
+                .rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
 
         // score command
-        m_primaryController.a()
-                .onTrue(new ScoreNote(sys_deployment, sys_cartridge));
+        m_primaryController.a().onTrue(new ScoreNote(sys_deployment, sys_cartridge));
 
         // Intake note command
-        m_primaryController.x()
-                .whileTrue(Commands.race(
-                        Commands.startEnd(
-                                () -> {
-                                    sys_intake.setVoltage(kIntake.VOLTAGE);
-                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                },
-                                () -> {
-                                    sys_intake.setVoltage(0);
-                                    sys_indexer.setVoltage(0);
-                                },
-                                sys_intake, sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR())));
+        m_primaryController
+                .x()
+                .whileTrue(
+                        Commands.race(
+                                Commands.startEnd(
+                                        () -> {
+                                            sys_intake.setVoltage(kIntake.VOLTAGE);
+                                            sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                        },
+                                        () -> {
+                                            sys_intake.setVoltage(0);
+                                            sys_indexer.setVoltage(0);
+                                        },
+                                        sys_intake,
+                                        sys_indexer),
+                                Commands.waitUntil(() -> sys_indexer.checkIR())));
 
         // Eject note command
-        m_primaryController.b()
-                .onTrue(new ShootNote(sys_deployment, sys_cartridge));
+        m_primaryController.b().onTrue(new ShootNote(sys_deployment, sys_cartridge));
 
-        m_primaryController.start()
-                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
-        m_primaryController.leftBumper()
-                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer).andThen(Commands.runOnce(
-                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.AMP_POSITION),
-                        sys_deployment)))
+        m_primaryController
+                .leftBumper()
+                .onTrue(
+                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                .andThen(
+                                        Commands.runOnce(
+                                                () ->
+                                                        sys_deployment.setPosition(
+                                                                kDeployment
+                                                                        .kSetpoints
+                                                                        .AMP_POSITION),
+                                                sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(new AlignToPose(() -> kWaypoints.AMP_ZONE_BLUE, sys_drivetrain));
 
-        m_primaryController.y().whileTrue(new AlignToPose(
-                () -> sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain, 0),
-                sys_drivetrain));
+        m_primaryController
+                .y()
+                .whileTrue(
+                        new AlignToPose(
+                                () ->
+                                        sys_photonvision.getNearestTagPoseWithOffset(
+                                                sys_drivetrain, 0),
+                                sys_drivetrain));
 
         // Secondary Controller
         // *************************************************************************************************************
 
         // Climber setpoint high fast
-        m_secondaryController.povUp()
-                .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.HIGH,
-                                Constants.kClimber.KFAST_SLOT),
-                        sys_climber));
+        m_secondaryController
+                .povUp()
+                .onTrue(
+                        Commands.runOnce(
+                                () ->
+                                        sys_climber.setPosition(
+                                                Constants.kClimber.HIGH,
+                                                Constants.kClimber.KFAST_SLOT),
+                                sys_climber));
 
         // Climber setpoint high slow
-        m_secondaryController.povLeft().onTrue(Commands.runOnce(
-                () -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KSLOW_SLOT),
-                sys_climber));
+        m_secondaryController
+                .povLeft()
+                .onTrue(
+                        Commands.runOnce(
+                                () ->
+                                        sys_climber.setPosition(
+                                                Constants.kClimber.HIGH,
+                                                Constants.kClimber.KSLOW_SLOT),
+                                sys_climber));
 
         // Climber setpoint low fast
-        m_secondaryController.povDown()
-                .onTrue(Commands.runOnce(
-                        () -> sys_climber.setPosition(Constants.kClimber.LOW,
-                                Constants.kClimber.KFAST_SLOT),
-                        sys_climber));
+        m_secondaryController
+                .povDown()
+                .onTrue(
+                        Commands.runOnce(
+                                () ->
+                                        sys_climber.setPosition(
+                                                Constants.kClimber.LOW,
+                                                Constants.kClimber.KFAST_SLOT),
+                                sys_climber));
 
         // Climber manual down
-        m_secondaryController.leftBumper()
-                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(Constants.kClimber.VOLTAGE), sys_climber))
+        m_secondaryController
+                .leftBumper()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> sys_climber.setVoltage(Constants.kClimber.VOLTAGE),
+                                sys_climber))
                 .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // Climber manual up
-        m_secondaryController.rightBumper()
-                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(-Constants.kClimber.VOLTAGE), sys_climber))
+        m_secondaryController
+                .rightBumper()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> sys_climber.setVoltage(-Constants.kClimber.VOLTAGE),
+                                sys_climber))
                 .onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // turns off climber pid
-        m_secondaryController.start().onTrue(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
+        m_secondaryController
+                .start()
+                .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // Bring note from indexer to cartridge, when stuck
         m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
         // Climb, extend and score, endgame sequence
         m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
-
     }
 
     private void addShuffleboardItems() {
 
         // Re-zero
-        sb_driveteamTab.add("Seed field relative",
-                Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
+        sb_driveteamTab
+                .add(
+                        "Seed field relative",
+                        Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
                 .withPosition(0, 0);
 
         // Autonomous
-        sb_driveteamTab.add("Choose auto", sc_autoChooser)
-                .withPosition(0, 1)
-                .withSize(3, 1);
-
+        sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 1).withSize(3, 1);
     }
 
     public void registerPathplannerCommands() {
 
-        NamedCommands.registerCommand("IntakeFromFloor",
+        NamedCommands.registerCommand(
+                "IntakeFromFloor",
                 Commands.run(
-                        () -> {
-                            sys_intake.setVoltage(kIntake.VOLTAGE);
-                            sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                        }, sys_intake, sys_indexer)
+                                () -> {
+                                    sys_intake.setVoltage(kIntake.VOLTAGE);
+                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                },
+                                sys_intake,
+                                sys_indexer)
                         .until(sys_indexer::checkIR));
 
-        NamedCommands.registerCommand("BringNoteToCartridge",
-                new BringNoteToCartridge(sys_cartridge, sys_indexer));
-        NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
+        NamedCommands.registerCommand(
+                "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        NamedCommands.registerCommand(
+                "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));
 

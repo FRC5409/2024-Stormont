@@ -13,55 +13,53 @@ import frc.robot.Constants.kIntake;
 
 public class Intake extends SubsystemBase {
 
-	private static Intake instance = null;
+    private static Intake instance = null;
 
-	// Motors
-	private final CANSparkMax motor;
+    // Motors
+    private final CANSparkMax motor;
 
-	// Sensors
-	// private final DigitalInput irSensor;
+    // Sensors
+    // private final DigitalInput irSensor;
 
-	private Intake() {
-		// Motors
-		motor = new CANSparkMax(kCANID.INTAKE_MOTOR_ID, MotorType.kBrushless);
+    private Intake() {
+        // Motors
+        motor = new CANSparkMax(kCANID.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
-		configMotor(motor, false);
-	}
+        configMotor(motor, false);
+    }
 
-	// Get subsystem
-	public static Intake getInstance() {
-		if (instance == null)
-			instance = new Intake();
-		return instance;
-	}
+    // Get subsystem
+    public static Intake getInstance() {
+        if (instance == null) instance = new Intake();
+        return instance;
+    }
 
-	private void configMotor(CANSparkMax motor, boolean isInverted) {
-		motor.restoreFactoryDefaults();
-		motor.setInverted(isInverted);
-		motor.setIdleMode(IdleMode.kBrake);
-		motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
+    private void configMotor(CANSparkMax motor, boolean isInverted) {
+        motor.restoreFactoryDefaults();
+        motor.setInverted(isInverted);
+        motor.setIdleMode(IdleMode.kBrake);
+        motor.setSmartCurrentLimit(kIntake.CURRENT_LIMIT);
 
-		motor.burnFlash();
-	}
+        motor.burnFlash();
+    }
 
-	/**
-	 * Set voltage of motor.
-	 * 
-	 * @param volts Between -12 to 12.
-	 */
-	public void setVoltage(double volts) {
-		motor.setVoltage(volts);
-	}
+    /**
+     * Set voltage of motor.
+     *
+     * @param volts Between -12 to 12.
+     */
+    public void setVoltage(double volts) {
+        motor.setVoltage(volts);
+    }
 
-	@Override
-	public void periodic() {
-		// This method will be called once per scheduler run
-	}
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+    }
 
-	@Override
-	public void simulationPeriodic() {
-		// This method will be called once per scheduler run during simulation
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run during simulation
 
-	}
-
+    }
 }
