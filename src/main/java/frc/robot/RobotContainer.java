@@ -52,6 +52,7 @@ public class RobotContainer {
      */
     // Joysticks
     private final CommandXboxController m_primaryController;
+
     private final CommandXboxController m_secondaryController;
 
     // Subsystems
