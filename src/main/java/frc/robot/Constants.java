@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -86,23 +88,45 @@ public final class Constants {
         }
 
         public static final class kAutoAlign {
-            public static final double T_CONTROLLER_P = 4.7;
-            public static final double T_CONTROLLER_I = 0;
-            public static final double T_CONTROLLER_D = .5;
-            public static final double T_CONTROLLER_FF = .55;
-            public static final double T_CONTROLLER_TOLERANCE = 0.03;
+            public static final class kPIDDrive {
+                public static final double T_CONTROLLER_P = 4.6;
+                public static final double T_CONTROLLER_I = 0;
+                public static final double T_CONTROLLER_D = .5;
+                public static final double T_CONTROLLER_FF = .55;
+                public static final double T_CONTROLLER_TOLERANCE = 0.01;
+            }
+
+            public static final class kPIDDriveSlow {
+                public static final double T_CONTROLLER_P = 3;
+                public static final double T_CONTROLLER_I = 0;
+                public static final double T_CONTROLLER_D = 0;
+                public static final double T_CONTROLLER_FF = .55;
+                public static final double T_CONTROLLER_TOLERANCE = 0.005;
+            }
 
             public static final double R_CONTROLLER_P = 10;
             public static final double R_CONTROLLER_I = 0;
             public static final double R_CONTROLLER_D = 1;
             public static final double R_CONTROLLER_FF = .45;
-            public static final double ROTATION_TOLERANCE = 0.045;
+            public static final double ROTATION_TOLERANCE = 0.02;
 
-            public static final double REACHED_POSITION_TOLERANCE = 0.04;
-            public static final double REACHED_POSITION_TIMEOUT = 500; // ms
+            public static final double REACHED_POSITION_TOLERANCE = 0.09;
+            public static final double REACHED_POSITION_TIMEOUT = 300; // ms
 
             public static final boolean AUTO_ALIGN_DEBUG = false;
+
+            public static final class kAprilTags {
+                public static final Map<Integer, Double> TRAP_TAG_ROTATIONS = Map.of(
+                    11, 2.086 - 2.094395102393195,
+                    12, 2.086,
+                    13, 2.086 + 2.094395102393195,    
+                    14, 2.086 - 2.094395102393195,
+                    15, 2.086,
+                    16, 2.086 + 2.094395102393195
+                );
+            }
         }
+
     }
 
     public static class kDeployment {
@@ -179,7 +203,8 @@ public final class Constants {
                 new Pose2d(14.7, 7.73, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-        public static final double TRAP_OFFSET = 2;
+        public static final double TRAP_OFFSET = 0.29;
+        public static final double TRAP_DISTANT_OFFSET = .67; 
     }
 
     public static final class kIntake {
