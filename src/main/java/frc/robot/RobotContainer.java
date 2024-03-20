@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
@@ -27,7 +28,6 @@ import frc.robot.commands.AlignToPose;
 import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.ScoreNote;
 import frc.robot.commands.ScoreTrap;
-import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
 import frc.robot.subsystems.Cartridge;
@@ -175,7 +175,15 @@ public class RobotContainer {
                                 Commands.waitUntil(() -> sys_indexer.checkIR())));
 
         // Eject note command
-        m_primaryController.b().onTrue(new ShootNote(sys_deployment, sys_cartridge));
+        m_primaryController.b()
+            .onTrue(Commands.runOnce(() -> {
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+                sys_intake.setVoltage(-kIntake.VOLTAGE);
+            }, sys_cartridge, sys_intake))
+            .onFalse(Commands.runOnce(() -> {
+                sys_cartridge.setVoltage(0);
+                sys_intake.setVoltage(0);
+            }, sys_cartridge, sys_intake));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
