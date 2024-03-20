@@ -183,7 +183,7 @@ public final class Constants {
     }
 
     public static final class kIntake {
-        public static final int CURRENT_LIMIT = 50;
+        public static final int CURRENT_LIMIT = 40;
 
         public static final double VOLTAGE = 7;
     }
