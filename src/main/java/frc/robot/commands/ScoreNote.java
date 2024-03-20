@@ -43,7 +43,7 @@ public class ScoreNote extends SequentialCommandGroup {
                         sys_deployment),
                 // stops the rollers
                 Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),
-                new WaitCommand(1.5).onlyIf(DriverStation::isTeleop),
+                new WaitCommand(1).onlyIf(DriverStation::isTeleop),
                 // stop the motor to save battery
                 Commands.runOnce(() -> sys_deployment.stopMot(), sys_deployment)
                         .onlyIf(DriverStation::isTeleop));

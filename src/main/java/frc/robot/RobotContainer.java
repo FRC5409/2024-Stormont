@@ -6,15 +6,17 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
@@ -26,7 +28,6 @@ import frc.robot.commands.AlignToPose;
 import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.ScoreNote;
 import frc.robot.commands.ScoreTrap;
-import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
 import frc.robot.subsystems.Cartridge;
@@ -119,14 +120,26 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
-        // new Trigger(() -> sys_indexer.checkIR())
-        // .and(DriverStation::isTeleop)
-        // .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer))
-        // .onTrue(Commands.runOnce(() -> m_primaryController.getHID()
-        // .setRumble(RumbleType.kBothRumble, 0.3))
-        // .andThen(new WaitCommand(0.75))
-        // .andThen(Commands.runOnce(() -> m_primaryController.getHID()
-        // .setRumble(RumbleType.kBothRumble, 0.0))));
+        new Trigger(() -> sys_indexer.checkIR())
+                .and(DriverStation::isTeleop)
+                .onTrue(
+                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                .onlyIf(DriverStation::isTeleop))
+                .onTrue(
+                        Commands.runOnce(
+                                        () ->
+                                                m_primaryController
+                                                        .getHID()
+                                                        .setRumble(RumbleType.kBothRumble, 0.3))
+                                .andThen(new WaitCommand(0.75))
+                                .andThen(
+                                        Commands.runOnce(
+                                                () ->
+                                                        m_primaryController
+                                                                .getHID()
+                                                                .setRumble(
+                                                                        RumbleType.kBothRumble,
+                                                                        0.0))));
     }
 
     /**
@@ -174,7 +187,24 @@ public class RobotContainer {
                                 Commands.waitUntil(() -> sys_indexer.checkIR())));
 
         // Eject note command
-        m_primaryController.b().onTrue(new ShootNote(sys_deployment, sys_cartridge));
+        m_primaryController
+                .b()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+                                    sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                },
+                                sys_cartridge,
+                                sys_intake))
+                .onFalse(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_cartridge.setVoltage(0);
+                                    sys_intake.setVoltage(0);
+                                },
+                                sys_cartridge,
+                                sys_intake));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
