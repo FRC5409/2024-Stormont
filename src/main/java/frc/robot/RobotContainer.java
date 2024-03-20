@@ -24,7 +24,6 @@ import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kWaypoints;
-import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.commands.AlignToPose;
 import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.ScoreNote;
@@ -95,17 +94,20 @@ public class RobotContainer {
         sys_photonvision = PhotonVision.getInstance();
 
         // Subsystems
-        sys_drivetrain = kRobot.IS_BETA_ROBOT
-                ? TunerConstantsBeta.DriveTrain
-                : TunerConstantsComp.DriveTrain;
+        sys_drivetrain =
+                kRobot.IS_BETA_ROBOT
+                        ? TunerConstantsBeta.DriveTrain
+                        : TunerConstantsComp.DriveTrain;
 
         // Commands
-        cmd_teleopDrive = sys_drivetrain.drive(
-                () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
-                () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
-                () -> (m_primaryController.getLeftTriggerAxis()
-                        - m_primaryController.getRightTriggerAxis())
-                        * kDrive.MAX_TURN_ANGULAR_VELOCITY);
+        cmd_teleopDrive =
+                sys_drivetrain.drive(
+                        () -> -m_primaryController.getLeftY() * kDrive.MAX_DRIVE_VELOCIY,
+                        () -> -m_primaryController.getLeftX() * kDrive.MAX_DRIVE_VELOCIY,
+                        () ->
+                                (m_primaryController.getLeftTriggerAxis()
+                                                - m_primaryController.getRightTriggerAxis())
+                                        * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -194,8 +196,11 @@ public class RobotContainer {
                         new BringNoteToCartridge(sys_cartridge, sys_indexer)
                                 .andThen(
                                         Commands.runOnce(
-                                                () -> sys_deployment.setPosition(
-                                                        kDeployment.kSetpoints.AMP_POSITION),
+                                                () ->
+                                                        sys_deployment.setPosition(
+                                                                kDeployment
+                                                                        .kSetpoints
+                                                                        .AMP_POSITION),
                                                 sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(new AlignToPose(() -> kWaypoints.AMP_ZONE_BLUE, sys_drivetrain, true));
@@ -204,12 +209,21 @@ public class RobotContainer {
                 .y()
                 .whileTrue(
                         new AlignToPose(
-                                () -> sys_photonvision.getNearestTagPoseWithOffset(
-                                        sys_drivetrain, kWaypoints.TRAP_DISTANT_OFFSET),
-                                sys_drivetrain, false)
-                                .andThen(new AlignToPose(() -> sys_photonvision
-                                        .getNearestTagPoseWithOffset(sys_drivetrain, kWaypoints.TRAP_OFFSET),
-                                        sys_drivetrain, true)));
+                                        () ->
+                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET),
+                                        sys_drivetrain,
+                                        false)
+                                .andThen(
+                                        new AlignToPose(
+                                                () ->
+                                                        sys_photonvision
+                                                                .getNearestTagPoseWithOffset(
+                                                                        sys_drivetrain,
+                                                                        kWaypoints.TRAP_OFFSET),
+                                                sys_drivetrain,
+                                                true)));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -219,9 +233,10 @@ public class RobotContainer {
                 .povUp()
                 .onTrue(
                         Commands.runOnce(
-                                () -> sys_climber.setPosition(
-                                        Constants.kClimber.HIGH,
-                                        Constants.kClimber.KFAST_SLOT),
+                                () ->
+                                        sys_climber.setPosition(
+                                                Constants.kClimber.HIGH,
+                                                Constants.kClimber.KFAST_SLOT),
                                 sys_climber));
 
         // Climber setpoint high slow
@@ -229,9 +244,10 @@ public class RobotContainer {
                 .povLeft()
                 .onTrue(
                         Commands.runOnce(
-                                () -> sys_climber.setPosition(
-                                        Constants.kClimber.HIGH,
-                                        Constants.kClimber.KSLOW_SLOT),
+                                () ->
+                                        sys_climber.setPosition(
+                                                Constants.kClimber.HIGH,
+                                                Constants.kClimber.KSLOW_SLOT),
                                 sys_climber));
 
         // Climber setpoint low fast
@@ -239,9 +255,10 @@ public class RobotContainer {
                 .povDown()
                 .onTrue(
                         Commands.runOnce(
-                                () -> sys_climber.setPosition(
-                                        Constants.kClimber.LOW,
-                                        Constants.kClimber.KFAST_SLOT),
+                                () ->
+                                        sys_climber.setPosition(
+                                                Constants.kClimber.LOW,
+                                                Constants.kClimber.KFAST_SLOT),
                                 sys_climber));
 
         // Climber manual down
@@ -292,12 +309,12 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "IntakeFromFloor",
                 Commands.run(
-                        () -> {
-                            sys_intake.setVoltage(kIntake.VOLTAGE);
-                            sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                        },
-                        sys_intake,
-                        sys_indexer)
+                                () -> {
+                                    sys_intake.setVoltage(kIntake.VOLTAGE);
+                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                },
+                                sys_intake,
+                                sys_indexer)
                         .until(sys_indexer::checkIR));
 
         NamedCommands.registerCommand(

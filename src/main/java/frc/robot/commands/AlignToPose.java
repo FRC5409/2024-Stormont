@@ -34,7 +34,8 @@ public class AlignToPose extends Command {
      * @param targetPose     Target position to navigate to
      * @param sys_Drivetrain Drivetrain
      */
-    public AlignToPose(Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain, boolean doSlowMode) {
+    public AlignToPose(
+            Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain, boolean doSlowMode) {
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
         this.targetPose = targetPoseSupplier.get();
@@ -43,10 +44,10 @@ public class AlignToPose extends Command {
         // Initializing PID Controllers
         if (doSlowMode) {
             m_xController =
-                new PIDController(
-                        kAutoAlign.kPIDDriveSlow.T_CONTROLLER_P,
-                        kAutoAlign.kPIDDriveSlow.T_CONTROLLER_I,
-                        kAutoAlign.kPIDDriveSlow.T_CONTROLLER_D); // TODO
+                    new PIDController(
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_P,
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_I,
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_D); // TODO
 
             m_xController.setTolerance(kAutoAlign.kPIDDriveSlow.T_CONTROLLER_TOLERANCE);
 
@@ -60,10 +61,10 @@ public class AlignToPose extends Command {
             controllerTolerance = kAutoAlign.kPIDDriveSlow.T_CONTROLLER_TOLERANCE;
         } else {
             m_xController =
-                new PIDController(
-                        kAutoAlign.kPIDDrive.T_CONTROLLER_P,
-                        kAutoAlign.kPIDDrive.T_CONTROLLER_I,
-                        kAutoAlign.kPIDDrive.T_CONTROLLER_D); // TODO
+                    new PIDController(
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_P,
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_I,
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_D); // TODO
 
             m_xController.setTolerance(kAutoAlign.kPIDDrive.T_CONTROLLER_TOLERANCE);
 
@@ -79,7 +80,6 @@ public class AlignToPose extends Command {
 
         m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
-
 
         m_rController =
                 new PIDController(
@@ -118,16 +118,14 @@ public class AlignToPose extends Command {
         double xControllerOutput =
                 applyTolerance(
                         applyFeatForward(
-                                m_xController.calculate(currentPose.getX()),
-                                controllerTolerance),
+                                m_xController.calculate(currentPose.getX()), controllerTolerance),
                         currentPose.getX(),
                         targetPose.getX(),
                         controllerTolerance);
         double yControllerOutput =
                 applyTolerance(
                         applyFeatForward(
-                                m_yController.calculate(currentPose.getY()),
-                                controllerTolerance),
+                                m_yController.calculate(currentPose.getY()), controllerTolerance),
                         currentPose.getY(),
                         targetPose.getY(),
                         controllerTolerance);
@@ -180,15 +178,21 @@ public class AlignToPose extends Command {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
 
         // double poseDelta = getPoseDelta(currentPose, targetPose);
-        //double poseDelta = getPoseDistance(currentPose, targetPose);
-        System.out.printf("x: %.3f | y: %.3f\n", Math.abs(currentPose.getX() - targetPose.getX()), Math.abs(currentPose.getY() - targetPose.getY()));
+        // double poseDelta = getPoseDistance(currentPose, targetPose);
+        System.out.printf(
+                "x: %.3f | y: %.3f\n",
+                Math.abs(currentPose.getX() - targetPose.getX()),
+                Math.abs(currentPose.getY() - targetPose.getY()));
 
         double rotationDelta =
                 Math.abs(
                         targetPose.getRotation().getRadians()
                                 - currentPose.getRotation().getRadians());
 
-        if (Math.abs(currentPose.getX() - targetPose.getX()) >= kAutoAlign.REACHED_POSITION_TOLERANCE || Math.abs(currentPose.getY() - targetPose.getY()) >= kAutoAlign.REACHED_POSITION_TOLERANCE
+        if (Math.abs(currentPose.getX() - targetPose.getX())
+                        >= kAutoAlign.REACHED_POSITION_TOLERANCE
+                || Math.abs(currentPose.getY() - targetPose.getY())
+                        >= kAutoAlign.REACHED_POSITION_TOLERANCE
                 || rotationDelta >= kAutoAlign.ROTATION_TOLERANCE) {
             notInLineTime = System.currentTimeMillis();
             System.out.println("NOT IN LINE");

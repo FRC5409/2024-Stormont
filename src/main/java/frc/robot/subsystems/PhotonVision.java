@@ -20,7 +20,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
-import frc.robot.Constants.kDrive.kAutoAlign.kAprilTags;
 
 public class PhotonVision extends SubsystemBase {
     AprilTagFieldLayout aprilTagFieldLayout;
@@ -142,11 +141,11 @@ public class PhotonVision extends SubsystemBase {
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestTag = tag;
-                //System.out.println(closestTag.ID);
+                // System.out.println(closestTag.ID);
             }
         }
-        //System.out.println("=========================");
-        //System.out.println(closestTag.pose.getRotation().getAngle());
+        // System.out.println("=========================");
+        // System.out.println(closestTag.pose.getRotation().getAngle());
 
         // Calculating target pose
         double x =
@@ -155,12 +154,11 @@ public class PhotonVision extends SubsystemBase {
         double y =
                 closestTag.pose.getY()
                         + offset * Math.sin(closestTag.pose.getRotation().getAngle());
-        //return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
-        //return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getX()));
-        //return new Pose2d(x, y, new Rotation2d(closestTag.pose.getRotation().getAngle() + Math.PI*.5));
+        // return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
+        // return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getX()));
+        // return new Pose2d(x, y, new Rotation2d(closestTag.pose.getRotation().getAngle() +
+        // Math.PI*.5));
         return new Pose2d(x, y, new Rotation2d(2.086));
-
-
     }
 
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {

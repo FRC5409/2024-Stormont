@@ -116,17 +116,22 @@ public final class Constants {
             public static final boolean AUTO_ALIGN_DEBUG = false;
 
             public static final class kAprilTags {
-                public static final Map<Integer, Double> TRAP_TAG_ROTATIONS = Map.of(
-                    11, 2.086 - 2.094395102393195,
-                    12, 2.086,
-                    13, 2.086 + 2.094395102393195,    
-                    14, 2.086 - 2.094395102393195,
-                    15, 2.086,
-                    16, 2.086 + 2.094395102393195
-                );
+                public static final Map<Integer, Double> TRAP_TAG_ROTATIONS =
+                        Map.of(
+                                11,
+                                2.086 - 2.094395102393195,
+                                12,
+                                2.086,
+                                13,
+                                2.086 + 2.094395102393195,
+                                14,
+                                2.086 - 2.094395102393195,
+                                15,
+                                2.086,
+                                16,
+                                2.086 + 2.094395102393195);
             }
         }
-
     }
 
     public static class kDeployment {
@@ -204,7 +209,7 @@ public final class Constants {
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
         public static final double TRAP_OFFSET = 0.29;
-        public static final double TRAP_DISTANT_OFFSET = .67; 
+        public static final double TRAP_DISTANT_OFFSET = .67;
     }
 
     public static final class kIntake {
