@@ -187,15 +187,24 @@ public class RobotContainer {
                                 Commands.waitUntil(() -> sys_indexer.checkIR())));
 
         // Eject note command
-        m_primaryController.b()
-            .onTrue(Commands.runOnce(() -> {
-                sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
-                sys_intake.setVoltage(-kIntake.VOLTAGE);
-            }, sys_cartridge, sys_intake))
-            .onFalse(Commands.runOnce(() -> {
-                sys_cartridge.setVoltage(0);
-                sys_intake.setVoltage(0);
-            }, sys_cartridge, sys_intake));
+        m_primaryController
+                .b()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+                                    sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                },
+                                sys_cartridge,
+                                sys_intake))
+                .onFalse(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_cartridge.setVoltage(0);
+                                    sys_intake.setVoltage(0);
+                                },
+                                sys_cartridge,
+                                sys_intake));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
