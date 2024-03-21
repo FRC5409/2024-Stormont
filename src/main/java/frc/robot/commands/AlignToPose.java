@@ -191,7 +191,10 @@ public class AlignToPose extends Command {
                         targetPose.getRotation().getRadians()
                                 - currentPose.getRotation().getRadians());
 
-        if (Math.abs(currentPose.getX() - targetPose.getX()) >= kAutoAlign.REACHED_POSITION_TOLERANCE || Math.abs(currentPose.getY() - targetPose.getY()) >= kAutoAlign.REACHED_POSITION_TOLERANCE) {
+        if (Math.abs(currentPose.getX() - targetPose.getX())
+                        >= kAutoAlign.REACHED_POSITION_TOLERANCE
+                || Math.abs(currentPose.getY() - targetPose.getY())
+                        >= kAutoAlign.REACHED_POSITION_TOLERANCE) {
             notInLineTime = System.currentTimeMillis();
             System.out.println("NOT IN LINE");
         } else {
