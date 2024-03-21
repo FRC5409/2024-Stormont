@@ -308,22 +308,26 @@ public class RobotContainer {
                 .withPosition(0, 0);
 
         // Intake note for auto, on Shuffleboard
-        Command intakeNote = Commands.race(
-                                Commands.startEnd(
-                                        () -> {
-                                            sys_intake.setVoltage(kIntake.VOLTAGE);
-                                            sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                        },
-                                        () -> {
-                                            sys_intake.setVoltage(0);
-                                            sys_indexer.setVoltage(0);
-                                        },
-                                        sys_intake,
-                                        sys_indexer),
-                                Commands.waitUntil(() -> sys_indexer.checkIR()));
+        Command intakeNote =
+                Commands.race(
+                        Commands.startEnd(
+                                () -> {
+                                    sys_intake.setVoltage(kIntake.VOLTAGE);
+                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                },
+                                () -> {
+                                    sys_intake.setVoltage(0);
+                                    sys_indexer.setVoltage(0);
+                                },
+                                sys_intake,
+                                sys_indexer),
+                        Commands.waitUntil(() -> sys_indexer.checkIR()));
         Command bringNoteToCartridge = new BringNoteToCartridge(sys_cartridge, sys_indexer);
         Command intakeForAuto = intakeNote.andThen(bringNoteToCartridge);
-        sb_driveteamTab.add("Intake note for auto", intakeForAuto).withPosition(1, 0).withSize(2, 1);
+        sb_driveteamTab
+                .add("Intake note for auto", intakeForAuto)
+                .withPosition(1, 0)
+                .withSize(2, 1);
 
         // Autonomous
         sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 1).withSize(3, 1);
