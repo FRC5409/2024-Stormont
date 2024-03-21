@@ -154,12 +154,11 @@ public class PhotonVision extends SubsystemBase {
         double y =
                 closestTag.pose.getY()
                         + offset * Math.sin(closestTag.pose.getRotation().getAngle());
-        //return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
-        //return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getX()));
-        //return new Pose2d(x, y, new Rotation2d(closestTag.pose.getRotation().getAngle() + Math.PI*.5));
+        // return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
+        // return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getX()));
+        // return new Pose2d(x, y, new Rotation2d(closestTag.pose.getRotation().getAngle() +
+        // Math.PI*.5));
         return new Pose2d(x, y, new Rotation2d(2.086 + 3.141592653589793));
-
-
     }
 
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {

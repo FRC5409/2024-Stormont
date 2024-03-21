@@ -203,7 +203,9 @@ public class RobotContainer {
                                                                         .AMP_POSITION),
                                                 sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
-                .whileTrue(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain, true));
+                .whileTrue(
+                        new AlignToPose(
+                                () -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain, true));
 
         m_primaryController
                 .y()
