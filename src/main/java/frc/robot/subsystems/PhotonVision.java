@@ -139,7 +139,8 @@ public class PhotonVision extends SubsystemBase {
         for (AprilTag tag : aprilTags) {
             double distance = getPoseDistance(currentPose, tag.pose.toPose2d());
 
-            if (distance < closestDistance && kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.containsKey(tag.ID)) {
+            if (distance < closestDistance
+                    && kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.containsKey(tag.ID)) {
                 closestDistance = distance;
                 closestTag = tag;
             }
