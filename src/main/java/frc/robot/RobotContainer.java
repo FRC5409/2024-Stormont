@@ -204,7 +204,12 @@ public class RobotContainer {
                                                                         .AMP_POSITION),
                                                 sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
-                .whileTrue(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW));
+                .whileTrue(
+                        new AlignToPose(
+                                () -> sys_drivetrain.getAmpWaypoint(),
+                                sys_drivetrain,
+                                true,
+                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW));
 
         m_primaryController
                 .y()
@@ -215,7 +220,8 @@ public class RobotContainer {
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET),
                                         sys_drivetrain,
-                                        false, kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
                                 .andThen(
                                         new AlignToPose(
                                                 () ->
@@ -224,7 +230,8 @@ public class RobotContainer {
                                                                         sys_drivetrain,
                                                                         kWaypoints.TRAP_OFFSET),
                                                 sys_drivetrain,
-                                                true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+                                                true,
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
 
         // Secondary Controller
         // *************************************************************************************************************
