@@ -1,4 +1,4 @@
-name: Format
+name: Format Java
 
 on: [ pull_request ]
 
