@@ -146,16 +146,16 @@ public class PhotonVision extends SubsystemBase {
             }
         }
 
-
         double x =
                 closestTag.pose.getX()
                         + offset * Math.cos(closestTag.pose.getRotation().getAngle());
         double y =
                 closestTag.pose.getY()
                         + offset * Math.sin(closestTag.pose.getRotation().getAngle());
-        //return new Pose2d(x, y, new Rotation2d(2.086 + 3.141592653589793));
+        // return new Pose2d(x, y, new Rotation2d(2.086 + 3.141592653589793));
         System.out.println(closestTag.ID);
-        //return new Pose2d(x, y, new Rotation2d(kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.get(closestTag.ID)));
+        // return new Pose2d(x, y, new
+        // Rotation2d(kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.get(closestTag.ID)));
         return new Pose2d(x, y, new Rotation2d());
     }
 
