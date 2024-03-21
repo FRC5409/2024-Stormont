@@ -119,17 +119,17 @@ public final class Constants {
             public static final class kAprilTags {
                 public static final Map<Integer, Double> TRAP_TAG_ROTATIONS = Map.of(
                         11,
-                        2.086 - 2.094395102393195,
+                        2.086,
                         12,
                         2.086,
                         13,
-                        2.086 + 2.094395102393195,
-                        14,
-                        2.086 - 2.094395102393195,
-                        15,
                         2.086,
+                        14,
+                        2.086 + 1,
+                        15,
+                        3.0,
                         16,
-                        2.086 + 2.094395102393195);
+                        2.086);
             }
         }
     }

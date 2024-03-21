@@ -145,7 +145,6 @@ public class PhotonVision extends SubsystemBase {
             }
         }
 
-        System.out.printf("Picked %.1f\n", closestTag.ID);
 
         double x =
                 closestTag.pose.getX()
@@ -154,7 +153,9 @@ public class PhotonVision extends SubsystemBase {
                 closestTag.pose.getY()
                         + offset * Math.sin(closestTag.pose.getRotation().getAngle());
         //return new Pose2d(x, y, new Rotation2d(2.086 + 3.141592653589793));
-        return new Pose2d(x, y, new Rotation2d(kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.get(closestTag.ID)));
+        System.out.println(closestTag.ID);
+        //return new Pose2d(x, y, new Rotation2d(kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.get(closestTag.ID)));
+        return new Pose2d(x, y, new Rotation2d());
     }
 
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
