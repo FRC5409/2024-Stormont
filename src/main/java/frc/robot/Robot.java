@@ -115,6 +115,11 @@ public class Robot extends TimedRobot {
             m_autonomousCommand.cancel();
         }
 
+        CommandScheduler.getInstance().cancelAll();
+
+        // Stop intake after auto
+        m_robotContainer.sys_intake.setVoltage(0);
+
         m_robotContainer.sys_drivetrain.setAllMotorsNeutralMode(NeutralModeValue.Brake);
     }
 
