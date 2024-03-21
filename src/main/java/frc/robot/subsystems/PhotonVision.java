@@ -139,7 +139,8 @@ public class PhotonVision extends SubsystemBase {
         for (AprilTag tag : aprilTags) {
             double distance = getPoseDistance(currentPose, tag.pose.toPose2d());
 
-            if (distance < closestDistance && kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.containsKey(tag.ID)) {
+            if (distance < closestDistance
+                    && kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.containsKey(tag.ID)) {
                 closestDistance = distance;
                 closestTag = tag;
             }
@@ -153,8 +154,9 @@ public class PhotonVision extends SubsystemBase {
         double y =
                 closestTag.pose.getY()
                         + offset * Math.sin(closestTag.pose.getRotation().getAngle());
-        //return new Pose2d(x, y, new Rotation2d(2.086 + 3.141592653589793));
-        return new Pose2d(x, y, new Rotation2d(kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.get(closestTag.ID)));
+        // return new Pose2d(x, y, new Rotation2d(2.086 + 3.141592653589793));
+        return new Pose2d(
+                x, y, new Rotation2d(kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.get(closestTag.ID)));
     }
 
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
