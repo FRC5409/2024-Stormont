@@ -24,6 +24,7 @@ import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kWaypoints;
+import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.commands.AlignToPose;
 import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.ScoreNote;
@@ -203,7 +204,7 @@ public class RobotContainer {
                                                                         .AMP_POSITION),
                                                 sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
-                .whileTrue(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain, true));
+                .whileTrue(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW));
 
         m_primaryController
                 .y()
@@ -214,7 +215,7 @@ public class RobotContainer {
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET),
                                         sys_drivetrain,
-                                        false)
+                                        false, kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
                                 .andThen(
                                         new AlignToPose(
                                                 () ->
@@ -223,7 +224,7 @@ public class RobotContainer {
                                                                         sys_drivetrain,
                                                                         kWaypoints.TRAP_OFFSET),
                                                 sys_drivetrain,
-                                                true)));
+                                                true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
 
         // Secondary Controller
         // *************************************************************************************************************

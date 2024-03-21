@@ -111,7 +111,8 @@ public final class Constants {
             public static final double ROTATION_TOLERANCE = 0.015;
 
             public static final double REACHED_POSITION_TOLERANCE = 0.1;
-            public static final double REACHED_POSITION_TIMEOUT = 400; // ms
+            public static final double REACHED_POSITION_TIMEOUT_FAST = 300; // ms
+            public static final double REACHED_POSITION_TIMEOUT_SLOW = 500;
 
             public static final boolean AUTO_ALIGN_DEBUG = false;
 
