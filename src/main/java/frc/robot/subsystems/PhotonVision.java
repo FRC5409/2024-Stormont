@@ -20,7 +20,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
-import frc.robot.Constants.kDrive.kAutoAlign.kAprilTags;
 
 public class PhotonVision extends SubsystemBase {
     AprilTagFieldLayout aprilTagFieldLayout;
@@ -142,11 +141,11 @@ public class PhotonVision extends SubsystemBase {
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestTag = tag;
-                //System.out.println(closestTag.ID);
+                // System.out.println(closestTag.ID);
             }
         }
-        //System.out.println("=========================");
-        //System.out.println(closestTag.pose.getRotation().getAngle());
+        // System.out.println("=========================");
+        // System.out.println(closestTag.pose.getRotation().getAngle());
 
         // Calculating target pose
         double x =

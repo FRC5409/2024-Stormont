@@ -116,17 +116,22 @@ public final class Constants {
             public static final boolean AUTO_ALIGN_DEBUG = false;
 
             public static final class kAprilTags {
-                public static final Map<Integer, Double> TRAP_TAG_ROTATIONS = Map.of(
-                    11, 2.086 - 2.094395102393195,
-                    12, 2.086,
-                    13, 2.086 + 2.094395102393195,    
-                    14, 2.086 - 2.094395102393195,
-                    15, 2.086,
-                    16, 2.086 + 2.094395102393195
-                );
+                public static final Map<Integer, Double> TRAP_TAG_ROTATIONS =
+                        Map.of(
+                                11,
+                                2.086 - 2.094395102393195,
+                                12,
+                                2.086,
+                                13,
+                                2.086 + 2.094395102393195,
+                                14,
+                                2.086 - 2.094395102393195,
+                                15,
+                                2.086,
+                                16,
+                                2.086 + 2.094395102393195);
             }
         }
-
     }
 
     public static class kDeployment {
