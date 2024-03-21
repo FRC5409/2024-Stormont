@@ -36,7 +36,10 @@ public class AlignToPose extends Command {
      * @param sys_Drivetrain Drivetrain
      */
     public AlignToPose(
-            Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain, boolean doSlowMode, double reachedPoseTimeout) {
+            Supplier<Pose2d> targetPoseSupplier,
+            Drivetrain sys_Drivetrain,
+            boolean doSlowMode,
+            double reachedPoseTimeout) {
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
         this.targetPose = targetPoseSupplier.get();
