@@ -198,7 +198,7 @@ public class RobotContainer {
                                                         kDeployment.kSetpoints.AMP_POSITION),
                                                 sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
-                .whileTrue(new AlignToPose(() -> kWaypoints.AMP_ZONE_BLUE, sys_drivetrain, true));
+                .whileTrue(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(), sys_drivetrain, true));
 
         m_primaryController
                 .y()

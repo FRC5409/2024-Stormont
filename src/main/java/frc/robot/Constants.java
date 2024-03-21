@@ -37,7 +37,7 @@ public final class Constants {
 
     public static final class kRobot {
         public static final boolean IS_BETA_ROBOT = false;
-        public static final boolean IS_HOME_FIELD = true;
+        public static final boolean IS_HOME_FIELD = false;
     }
 
     public static final class kCANID {
@@ -106,12 +106,12 @@ public final class Constants {
 
             public static final double R_CONTROLLER_P = 10;
             public static final double R_CONTROLLER_I = 0;
-            public static final double R_CONTROLLER_D = 1;
+            public static final double R_CONTROLLER_D = 1.5;
             public static final double R_CONTROLLER_FF = .45;
-            public static final double ROTATION_TOLERANCE = 0.02;
+            public static final double ROTATION_TOLERANCE = 0.015;
 
-            public static final double REACHED_POSITION_TOLERANCE = 0.09;
-            public static final double REACHED_POSITION_TIMEOUT = 300; // ms
+            public static final double REACHED_POSITION_TOLERANCE = 0.1;
+            public static final double REACHED_POSITION_TIMEOUT = 400; // ms
 
             public static final boolean AUTO_ALIGN_DEBUG = false;
 
@@ -203,7 +203,7 @@ public final class Constants {
                 new Pose2d(14.7, 7.73, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-        public static final double TRAP_OFFSET = 0.29;
+        public static final double TRAP_OFFSET = 0.28;
         public static final double TRAP_DISTANT_OFFSET = .67; 
     }
 
