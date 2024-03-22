@@ -54,6 +54,8 @@ public final class Constants {
 
     public static final class kDrive {
 
+        public static final double CURRENT_LIMIT = 150.0;
+
         public static final ShuffleboardTab DRIVE_SHUFFLEBOARD_TAB = Shuffleboard.getTab("Drive");
 
         public static final double DRIVE_GEAR_RATIO = 6.75;
@@ -212,7 +214,7 @@ public final class Constants {
     }
 
     public static final class kIntake {
-        public static final int CURRENT_LIMIT = 50;
+        public static final int CURRENT_LIMIT = 40;
 
         public static final double VOLTAGE = 7;
     }

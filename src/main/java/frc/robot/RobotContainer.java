@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -17,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
@@ -29,7 +29,6 @@ import frc.robot.commands.AlignToPose;
 import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.ScoreNote;
 import frc.robot.commands.ScoreTrap;
-import frc.robot.commands.ShootNote;
 import frc.robot.generated.TunerConstantsBeta;
 import frc.robot.generated.TunerConstantsComp;
 import frc.robot.subsystems.Cartridge;
@@ -124,7 +123,9 @@ public class RobotContainer {
 
         new Trigger(() -> sys_indexer.checkIR())
                 .and(DriverStation::isTeleop)
-                .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer))
+                .onTrue(
+                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                .onlyIf(DriverStation::isTeleop))
                 .onTrue(
                         Commands.runOnce(
                                         () ->
@@ -187,7 +188,24 @@ public class RobotContainer {
                                 Commands.waitUntil(() -> sys_indexer.checkIR())));
 
         // Eject note command
-        m_primaryController.b().onTrue(new ShootNote(sys_deployment, sys_cartridge));
+        m_primaryController
+                .b()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+                                    sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                },
+                                sys_cartridge,
+                                sys_intake))
+                .onFalse(
+                        Commands.runOnce(
+                                () -> {
+                                    sys_cartridge.setVoltage(0);
+                                    sys_intake.setVoltage(0);
+                                },
+                                sys_cartridge,
+                                sys_intake));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
@@ -364,6 +382,28 @@ public class RobotContainer {
                         Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
                 .withPosition(0, 0);
 
+        // Intake note for auto, on Shuffleboard
+        Command intakeNote =
+                Commands.race(
+                        Commands.startEnd(
+                                () -> {
+                                    sys_intake.setVoltage(kIntake.VOLTAGE);
+                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                                },
+                                () -> {
+                                    sys_intake.setVoltage(0);
+                                    sys_indexer.setVoltage(0);
+                                },
+                                sys_intake,
+                                sys_indexer),
+                        Commands.waitUntil(() -> sys_indexer.checkIR()));
+        Command bringNoteToCartridge = new BringNoteToCartridge(sys_cartridge, sys_indexer);
+        Command intakeForAuto = intakeNote.andThen(bringNoteToCartridge);
+        sb_driveteamTab
+                .add("Intake note for auto", intakeForAuto)
+                .withPosition(1, 0)
+                .withSize(2, 1);
+
         // Autonomous
         sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 1).withSize(3, 1);
     }
@@ -384,7 +424,7 @@ public class RobotContainer {
         NamedCommands.registerCommand(
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
-                "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(2));
+                "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));
 
