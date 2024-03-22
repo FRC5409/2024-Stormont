@@ -211,28 +211,6 @@ public class RobotContainer {
                                 true,
                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW));
 
-        m_primaryController
-                .y()
-                .whileTrue(
-                        new AlignToPose(
-                                        () ->
-                                                sys_photonvision.getNearestTagPoseWithOffset(
-                                                        sys_drivetrain,
-                                                        kWaypoints.TRAP_DISTANT_OFFSET, kAutoAlign.TRAP_POSITION_1),
-                                        sys_drivetrain,
-                                        false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
-                                .andThen(
-                                        new AlignToPose(
-                                                () ->
-                                                        sys_photonvision
-                                                                .getNearestTagPoseWithOffset(
-                                                                        sys_drivetrain,
-                                                                        kWaypoints.TRAP_OFFSET, kAutoAlign.TRAP_POSITION_2),
-                                                sys_drivetrain,
-                                                true,
-                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
-
         // Secondary Controller
         // *************************************************************************************************************
 
@@ -297,6 +275,72 @@ public class RobotContainer {
 
         // Climb, extend and score, endgame sequence
         m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
+
+        m_primaryController
+                .x()
+                .whileTrue(
+                        new AlignToPose(
+                                        () ->
+                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET, sys_drivetrain.getTrapRotation(1)),
+                                        sys_drivetrain,
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                .andThen(
+                                        new AlignToPose(
+                                                () ->
+                                                        sys_photonvision
+                                                                .getNearestTagPoseWithOffset(
+                                                                        sys_drivetrain,
+                                                                        kWaypoints.TRAP_OFFSET, sys_drivetrain.getTrapRotation(1)),
+                                                sys_drivetrain,
+                                                true,
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+
+        m_primaryController
+                .b()
+                .whileTrue(
+                        new AlignToPose(
+                                        () ->
+                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET, sys_drivetrain.getTrapRotation(2)),
+                                        sys_drivetrain,
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                .andThen(
+                                        new AlignToPose(
+                                                () ->
+                                                        sys_photonvision
+                                                                .getNearestTagPoseWithOffset(
+                                                                        sys_drivetrain,
+                                                                        kWaypoints.TRAP_OFFSET, sys_drivetrain.getTrapRotation(2)),
+                                                sys_drivetrain,
+                                                true,
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+
+        m_primaryController
+                .a()
+                .whileTrue(
+                        new AlignToPose(
+                                        () ->
+                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET, sys_drivetrain.getTrapRotation(3)),
+                                        sys_drivetrain,
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                .andThen(
+                                        new AlignToPose(
+                                                () ->
+                                                        sys_photonvision
+                                                                .getNearestTagPoseWithOffset(
+                                                                        sys_drivetrain,
+                                                                        kWaypoints.TRAP_OFFSET, sys_drivetrain.getTrapRotation(3)),
+                                                sys_drivetrain,
+                                                true,
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
     }
 
     private void addShuffleboardItems() {
