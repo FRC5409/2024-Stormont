@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.sql.Driver;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -143,6 +144,14 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
 
     public void updateFieldRelative(double rotationOffset) {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+
+        if (alliance.isPresent()) {
+            if (alliance.get() == Alliance.Red) {
+                rotationOffset += Math.toRadians(180);
+            }
+        }
+        
         Rotation2d robotRotation = getState().Pose.getRotation();
         m_fieldRelativeOffset = (new Rotation2d(robotRotation.getRadians() +  rotationOffset));
     }
