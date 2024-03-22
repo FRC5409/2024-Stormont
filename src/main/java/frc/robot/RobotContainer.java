@@ -24,6 +24,7 @@ import frc.robot.Constants.kIndexer;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kRobot;
 import frc.robot.Constants.kWaypoints;
+import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.commands.AlignToPose;
 import frc.robot.commands.BringNoteToCartridge;
 import frc.robot.commands.ScoreNote;
@@ -221,16 +222,12 @@ public class RobotContainer {
                                                                         .AMP_POSITION),
                                                 sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
-                .whileTrue(new AlignToPose(() -> kWaypoints.AMP_ZONE_BLUE, sys_drivetrain));
-
-        m_primaryController
-                .y()
                 .whileTrue(
                         new AlignToPose(
-                                () ->
-                                        sys_photonvision.getNearestTagPoseWithOffset(
-                                                sys_drivetrain, 0),
-                                sys_drivetrain));
+                                () -> sys_drivetrain.getAmpWaypoint(),
+                                sys_drivetrain,
+                                true,
+                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -296,6 +293,84 @@ public class RobotContainer {
 
         // Climb, extend and score, endgame sequence
         m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
+
+        m_secondaryController
+                .x()
+                .whileTrue(
+                        new AlignToPose(
+                                        () ->
+                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        sys_drivetrain.getTrapRotation(1)),
+                                        sys_drivetrain,
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                .andThen(
+                                        new AlignToPose(
+                                                () ->
+                                                        sys_photonvision
+                                                                .getNearestTagPoseWithOffset(
+                                                                        sys_drivetrain,
+                                                                        kWaypoints.TRAP_OFFSET,
+                                                                        sys_drivetrain
+                                                                                .getTrapRotation(
+                                                                                        1)),
+                                                sys_drivetrain,
+                                                true,
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+
+        m_secondaryController
+                .b()
+                .whileTrue(
+                        new AlignToPose(
+                                        () ->
+                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        sys_drivetrain.getTrapRotation(2)),
+                                        sys_drivetrain,
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                .andThen(
+                                        new AlignToPose(
+                                                () ->
+                                                        sys_photonvision
+                                                                .getNearestTagPoseWithOffset(
+                                                                        sys_drivetrain,
+                                                                        kWaypoints.TRAP_OFFSET,
+                                                                        sys_drivetrain
+                                                                                .getTrapRotation(
+                                                                                        2)),
+                                                sys_drivetrain,
+                                                true,
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+
+        m_secondaryController
+                .a()
+                .whileTrue(
+                        new AlignToPose(
+                                        () ->
+                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        sys_drivetrain.getTrapRotation(3)),
+                                        sys_drivetrain,
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                .andThen(
+                                        new AlignToPose(
+                                                () ->
+                                                        sys_photonvision
+                                                                .getNearestTagPoseWithOffset(
+                                                                        sys_drivetrain,
+                                                                        kWaypoints.TRAP_OFFSET,
+                                                                        sys_drivetrain
+                                                                                .getTrapRotation(
+                                                                                        3)),
+                                                sys_drivetrain,
+                                                true,
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
     }
 
     private void addShuffleboardItems() {

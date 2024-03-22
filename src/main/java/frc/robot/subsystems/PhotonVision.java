@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
+import frc.robot.Constants.kDrive.kAutoAlign;
 
 public class PhotonVision extends SubsystemBase {
     AprilTagFieldLayout aprilTagFieldLayout;
@@ -128,30 +129,31 @@ public class PhotonVision extends SubsystemBase {
         return lowestAmbiguity;
     }
 
-    public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset) {
+    public Pose2d getNearestTagPoseWithOffset(
+            Drivetrain sys_drivetrain, double offset, double targetRotation) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
-        AprilTag closestTag = aprilTagFieldLayout.getTags().get(0);
+        AprilTag closestTag = aprilTagFieldLayout.getTags().get(11);
         double closestDistance = getPoseDistance(currentPose, closestTag.pose.toPose2d());
 
         // Determining closest tag
         for (AprilTag tag : aprilTags) {
             double distance = getPoseDistance(currentPose, tag.pose.toPose2d());
 
-            if (distance < closestDistance) {
+            if (distance < closestDistance
+                    && kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.containsKey(tag.ID)) {
                 closestDistance = distance;
                 closestTag = tag;
             }
         }
 
-        // Calculating target pose
         double x =
                 closestTag.pose.getX()
                         + offset * Math.cos(closestTag.pose.getRotation().getAngle());
         double y =
                 closestTag.pose.getY()
                         + offset * Math.sin(closestTag.pose.getRotation().getAngle());
-        return new Pose2d(x, y, new Rotation2d(0, closestTag.pose.getRotation().getAngle()));
+        return new Pose2d(x, y, new Rotation2d(targetRotation));
     }
 
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {

@@ -26,6 +26,8 @@ public class AlignToPose extends Command {
     private Pose2d targetPose;
     private final Supplier<Pose2d> targetPoseSupplier;
     private double notInLineTime;
+    private double controllerTolerance;
+    private double reachedPoseTimeout;
 
     /**
      * AlignToPose Constructor
@@ -33,31 +35,56 @@ public class AlignToPose extends Command {
      * @param targetPose     Target position to navigate to
      * @param sys_Drivetrain Drivetrain
      */
-    public AlignToPose(Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain) {
+    public AlignToPose(
+            Supplier<Pose2d> targetPoseSupplier,
+            Drivetrain sys_Drivetrain,
+            boolean doSlowMode,
+            double reachedPoseTimeout) {
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
         this.targetPose = targetPoseSupplier.get();
         this.targetPoseSupplier = targetPoseSupplier;
+        this.reachedPoseTimeout = reachedPoseTimeout;
 
         // Initializing PID Controllers
-        m_xController =
-                new PIDController(
-                        kAutoAlign.T_CONTROLLER_P,
-                        kAutoAlign.T_CONTROLLER_I,
-                        kAutoAlign.T_CONTROLLER_D); // TODO
-        // check
-        // period
-        // var
-        m_xController.setSetpoint(targetPose.getX());
-        m_xController.setTolerance(kAutoAlign.T_CONTROLLER_TOLERANCE);
+        if (doSlowMode) {
+            m_xController =
+                    new PIDController(
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_P,
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_I,
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_D); // TODO
 
-        m_yController =
-                new PIDController(
-                        kAutoAlign.T_CONTROLLER_P,
-                        kAutoAlign.T_CONTROLLER_I,
-                        kAutoAlign.T_CONTROLLER_D);
+            m_xController.setTolerance(kAutoAlign.kPIDDriveSlow.T_CONTROLLER_TOLERANCE);
+
+            m_yController =
+                    new PIDController(
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_P,
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_I,
+                            kAutoAlign.kPIDDriveSlow.T_CONTROLLER_D);
+            m_yController.setTolerance(kAutoAlign.kPIDDriveSlow.T_CONTROLLER_TOLERANCE);
+
+            controllerTolerance = kAutoAlign.kPIDDriveSlow.T_CONTROLLER_TOLERANCE;
+        } else {
+            m_xController =
+                    new PIDController(
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_P,
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_I,
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_D); // TODO
+
+            m_xController.setTolerance(kAutoAlign.kPIDDrive.T_CONTROLLER_TOLERANCE);
+
+            m_yController =
+                    new PIDController(
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_P,
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_I,
+                            kAutoAlign.kPIDDrive.T_CONTROLLER_D);
+            m_yController.setTolerance(kAutoAlign.kPIDDrive.T_CONTROLLER_TOLERANCE);
+
+            controllerTolerance = kAutoAlign.kPIDDrive.T_CONTROLLER_TOLERANCE;
+        }
+
+        m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
-        m_yController.setTolerance(kAutoAlign.T_CONTROLLER_TOLERANCE);
 
         m_rController =
                 new PIDController(
@@ -96,19 +123,17 @@ public class AlignToPose extends Command {
         double xControllerOutput =
                 applyTolerance(
                         applyFeatForward(
-                                m_xController.calculate(currentPose.getX()),
-                                kAutoAlign.T_CONTROLLER_FF),
+                                m_xController.calculate(currentPose.getX()), controllerTolerance),
                         currentPose.getX(),
                         targetPose.getX(),
-                        kAutoAlign.T_CONTROLLER_TOLERANCE);
+                        controllerTolerance);
         double yControllerOutput =
                 applyTolerance(
                         applyFeatForward(
-                                m_yController.calculate(currentPose.getY()),
-                                kAutoAlign.T_CONTROLLER_FF),
+                                m_yController.calculate(currentPose.getY()), controllerTolerance),
                         currentPose.getY(),
                         targetPose.getY(),
-                        kAutoAlign.T_CONTROLLER_TOLERANCE);
+                        controllerTolerance);
         double rControllerOutput =
                 applyTolerance(
                         applyFeatForward(
@@ -158,17 +183,26 @@ public class AlignToPose extends Command {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
 
         // double poseDelta = getPoseDelta(currentPose, targetPose);
-        double poseDelta = getPoseDistance(currentPose, targetPose);
+        // double poseDelta = getPoseDistance(currentPose, targetPose);
+        System.out.printf(
+                "x: %.3f | y: %.3f\n",
+                Math.abs(currentPose.getX() - targetPose.getX()),
+                Math.abs(currentPose.getY() - targetPose.getY()));
+
         double rotationDelta =
                 Math.abs(
                         targetPose.getRotation().getRadians()
                                 - currentPose.getRotation().getRadians());
 
-        if (poseDelta >= kAutoAlign.REACHED_POSITION_TOLERANCE
-                || rotationDelta >= kAutoAlign.ROTATION_TOLERANCE) {
+        if (Math.abs(currentPose.getX() - targetPose.getX())
+                        >= kAutoAlign.REACHED_POSITION_TOLERANCE
+                || Math.abs(currentPose.getY() - targetPose.getY())
+                        >= kAutoAlign.REACHED_POSITION_TOLERANCE) {
             notInLineTime = System.currentTimeMillis();
+            System.out.println("NOT IN LINE");
         } else {
-            if ((currentTime - notInLineTime) >= kAutoAlign.REACHED_POSITION_TIMEOUT) {
+            if ((currentTime - notInLineTime) >= reachedPoseTimeout) {
+                System.out.println("FINISHED ALIGNMENT!");
                 return true;
             }
         }
