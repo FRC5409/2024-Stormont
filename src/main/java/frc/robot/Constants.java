@@ -120,13 +120,16 @@ public final class Constants {
                 public static final Map<Integer, Double> TRAP_TAG_ROTATIONS =
                         Map.of(11, 2.086, 12, 2.086, 13, 2.086, 14, 2.086 + 1, 15, 3.0, 16, 2.086);
             }
+
             public static final double TRAP_POSITION_14 = (2.086 - 2.094395102393195);
             public static final double TRAP_POSITION_15 = 2.086;
             public static final double TRAP_POSITION_16 = (2.086 + 2.094395102393195);
-            
+
             public static final double TRAP_POSITION_11 = (2.086 - 3.141592653589793);
-            public static final double TRAP_POSITION_12 = (2.086 + 2.094395102393195 - 3.141592653589793);
-            public static final double TRAP_POSITION_13 = (2.086 - 2.094395102393195 - 3.141592653589793);
+            public static final double TRAP_POSITION_12 =
+                    (2.086 + 2.094395102393195 - 3.141592653589793);
+            public static final double TRAP_POSITION_13 =
+                    (2.086 - 2.094395102393195 - 3.141592653589793);
         }
     }
 
