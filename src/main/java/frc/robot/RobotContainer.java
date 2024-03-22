@@ -276,7 +276,7 @@ public class RobotContainer {
         // Climb, extend and score, endgame sequence
         m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
 
-        m_primaryController
+        m_secondaryController
                 .x()
                 .whileTrue(
                         new AlignToPose(
@@ -298,7 +298,7 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
 
-        m_primaryController
+        m_secondaryController
                 .b()
                 .whileTrue(
                         new AlignToPose(
@@ -320,7 +320,7 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
 
-        m_primaryController
+        m_secondaryController
                 .a()
                 .whileTrue(
                         new AlignToPose(

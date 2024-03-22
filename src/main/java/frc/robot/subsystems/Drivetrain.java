@@ -341,7 +341,6 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                     return kAutoAlign.TRAP_POSITION_13;
                 }
             } else if (alliance.get() == Alliance.Blue) {
-                System.out.println("Returned blue");
                 if (index == 1) {
                     //LEFT
                     return kAutoAlign.TRAP_POSITION_15;

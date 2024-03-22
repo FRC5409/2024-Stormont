@@ -242,7 +242,6 @@ public class AlignToPose extends Command {
     @Override
     public void execute() {
         moveToPose(targetPose);
-        System.out.println(sys_drivetrain.getAutoRobotPose().getRotation().getRadians());
         // PhotonVision.getInstance().getNearestTagPoseWithOffset(sys_drivetrain, 0);
     }
 
