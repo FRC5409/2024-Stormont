@@ -327,26 +327,26 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         return kWaypoints.AMP_ZONE_BLUE;
     }
 
-    public double getTrapRotation(double index) { 
+    public double getTrapRotation(double index) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
             if (alliance.get() == Alliance.Red) {
                 if (index == 1) {
-                    //LEFT
+                    // LEFT
                     return kAutoAlign.TRAP_POSITION_11;
-                } else if (index == 2) { 
-                    //RIGHT
+                } else if (index == 2) {
+                    // RIGHT
                     return kAutoAlign.TRAP_POSITION_12;
-                } else if (index == 3) { 
+                } else if (index == 3) {
                     return kAutoAlign.TRAP_POSITION_13;
                 }
             } else if (alliance.get() == Alliance.Blue) {
                 if (index == 1) {
-                    //LEFT
+                    // LEFT
                     return kAutoAlign.TRAP_POSITION_15;
-                } else if (index == 2) { 
+                } else if (index == 2) {
                     return kAutoAlign.TRAP_POSITION_16;
-                } else if (index == 3) { 
+                } else if (index == 3) {
                     return kAutoAlign.TRAP_POSITION_14;
                 }
             }

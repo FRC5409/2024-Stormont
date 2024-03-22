@@ -283,7 +283,8 @@ public class RobotContainer {
                                         () ->
                                                 sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_DISTANT_OFFSET, sys_drivetrain.getTrapRotation(1)),
+                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        sys_drivetrain.getTrapRotation(1)),
                                         sys_drivetrain,
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
@@ -293,7 +294,10 @@ public class RobotContainer {
                                                         sys_photonvision
                                                                 .getNearestTagPoseWithOffset(
                                                                         sys_drivetrain,
-                                                                        kWaypoints.TRAP_OFFSET, sys_drivetrain.getTrapRotation(1)),
+                                                                        kWaypoints.TRAP_OFFSET,
+                                                                        sys_drivetrain
+                                                                                .getTrapRotation(
+                                                                                        1)),
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
@@ -305,7 +309,8 @@ public class RobotContainer {
                                         () ->
                                                 sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_DISTANT_OFFSET, sys_drivetrain.getTrapRotation(2)),
+                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        sys_drivetrain.getTrapRotation(2)),
                                         sys_drivetrain,
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
@@ -315,7 +320,10 @@ public class RobotContainer {
                                                         sys_photonvision
                                                                 .getNearestTagPoseWithOffset(
                                                                         sys_drivetrain,
-                                                                        kWaypoints.TRAP_OFFSET, sys_drivetrain.getTrapRotation(2)),
+                                                                        kWaypoints.TRAP_OFFSET,
+                                                                        sys_drivetrain
+                                                                                .getTrapRotation(
+                                                                                        2)),
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
@@ -327,7 +335,8 @@ public class RobotContainer {
                                         () ->
                                                 sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_DISTANT_OFFSET, sys_drivetrain.getTrapRotation(3)),
+                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        sys_drivetrain.getTrapRotation(3)),
                                         sys_drivetrain,
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
@@ -337,7 +346,10 @@ public class RobotContainer {
                                                         sys_photonvision
                                                                 .getNearestTagPoseWithOffset(
                                                                         sys_drivetrain,
-                                                                        kWaypoints.TRAP_OFFSET, sys_drivetrain.getTrapRotation(3)),
+                                                                        kWaypoints.TRAP_OFFSET,
+                                                                        sys_drivetrain
+                                                                                .getTrapRotation(
+                                                                                        3)),
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
