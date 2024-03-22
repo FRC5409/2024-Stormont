@@ -156,7 +156,31 @@ public class PhotonVision extends SubsystemBase {
         //return new Pose2d(x, y, new Rotation2d(2.086 + 3.141592653589793));
         System.out.println(closestTag.ID);
         //return new Pose2d(x, y, new Rotation2d(kAutoAlign.kAprilTags.TRAP_TAG_ROTATIONS.get(closestTag.ID)));
-        return new Pose2d(x, y, new Rotation2d());
+
+        double targetRotationRad = 0;
+        switch (closestTag.ID) {
+            case 11:
+                targetRotationRad = 2.086;
+                break;
+            case 12:
+                targetRotationRad = 2.086 - 2.094395102393195;
+                break;
+            case 13:
+                targetRotationRad = 2.086 + 2.094395102393195;
+                break;
+            case 14:
+                targetRotationRad = 2.086 + 2.094395102393195;
+                break;
+            case 15:
+                targetRotationRad = 2.086;
+                break;
+            case 16:
+                targetRotationRad = 2.086 - 2.094395102393195;
+                break;
+        }
+        
+
+        return new Pose2d(x, y, new Rotation2d(targetRotationRad));
     }
 
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
