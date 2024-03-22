@@ -140,6 +140,12 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         this.setControl(autoRequest.withSpeeds(speeds));
     }
 
+
+    public void updateFieldRelative(double rotationOffset) {
+        Rotation2d robotRotation = getState().Pose.getRotation();
+        m_fieldRelativeOffset = (new Rotation2d(robotRotation.getRadians() +  rotationOffset));
+    }
+
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
