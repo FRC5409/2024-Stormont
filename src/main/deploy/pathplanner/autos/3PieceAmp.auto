@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "SeedFieldRelativeLeft"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "StartToAmp"
