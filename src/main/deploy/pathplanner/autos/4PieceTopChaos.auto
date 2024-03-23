@@ -12,33 +12,53 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "StartToCenterNote2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "StartToCenterNote2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EjectNote"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "deadline",
           "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterNote2ToCenterNote5"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CenterNote2ToCenterNote5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeFromFloor"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "CenterNote5ToBack"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BringNoteToCartridge"
           }
         }
       ]

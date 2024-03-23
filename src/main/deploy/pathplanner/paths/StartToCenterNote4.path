@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.504439219704649,
-        "y": 3.391304788307582
+        "x": 3.5687359476570806,
+        "y": 1.711695312279514
       },
       "isLocked": false,
       "linkedName": "StartMid"
     },
     {
       "anchor": {
-        "x": 8.075832086849358,
-        "y": 6.511497050771879
+        "x": 8.218295209738567,
+        "y": 2.375434505498641
       },
       "prevControl": {
-        "x": 6.941499105932685,
-        "y": 5.459023150952285
+        "x": 5.348842063424868,
+        "y": 0.7112466956415398
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterNote2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -39,14 +39,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 40.0,
+    "rotation": 30.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
-    "rotation": 0,
-    "velocity": 0
-  },
-  "useDefaultConstraints": true
+  "previewStartingState": null,
+  "useDefaultConstraints": false
 }

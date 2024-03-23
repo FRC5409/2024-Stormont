@@ -435,6 +435,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("SeedFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(0), sys_drivetrain));
         NamedCommands.registerCommand("SeedFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(90)), sys_drivetrain));
         NamedCommands.registerCommand("SeedFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(-90)), sys_drivetrain));
+        NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));
 
