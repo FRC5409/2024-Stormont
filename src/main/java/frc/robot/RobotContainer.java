@@ -227,7 +227,8 @@ public class RobotContainer {
                                 () -> sys_drivetrain.getAmpWaypoint(),
                                 sys_drivetrain,
                                 true,
-                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW));
+                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -305,7 +306,8 @@ public class RobotContainer {
                                                         sys_drivetrain.getTrapRotation(1)),
                                         sys_drivetrain,
                                         false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
                                                 () ->
@@ -318,7 +320,8 @@ public class RobotContainer {
                                                                                         1)),
                                                 sys_drivetrain,
                                                 true,
-                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
 
         m_secondaryController
                 .b()
@@ -331,7 +334,8 @@ public class RobotContainer {
                                                         sys_drivetrain.getTrapRotation(2)),
                                         sys_drivetrain,
                                         false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
                                                 () ->
@@ -344,7 +348,8 @@ public class RobotContainer {
                                                                                         2)),
                                                 sys_drivetrain,
                                                 true,
-                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
 
         m_secondaryController
                 .a()
@@ -357,7 +362,8 @@ public class RobotContainer {
                                                         sys_drivetrain.getTrapRotation(3)),
                                         sys_drivetrain,
                                         false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
                                                 () ->
@@ -370,7 +376,8 @@ public class RobotContainer {
                                                                                         3)),
                                                 sys_drivetrain,
                                                 true,
-                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
     }
 
     private void addShuffleboardItems() {

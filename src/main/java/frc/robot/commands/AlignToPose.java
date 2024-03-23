@@ -28,6 +28,7 @@ public class AlignToPose extends Command {
     private double notInLineTime;
     private double controllerTolerance;
     private double reachedPoseTimeout;
+    private double reachedPoseTolerance;
 
     /**
      * AlignToPose Constructor
@@ -39,12 +40,14 @@ public class AlignToPose extends Command {
             Supplier<Pose2d> targetPoseSupplier,
             Drivetrain sys_Drivetrain,
             boolean doSlowMode,
-            double reachedPoseTimeout) {
+            double reachedPoseTimeout,
+            double reachedPoseTolerance) {
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
         this.targetPose = targetPoseSupplier.get();
         this.targetPoseSupplier = targetPoseSupplier;
         this.reachedPoseTimeout = reachedPoseTimeout;
+        this.reachedPoseTolerance = reachedPoseTolerance;
 
         // Initializing PID Controllers
         if (doSlowMode) {
@@ -195,9 +198,9 @@ public class AlignToPose extends Command {
                                 - currentPose.getRotation().getRadians());
 
         if (Math.abs(currentPose.getX() - targetPose.getX())
-                        >= kAutoAlign.REACHED_POSITION_TOLERANCE
+                        >= reachedPoseTolerance
                 || Math.abs(currentPose.getY() - targetPose.getY())
-                        >= kAutoAlign.REACHED_POSITION_TOLERANCE) {
+                        >= reachedPoseTolerance) {
             notInLineTime = System.currentTimeMillis();
             System.out.println("NOT IN LINE");
         } else {
