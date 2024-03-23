@@ -185,13 +185,6 @@ public class AlignToPose extends Command {
         double currentTime = System.currentTimeMillis();
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
 
-        // double poseDelta = getPoseDelta(currentPose, targetPose);
-        // double poseDelta = getPoseDistance(currentPose, targetPose);
-        System.out.printf(
-                "x: %.3f | y: %.3f\n",
-                Math.abs(currentPose.getX() - targetPose.getX()),
-                Math.abs(currentPose.getY() - targetPose.getY()));
-
         double rotationDelta =
                 Math.abs(
                         targetPose.getRotation().getRadians()
@@ -202,10 +195,8 @@ public class AlignToPose extends Command {
                 || Math.abs(currentPose.getY() - targetPose.getY())
                         >= reachedPoseTolerance) {
             notInLineTime = System.currentTimeMillis();
-            System.out.println("NOT IN LINE");
         } else {
             if ((currentTime - notInLineTime) >= reachedPoseTimeout) {
-                System.out.println("FINISHED ALIGNMENT!");
                 return true;
             }
         }
