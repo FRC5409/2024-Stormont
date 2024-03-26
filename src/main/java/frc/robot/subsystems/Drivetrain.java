@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.sql.Driver;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.Constants.kDrive.kAutoPathPlanner;
@@ -138,6 +140,20 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         SmartDashboard.putNumber("Yspeed", speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("deg/s", Math.toDegrees(speeds.omegaRadiansPerSecond));
         this.setControl(autoRequest.withSpeeds(speeds));
+    }
+
+
+    public void updateFieldRelative(double rotationOffset) {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+
+        if (alliance.isPresent()) {
+            if (alliance.get() == Alliance.Red) {
+                rotationOffset += Math.toRadians(180);
+            }
+        }
+        
+        Rotation2d robotRotation = getState().Pose.getRotation();
+        m_fieldRelativeOffset = (new Rotation2d(robotRotation.getRadians() +  rotationOffset));
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {

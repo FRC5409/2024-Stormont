@@ -227,7 +227,8 @@ public class RobotContainer {
                                 () -> sys_drivetrain.getAmpWaypoint(),
                                 sys_drivetrain,
                                 true,
-                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW));
+                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -298,79 +299,94 @@ public class RobotContainer {
                 .x()
                 .whileTrue(
                         new AlignToPose(
-                                        () ->
-                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                        () -> {
+                                            double trapRotation = sys_drivetrain.getTrapRotation(1);
+                                            System.out.println(trapRotation);
+                                            return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET,
-                                                        sys_drivetrain.getTrapRotation(1)),
+                                                        trapRotation);
+                                        },
                                         sys_drivetrain,
                                         false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
-                                                () ->
-                                                        sys_photonvision
-                                                                .getNearestTagPoseWithOffset(
-                                                                        sys_drivetrain,
-                                                                        kWaypoints.TRAP_OFFSET,
-                                                                        sys_drivetrain
-                                                                                .getTrapRotation(
-                                                                                        1)),
+                                                () -> {
+                                            double trapRotation = sys_drivetrain.getTrapRotation(1);
+                                            System.out.println(trapRotation);
+                                            return sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_OFFSET,
+                                                        trapRotation);
+                                        },
                                                 sys_drivetrain,
                                                 true,
-                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
 
         m_secondaryController
                 .b()
                 .whileTrue(
                         new AlignToPose(
-                                        () ->
-                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                        () -> {
+                                            double trapRotation = sys_drivetrain.getTrapRotation(2);
+                                            System.out.println(trapRotation);
+                                            return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET,
-                                                        sys_drivetrain.getTrapRotation(2)),
+                                                        trapRotation);
+                                        },
                                         sys_drivetrain,
                                         false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
-                                                () ->
-                                                        sys_photonvision
-                                                                .getNearestTagPoseWithOffset(
-                                                                        sys_drivetrain,
-                                                                        kWaypoints.TRAP_OFFSET,
-                                                                        sys_drivetrain
-                                                                                .getTrapRotation(
-                                                                                        2)),
+                                                () -> {
+                                            double trapRotation = sys_drivetrain.getTrapRotation(2);
+                                            System.out.println(trapRotation);
+                                            return sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_OFFSET,
+                                                        trapRotation);
+                                        },
                                                 sys_drivetrain,
                                                 true,
-                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
 
         m_secondaryController
                 .a()
                 .whileTrue(
                         new AlignToPose(
-                                        () ->
-                                                sys_photonvision.getNearestTagPoseWithOffset(
+                                        () -> {
+                                            double trapRotation = sys_drivetrain.getTrapRotation(3);
+                                            System.out.println(trapRotation);
+                                            return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET,
-                                                        sys_drivetrain.getTrapRotation(3)),
+                                                        trapRotation);
+                                        },
                                         sys_drivetrain,
                                         false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST)
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
-                                                () ->
-                                                        sys_photonvision
-                                                                .getNearestTagPoseWithOffset(
-                                                                        sys_drivetrain,
-                                                                        kWaypoints.TRAP_OFFSET,
-                                                                        sys_drivetrain
-                                                                                .getTrapRotation(
-                                                                                        3)),
+                                                () -> {
+                                            double trapRotation = sys_drivetrain.getTrapRotation(3);
+                                            System.out.println(trapRotation);
+                                            return sys_photonvision.getNearestTagPoseWithOffset(
+                                                        sys_drivetrain,
+                                                        kWaypoints.TRAP_OFFSET,
+                                                        trapRotation);
+                                        },
                                                 sys_drivetrain,
                                                 true,
-                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW)));
+                                                kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
     }
 
     private void addShuffleboardItems() {
@@ -425,6 +441,10 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
+        NamedCommands.registerCommand("SeedFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(0), sys_drivetrain));
+        NamedCommands.registerCommand("SeedFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(90)), sys_drivetrain));
+        NamedCommands.registerCommand("SeedFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(-90)), sys_drivetrain));
+        NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));
 

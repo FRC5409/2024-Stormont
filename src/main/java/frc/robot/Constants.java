@@ -112,7 +112,8 @@ public final class Constants {
             public static final double R_CONTROLLER_FF = .45;
             public static final double ROTATION_TOLERANCE = 0.015;
 
-            public static final double REACHED_POSITION_TOLERANCE = 0.1;
+            public static final double REACHED_POSITION_TOLERANCE_ClOSE = 0.1;
+            public static final double REACHED_POSITION_TOLERANCE = 0.2;
             public static final double REACHED_POSITION_TIMEOUT_FAST = 300; // ms
             public static final double REACHED_POSITION_TIMEOUT_SLOW = 500;
 
@@ -204,9 +205,9 @@ public final class Constants {
     public static final class kWaypoints {
         public static final Pose2d AMP_ZONE_TEST = new Pose2d(14.5, 5.37, new Rotation2d(0, -.5));
         public static final Pose2d AMP_ZONE_BLUE =
-                new Pose2d(1.90, 7.73, new Rotation2d(0, Math.toRadians(-90)));
+                new Pose2d(1.90, 7.78, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d AMP_ZONE_RED =
-                new Pose2d(14.7, 7.73, new Rotation2d(0, Math.toRadians(-90)));
+                new Pose2d(14.7, 7.78, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
         public static final double TRAP_OFFSET = 0.28;

@@ -2,60 +2,55 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4,
-      "y": 7.3
+      "x": 1.4174820372432768,
+      "y": 2.982009382822185
     },
-    "rotation": -90.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "SeedFieldRelativeLeft"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "StartToAmp"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreNote"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "AmpToCloseNote1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeFromFloor"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CloseNote1ToAmp"
+                  "pathName": "StartToCenterNote5"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "EjectNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeFromFloor"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CenterNote5ToStart"
                 }
               },
               {
@@ -70,17 +65,17 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreNote"
+            "name": "EjectNote"
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "AmpToCenterPickup"
+                  "pathName": "StartToCenterNote4"
                 }
               },
               {
@@ -93,13 +88,13 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CenterPickupToAmp"
+                  "pathName": "CenterNote4ToStart"
                 }
               },
               {
@@ -109,12 +104,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreNote"
           }
         }
       ]

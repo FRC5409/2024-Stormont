@@ -130,7 +130,7 @@ public class PhotonVision extends SubsystemBase {
     }
 
     public Pose2d getNearestTagPoseWithOffset(
-            Drivetrain sys_drivetrain, double offset, double targetRotation) {
+        Drivetrain sys_drivetrain, double offset, double targetRotation) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
         AprilTag closestTag = aprilTagFieldLayout.getTags().get(11);
