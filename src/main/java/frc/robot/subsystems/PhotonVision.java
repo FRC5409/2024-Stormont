@@ -92,7 +92,7 @@ public class PhotonVision extends SubsystemBase {
         return poseEstimateOut;
     }
 
-    private void updateCameraStatus() {
+    public void updateCameraStatus() {
         if (!frontCamera.isConnected()) {
             if ((System.currentTimeMillis() - lastResponseFront) > kPhotonVision.CAMERA_STATUS_TIMEOUT) {
                 SmartDashboard.putBoolean("[PV] Front", false);
@@ -193,7 +193,5 @@ public class PhotonVision extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-        updateCameraStatus();
-    }
+    public void periodic() {}
 }
