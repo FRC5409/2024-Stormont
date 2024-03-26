@@ -24,9 +24,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ScoreNote"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ScoreNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlignToAmp"
+                }
+              }
+            ]
           }
         },
         {

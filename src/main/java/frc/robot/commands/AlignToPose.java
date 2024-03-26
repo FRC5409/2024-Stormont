@@ -235,13 +235,16 @@ public class AlignToPose extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        System.out.println("STARTING ALIGNMENT");
         moveToPose(targetPose);
         // PhotonVision.getInstance().getNearestTagPoseWithOffset(sys_drivetrain, 0);
     }
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        System.out.println("ENDED");
+    }
 
     // Returns true when the command should end.
     @Override
