@@ -17,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -28,6 +29,7 @@ public class PhotonVision extends SubsystemBase {
     PhotonCamera backCamera;
     PhotonPoseEstimator poseEstimatorFront;
     PhotonPoseEstimator poseEstimatorBack;
+    private double lastResponseFront, lastResponseBack; 
     private static PhotonVision instance = null;
 
     public PhotonVision() {
@@ -57,6 +59,9 @@ public class PhotonVision extends SubsystemBase {
                         backCamera,
                         kCameras.BACK_CAMERA_OFFSET);
         poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+        this.lastResponseFront = System.currentTimeMillis();
+        this.lastResponseBack = System.currentTimeMillis();
     }
 
     /**
@@ -66,10 +71,8 @@ public class PhotonVision extends SubsystemBase {
      * @return Positioning data
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-        Optional<EstimatedRobotPose> poseEstimateFront =
-                getPoseEstimatorUpdate(frontCamera, poseEstimatorFront);
-        Optional<EstimatedRobotPose> poseEstimateBack =
-                getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
+        Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront, lastResponseFront);
+        Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack, lastResponseBack);
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
         if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
@@ -89,9 +92,30 @@ public class PhotonVision extends SubsystemBase {
         return poseEstimateOut;
     }
 
-    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(
-            PhotonCamera camera, PhotonPoseEstimator poseEstimator) {
+    private void updateCameraStatus() {
+        if (!frontCamera.isConnected()) {
+            if ((System.currentTimeMillis() - lastResponseFront) > kPhotonVision.CAMERA_STATUS_TIMEOUT) {
+                SmartDashboard.putBoolean("[PV] Front", false);
+            }
+        } else {
+            lastResponseFront = System.currentTimeMillis();
+            SmartDashboard.putBoolean("[PV] Front", true); //is this going to cause too much traffic?
+        }
+
+        if (!backCamera.isConnected()) {
+            if ((System.currentTimeMillis() - lastResponseBack) > kPhotonVision.CAMERA_STATUS_TIMEOUT) {
+                SmartDashboard.putBoolean("[PV] Back", false);
+            }
+        } else {
+            lastResponseBack = System.currentTimeMillis();
+            SmartDashboard.putBoolean("[PV] Back", true); //is this going to cause too much traffic?
+        }
+    }
+
+    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(PhotonCamera camera, PhotonPoseEstimator poseEstimator, double statusTimestamp) {
         if (camera.isConnected()) {
+            
+
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
                 return isWithinAmbiguityThreshold(
@@ -129,8 +153,7 @@ public class PhotonVision extends SubsystemBase {
         return lowestAmbiguity;
     }
 
-    public Pose2d getNearestTagPoseWithOffset(
-        Drivetrain sys_drivetrain, double offset, double targetRotation) {
+    public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset, double targetRotation) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         List<AprilTag> aprilTags = aprilTagFieldLayout.getTags();
         AprilTag closestTag = aprilTagFieldLayout.getTags().get(11);
@@ -170,5 +193,7 @@ public class PhotonVision extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        updateCameraStatus();
+    }
 }
