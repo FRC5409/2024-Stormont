@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -74,6 +75,8 @@ public class RobotContainer {
 
     // Autonomous
     private final SendableChooser<Command> sc_autoChooser;
+    private final GenericEntry sb_autoDelay;
+    private final GenericEntry sb_autoRotationOffset;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -116,7 +119,12 @@ public class RobotContainer {
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sc_autoChooser = AutoBuilder.buildAutoChooser();
-        addShuffleboardItems();
+        
+        // Auto
+        sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
+
+        sb_autoRotationOffset = sb_driveteamTab.add("Starting rotation", 0).withPosition(3, 0).getEntry();
+        sb_autoDelay = sb_driveteamTab.add("Auto delay", 0).withPosition(4, 0).getEntry();
 
         // Configure the trigger bindings
         configureBindings();
@@ -389,41 +397,6 @@ public class RobotContainer {
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
     }
 
-    private void addShuffleboardItems() {
-
-        // Re-zero
-        sb_driveteamTab
-                .add(
-                        "Seed field relative",
-                        Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                .withPosition(0, 0);
-
-        // Intake note for auto, on Shuffleboard
-        Command intakeNote =
-                Commands.race(
-                        Commands.startEnd(
-                                () -> {
-                                    sys_intake.setVoltage(kIntake.VOLTAGE);
-                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                },
-                                () -> {
-                                    sys_intake.setVoltage(0);
-                                    sys_indexer.setVoltage(0);
-                                },
-                                sys_intake,
-                                sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR()));
-        Command bringNoteToCartridge = new BringNoteToCartridge(sys_cartridge, sys_indexer);
-        Command intakeForAuto = intakeNote.andThen(bringNoteToCartridge);
-        sb_driveteamTab
-                .add("Intake note for auto", intakeForAuto)
-                .withPosition(1, 0)
-                .withSize(2, 1);
-
-        // Autonomous
-        sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 1).withSize(3, 1);
-    }
-
     public void registerPathplannerCommands() {
 
         NamedCommands.registerCommand(
@@ -441,13 +414,7 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
-        NamedCommands.registerCommand("SeedFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(0), sys_drivetrain));
-        NamedCommands.registerCommand("SeedFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(90)), sys_drivetrain));
-        NamedCommands.registerCommand("SeedFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(-90)), sys_drivetrain));
         NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
-        // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
-        // sys_drivetrain)));
-
     }
 
     /**
@@ -456,6 +423,10 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sc_autoChooser.getSelected();
+        return Commands.runOnce(() -> 
+        sys_drivetrain.updateFieldRelative(Math.toRadians((double) sb_autoRotationOffset.getInteger(0))))
+        .alongWith(Commands.waitSeconds(sb_autoDelay.getDouble(0)))
+        // .andThen(Commands.print("" + Math.toRadians((double) sb_autoRotationOffset.getInteger(0))))
+        .andThen(sc_autoChooser.getSelected());
     }
 }
