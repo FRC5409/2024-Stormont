@@ -78,7 +78,6 @@ public class RobotContainer {
     public final SendableChooser<Command> sc_autoChooser;
     public final SendableChooser<Boolean> sc_alliance;
     public final GenericEntry sb_autoDelay;
-    public final GenericEntry sb_rotationOffset;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -115,9 +114,17 @@ public class RobotContainer {
                                         * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
         cmd_intakeToSensor = 
-                Commands.runOnce(() -> sys_intake.setVoltage(kIntake.VOLTAGE), sys_intake)
+                Commands.runOnce(() -> {
+                    sys_intake.setVoltage(kIntake.VOLTAGE);
+                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                }, 
+                sys_intake, sys_indexer)
                 .andThen(Commands.waitUntil(() -> sys_intake.checkIR()))
-                .andThen(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+                .andThen(Commands.runOnce(() -> {
+                    sys_intake.setVoltage(0);
+                    sys_indexer.setVoltage(0);
+                }, 
+                sys_intake, sys_indexer));
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -138,7 +145,6 @@ public class RobotContainer {
         sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
         sb_driveteamTab.add("Alliance", sc_alliance).withPosition(0, 1).withSize(3, 1);
 
-        sb_rotationOffset = sb_driveteamTab.add("Rotation offset", 0).withPosition(3, 0).getEntry();
         sb_autoDelay = sb_driveteamTab.add("Auto delay", 0).withPosition(4, 0).getEntry();
 
         // Configure the trigger bindings

@@ -215,7 +215,7 @@ public final class Constants {
     }
 
     public static final class kIntake {
-        public static final int IR_CHANNEL = 9;
+        public static final int IR_CHANNEL = 2;
 
         public static final int CURRENT_LIMIT = 40;
 

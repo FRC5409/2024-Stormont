@@ -139,7 +139,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
 
-    public void updateFieldRelative(Pose2d startingPose, Rotation2d rotationOffset) {
+    public void updateFieldRelative(Pose2d startingPose) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
         if (alliance.isPresent()) {
@@ -149,7 +149,6 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
         
         m_poseEstimator.resetPosition(startingPose.getRotation(), m_modulePositions, startingPose);
-        m_fieldRelativeOffset.plus(rotationOffset);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
