@@ -168,8 +168,11 @@ public final class Constants {
     public static final class kPhotonVision {
         public static final String FIELD_LAYOUT = AprilTagFields.k2024Crescendo.m_resourceFile;
         public static final double AMBIGUITY_THRESHOLD = 0.4;
-        // public static final Transform3d kFrontCameraOffset = new Transform3d(new
-        // Translation3d(10, 0.0, 0.26416), new Rotation3d(0,0,0));
+        public static final double CAMERA_STATUS_TIMEOUT = 3000; //3 seconds
+        public static final double MAX_JUMP_DISTANCE = 1; //m
+        public static final boolean DO_JUMP_FILTERING = false;
+        public static final double TAG_MIN_AREA = 0.15;
+
     }
 
     public static final class kCameras {
