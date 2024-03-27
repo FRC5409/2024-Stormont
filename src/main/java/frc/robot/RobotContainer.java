@@ -301,7 +301,6 @@ public class RobotContainer {
                         new AlignToPose(
                                         () -> {
                                             double trapRotation = sys_drivetrain.getTrapRotation(1);
-                                            System.out.println(trapRotation);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET,
@@ -315,7 +314,6 @@ public class RobotContainer {
                                         new AlignToPose(
                                                 () -> {
                                             double trapRotation = sys_drivetrain.getTrapRotation(1);
-                                            System.out.println(trapRotation);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET,
@@ -332,7 +330,6 @@ public class RobotContainer {
                         new AlignToPose(
                                         () -> {
                                             double trapRotation = sys_drivetrain.getTrapRotation(2);
-                                            System.out.println(trapRotation);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET,
@@ -346,7 +343,6 @@ public class RobotContainer {
                                         new AlignToPose(
                                                 () -> {
                                             double trapRotation = sys_drivetrain.getTrapRotation(2);
-                                            System.out.println(trapRotation);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET,
@@ -363,7 +359,6 @@ public class RobotContainer {
                         new AlignToPose(
                                         () -> {
                                             double trapRotation = sys_drivetrain.getTrapRotation(3);
-                                            System.out.println(trapRotation);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET,
@@ -377,7 +372,6 @@ public class RobotContainer {
                                         new AlignToPose(
                                                 () -> {
                                             double trapRotation = sys_drivetrain.getTrapRotation(3);
-                                            System.out.println(trapRotation);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET,
