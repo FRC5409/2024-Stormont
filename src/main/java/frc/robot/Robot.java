@@ -5,7 +5,9 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -92,6 +94,19 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
 
         m_robotContainer.sys_drivetrain.setAllMotorsNeutralMode(NeutralModeValue.Brake);
+
+        // If Red
+        if (m_robotContainer.sc_alliance.getSelected()) {
+            m_robotContainer.sys_drivetrain.updateFieldRelative(
+                PathPlannerAuto.getPathGroupFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).get(0).flipPath().getPreviewStartingHolonomicPose(),
+                Rotation2d.fromDegrees(m_robotContainer.sb_rotationOffset.getDouble(0))
+            );
+        } else {
+            m_robotContainer.sys_drivetrain.updateFieldRelative(
+                PathPlannerAuto.getPathGroupFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).get(0).getPreviewStartingHolonomicPose(),
+                Rotation2d.fromDegrees(m_robotContainer.sb_rotationOffset.getDouble(0))
+            );
+        }
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 

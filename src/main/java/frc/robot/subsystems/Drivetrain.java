@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 
-import java.sql.Driver;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
@@ -18,7 +16,6 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,7 +32,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.Constants.kDrive.kAutoPathPlanner;
@@ -143,17 +139,17 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
 
-    public void updateFieldRelative(double rotationOffset) {
+    public void updateFieldRelative(Pose2d startingPose, Rotation2d rotationOffset) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
         if (alliance.isPresent()) {
             if (alliance.get() == Alliance.Red) {
-                rotationOffset += Math.toRadians(180);
+                startingPose.getRotation().plus(Rotation2d.fromDegrees(180));
             }
         }
         
-        Rotation2d robotRotation = getState().Pose.getRotation();
-        m_fieldRelativeOffset = (new Rotation2d(robotRotation.getRadians() +  rotationOffset));
+        m_poseEstimator.resetPosition(startingPose.getRotation(), m_modulePositions, startingPose);
+        m_fieldRelativeOffset.plus(rotationOffset);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {

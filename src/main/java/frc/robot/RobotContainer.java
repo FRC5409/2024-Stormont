@@ -75,10 +75,10 @@ public class RobotContainer {
     public final ShuffleboardTab sb_driveteamTab;
 
     // Autonomous
-    private final SendableChooser<Command> sc_autoChooser;
-    private final SendableChooser<Boolean> sc_alliance;
-    private final GenericEntry sb_autoDelay;
-    private final GenericEntry sb_autoRotationOffset;
+    public final SendableChooser<Command> sc_autoChooser;
+    public final SendableChooser<Boolean> sc_alliance;
+    public final GenericEntry sb_autoDelay;
+    public final GenericEntry sb_rotationOffset;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -138,7 +138,7 @@ public class RobotContainer {
         sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
         sb_driveteamTab.add("Alliance", sc_alliance).withPosition(0, 1).withSize(3, 1);
 
-        sb_autoRotationOffset = sb_driveteamTab.add("Starting rotation", 0).withPosition(3, 0).getEntry();
+        sb_rotationOffset = sb_driveteamTab.add("Rotation offset", 0).withPosition(3, 0).getEntry();
         sb_autoDelay = sb_driveteamTab.add("Auto delay", 0).withPosition(4, 0).getEntry();
 
         // Configure the trigger bindings
@@ -457,11 +457,9 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return Commands.runOnce(() -> 
-        sys_drivetrain.updateFieldRelative(Math.toRadians((double) sb_autoRotationOffset.getInteger(0))))
-        .alongWith(Commands.waitSeconds(sb_autoDelay.getDouble(0)))
-        // .andThen(Commands.print("" + Math.toRadians((double) sb_autoRotationOffset.getInteger(0))))
-        .andThen(sc_autoChooser.getSelected());
+        return Commands.waitSeconds(sb_autoDelay.getDouble(0)).andThen(
+            sc_autoChooser.getSelected()
+        );
     }
 
     public boolean isRedAlliance() {
