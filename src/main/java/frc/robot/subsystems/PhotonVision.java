@@ -42,7 +42,7 @@ public class PhotonVision extends SubsystemBase {
     private boolean useCameraBack = true;
     private Pose2d lastEstimatedPose;
 
-    public PhotonVision(Drivetrain sys_drivetrain) {
+    public PhotonVision() {
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(kPhotonVision.FIELD_LAYOUT);
         } catch (Exception ignore) {
@@ -73,8 +73,7 @@ public class PhotonVision extends SubsystemBase {
         this.lastResponseFront = System.currentTimeMillis();
         this.lastResponseBack = System.currentTimeMillis();
 
-        this.sys_drivetrain = sys_drivetrain;
-        lastEstimatedPose = this.sys_drivetrain.getAutoRobotPose();
+        lastEstimatedPose = new Pose2d(0, 0, new Rotation2d(0)); //TODO replace with Drivetrain getter
     }
 
     /**
@@ -139,7 +138,6 @@ public class PhotonVision extends SubsystemBase {
                         System.out.println("[PV] Jump Detected");
                         return Optional.empty();
                     }
-
                     return photonData;
                 } else {
                     return Optional.empty();
