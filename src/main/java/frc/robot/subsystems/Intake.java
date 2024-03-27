@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 // 5409: The Chargers
 // http://github.com/FRC5409
 
@@ -19,13 +21,15 @@ public class Intake extends SubsystemBase {
     private final CANSparkMax motor;
 
     // Sensors
-    // private final DigitalInput irSensor;
+    private final DigitalInput irSensor;
 
     private Intake() {
         // Motors
         motor = new CANSparkMax(kCANID.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
         configMotor(motor, false);
+
+        irSensor = new DigitalInput(kIntake.IR_CHANNEL);
     }
 
     // Get subsystem
@@ -50,6 +54,10 @@ public class Intake extends SubsystemBase {
      */
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
+    }
+
+    public boolean checkIR() {
+        return !irSensor.get();
     }
 
     @Override
