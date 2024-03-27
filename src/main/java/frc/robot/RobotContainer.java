@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -68,12 +69,15 @@ public class RobotContainer {
 
     // Commands
     private final Command cmd_teleopDrive;
+    private final Command cmd_intakeToSensor;
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
 
     // Autonomous
-    private final SendableChooser<Command> sc_autoChooser;
+    public final SendableChooser<Command> sc_autoChooser;
+    public final SendableChooser<Boolean> sc_alliance;
+    public final GenericEntry sb_autoDelay;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -109,6 +113,19 @@ public class RobotContainer {
                                                 - m_primaryController.getRightTriggerAxis())
                                         * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
+        cmd_intakeToSensor = 
+                Commands.runOnce(() -> {
+                    sys_intake.setVoltage(kIntake.VOLTAGE);
+                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                }, 
+                sys_intake, sys_indexer)
+                .andThen(Commands.waitUntil(() -> sys_intake.checkIR()))
+                .andThen(Commands.runOnce(() -> {
+                    sys_intake.setVoltage(0);
+                    sys_indexer.setVoltage(0);
+                }, 
+                sys_intake, sys_indexer));
+
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
         registerPathplannerCommands();
@@ -116,7 +133,19 @@ public class RobotContainer {
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sc_autoChooser = AutoBuilder.buildAutoChooser();
-        addShuffleboardItems();
+
+        sc_alliance = new SendableChooser<>();
+
+        sc_alliance.addOption("Red", true);
+        sc_alliance.addOption("Blue", false);
+
+        sc_alliance.setDefaultOption("Red", true);
+        
+        // Auto
+        sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
+        sb_driveteamTab.add("Alliance", sc_alliance).withPosition(0, 1).withSize(3, 1);
+
+        sb_autoDelay = sb_driveteamTab.add("Auto delay", 0).withPosition(4, 0).getEntry();
 
         // Configure the trigger bindings
         configureBindings();
@@ -194,7 +223,7 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> {
                                     sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
-                                    sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                    sys_intake.setVoltage(-12.0);
                                 },
                                 sys_cartridge,
                                 sys_intake))
@@ -207,7 +236,17 @@ public class RobotContainer {
                                 sys_cartridge,
                                 sys_intake));
 
-        m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        m_primaryController.y()
+                                .onTrue(cmd_intakeToSensor)
+                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+
+        m_primaryController.start()
+                                .onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(-12), sys_cartridge))
+                                .onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge));
+        
+        m_primaryController.back()
+                                .onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(12), sys_cartridge))
+                                .onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge));
 
         m_primaryController
                 .leftBumper()
@@ -389,41 +428,6 @@ public class RobotContainer {
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
     }
 
-    private void addShuffleboardItems() {
-
-        // Re-zero
-        sb_driveteamTab
-                .add(
-                        "Seed field relative",
-                        Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                .withPosition(0, 0);
-
-        // Intake note for auto, on Shuffleboard
-        Command intakeNote =
-                Commands.race(
-                        Commands.startEnd(
-                                () -> {
-                                    sys_intake.setVoltage(kIntake.VOLTAGE);
-                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                },
-                                () -> {
-                                    sys_intake.setVoltage(0);
-                                    sys_indexer.setVoltage(0);
-                                },
-                                sys_intake,
-                                sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR()));
-        Command bringNoteToCartridge = new BringNoteToCartridge(sys_cartridge, sys_indexer);
-        Command intakeForAuto = intakeNote.andThen(bringNoteToCartridge);
-        sb_driveteamTab
-                .add("Intake note for auto", intakeForAuto)
-                .withPosition(1, 0)
-                .withSize(2, 1);
-
-        // Autonomous
-        sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 1).withSize(3, 1);
-    }
-
     public void registerPathplannerCommands() {
 
         NamedCommands.registerCommand(
@@ -441,13 +445,16 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
-        NamedCommands.registerCommand("SeedFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(0), sys_drivetrain));
-        NamedCommands.registerCommand("SeedFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(90)), sys_drivetrain));
-        NamedCommands.registerCommand("SeedFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.updateFieldRelative(Math.toRadians(-90)), sys_drivetrain));
-        NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
-        // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
-        // sys_drivetrain)));
 
+        NamedCommands.registerCommand(
+            "EjectNote",
+            Commands.runOnce(() -> {
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+                sys_intake.setVoltage(-kIntake.VOLTAGE);
+            }, 
+            sys_cartridge).withTimeout(1));
+
+        NamedCommands.registerCommand("IntakeToSensor", cmd_intakeToSensor);
     }
 
     /**
@@ -456,6 +463,12 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sc_autoChooser.getSelected();
+        return Commands.waitSeconds(sb_autoDelay.getDouble(0)).andThen(
+            sc_autoChooser.getSelected()
+        );
+    }
+
+    public boolean isRedAlliance() {
+        return sc_alliance.getSelected();
     }
 }
