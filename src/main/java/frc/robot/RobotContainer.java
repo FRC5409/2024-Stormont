@@ -69,6 +69,7 @@ public class RobotContainer {
 
     // Commands
     private final Command cmd_teleopDrive;
+    private final Command cmd_intakeToSensor;
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
@@ -112,6 +113,11 @@ public class RobotContainer {
                                 (m_primaryController.getLeftTriggerAxis()
                                                 - m_primaryController.getRightTriggerAxis())
                                         * kDrive.MAX_TURN_ANGULAR_VELOCITY);
+
+        cmd_intakeToSensor = 
+                Commands.runOnce(() -> sys_intake.setVoltage(kIntake.VOLTAGE), sys_intake)
+                .andThen(Commands.waitUntil(() -> sys_intake.checkIR()))
+                .andThen(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -223,6 +229,10 @@ public class RobotContainer {
                                 },
                                 sys_cartridge,
                                 sys_intake));
+
+        m_primaryController.y()
+                                .onTrue(cmd_intakeToSensor)
+                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
@@ -423,7 +433,16 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
-        NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
+
+        NamedCommands.registerCommand(
+            "EjectNote",
+            Commands.runOnce(() -> {
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+                sys_intake.setVoltage(-kIntake.VOLTAGE);
+            }, 
+            sys_cartridge).withTimeout(1));
+
+        NamedCommands.registerCommand("IntakeToSensor", cmd_intakeToSensor);
     }
 
     /**
