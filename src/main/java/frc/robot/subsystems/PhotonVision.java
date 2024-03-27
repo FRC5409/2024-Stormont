@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.subsystems.Drivetrain;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,8 @@ import frc.robot.Constants.kPhotonVision;
 import frc.robot.Constants.kDrive.kAutoAlign;
 
 public class PhotonVision extends SubsystemBase {
+    private Drivetrain sys_drivetrain;
+
     AprilTagFieldLayout aprilTagFieldLayout;
     PhotonCamera frontCamera;
     PhotonCamera backCamera;
@@ -36,8 +40,9 @@ public class PhotonVision extends SubsystemBase {
     private static PhotonVision instance = null;
     private boolean useCameraFront = true; 
     private boolean useCameraBack = true;
+    private Pose2d lastEstimatedPose;
 
-    public PhotonVision() {
+    public PhotonVision(Drivetrain sys_drivetrain) {
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(kPhotonVision.FIELD_LAYOUT);
         } catch (Exception ignore) {
@@ -67,6 +72,9 @@ public class PhotonVision extends SubsystemBase {
 
         this.lastResponseFront = System.currentTimeMillis();
         this.lastResponseBack = System.currentTimeMillis();
+
+        this.sys_drivetrain = sys_drivetrain;
+        lastEstimatedPose = this.sys_drivetrain.getAutoRobotPose();
     }
 
     /**
@@ -76,8 +84,8 @@ public class PhotonVision extends SubsystemBase {
      * @return Positioning data
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-        Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront);
-        Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
+        Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront, useCameraFront);
+        Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack, useCameraBack);
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
         if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
@@ -118,14 +126,24 @@ public class PhotonVision extends SubsystemBase {
 
     private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(PhotonCamera camera, PhotonPoseEstimator poseEstimator, boolean isCameraEnabled) {
         if (camera.isConnected()) {
-            
-
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
-                return isWithinAmbiguityThreshold(
-                                photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled
-                        ? photonData
-                        : Optional.empty();
+                //return isWithinAmbiguityThreshold(
+                //                photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled
+                //        ? photonData
+                //        : Optional.empty();
+
+                if (isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled) {
+                    if (kPhotonVision.DO_JUMP_FILTERING && getPoseDistance(lastEstimatedPose, photonData.get().estimatedPose.toPose2d()) > kPhotonVision.MAX_JUMP_DISTANCE) {
+                        lastEstimatedPose = photonData.get().estimatedPose.toPose2d();
+                        System.out.println("[PV] Jump Detected");
+                        return Optional.empty();
+                    }
+
+                    return photonData;
+                } else {
+                    return Optional.empty();
+                }
             }
         }
         return Optional.empty();
@@ -192,9 +210,9 @@ public class PhotonVision extends SubsystemBase {
     }
 
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
-        return Math.sqrt(
+        return Math.abs(Math.sqrt(
                 Math.pow(pose2.getX() - pose1.getX(), 2)
-                        + Math.pow(pose2.getY() - pose1.getY(), 2));
+                        + Math.pow(pose2.getY() - pose1.getY(), 2)));
     }
 
     public static PhotonVision getInstance() {
