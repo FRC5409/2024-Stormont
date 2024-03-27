@@ -99,14 +99,14 @@ public final class Constants {
             }
 
             public static final class kPIDDriveSlow {
-                public static final double T_CONTROLLER_P = 3;
+                public static final double T_CONTROLLER_P = 2.5;
                 public static final double T_CONTROLLER_I = 0;
-                public static final double T_CONTROLLER_D = 0;
+                public static final double T_CONTROLLER_D = 0.02;
                 public static final double T_CONTROLLER_FF = .55;
                 public static final double T_CONTROLLER_TOLERANCE = 0.005;
             }
 
-            public static final double R_CONTROLLER_P = 10;
+            public static final double R_CONTROLLER_P = 8;
             public static final double R_CONTROLLER_I = 0;
             public static final double R_CONTROLLER_D = 1.5;
             public static final double R_CONTROLLER_FF = .45;
@@ -210,7 +210,7 @@ public final class Constants {
                 new Pose2d(14.7, 7.78, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-        public static final double TRAP_OFFSET = 0.28;
+        public static final double TRAP_OFFSET = 0.335;
         public static final double TRAP_DISTANT_OFFSET = .67;
     }
 
@@ -249,7 +249,7 @@ public final class Constants {
         public static final double IR_ZERO_DISTANCE = 0;
 
         public static final double LOW = 0;
-        public static final double MIDDLE = -33;
+        public static final double MIDDLE = -15;
         public static final double HIGH = -60;
         public static final double TRAP_TRIGGER_POS = -40;
     }
