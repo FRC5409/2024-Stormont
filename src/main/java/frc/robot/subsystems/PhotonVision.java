@@ -13,10 +13,13 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import com.fasterxml.jackson.databind.node.BooleanNode;
+
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -29,6 +32,8 @@ public class PhotonVision extends SubsystemBase {
     PhotonPoseEstimator poseEstimatorFront;
     PhotonPoseEstimator poseEstimatorBack;
     private static PhotonVision instance = null;
+    private boolean useCameraFront = true; 
+    private boolean useCameraBack = true;
 
     public PhotonVision() {
         try {
@@ -67,9 +72,9 @@ public class PhotonVision extends SubsystemBase {
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
         Optional<EstimatedRobotPose> poseEstimateFront =
-                getPoseEstimatorUpdate(frontCamera, poseEstimatorFront);
+                getPoseEstimatorUpdate(frontCamera, poseEstimatorFront, useCameraFront);
         Optional<EstimatedRobotPose> poseEstimateBack =
-                getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
+                getPoseEstimatorUpdate(backCamera, poseEstimatorBack, useCameraBack);
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
         if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
@@ -85,17 +90,15 @@ public class PhotonVision extends SubsystemBase {
         } else if (poseEstimateBack.isPresent()) {
             poseEstimateOut = poseEstimateBack;
         }
-
         return poseEstimateOut;
     }
 
-    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(
-            PhotonCamera camera, PhotonPoseEstimator poseEstimator) {
+    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(PhotonCamera camera, PhotonPoseEstimator poseEstimator, boolean isCameraEnabled) {
         if (camera.isConnected()) {
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
                 return isWithinAmbiguityThreshold(
-                                photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
+                                photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled
                         ? photonData
                         : Optional.empty();
             }
@@ -117,6 +120,14 @@ public class PhotonVision extends SubsystemBase {
             }
         }
         return true;
+    }
+
+    public void useFrontCamera(boolean state) {
+        useCameraFront = state;
+    }
+
+    public void useBackCamera(boolean state) {
+        useCameraBack = state;
     }
 
     public double getMeasurementAmbiguity(List<PhotonTrackedTarget> targets) {

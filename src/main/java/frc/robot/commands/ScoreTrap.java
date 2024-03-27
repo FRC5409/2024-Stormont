@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.kCartridge;
+import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kDeployment;
 import frc.robot.subsystems.Cartridge;
 import frc.robot.subsystems.Climber;
@@ -29,6 +30,7 @@ public class ScoreTrap extends SequentialCommandGroup {
                         () ->
                                 Math.abs(sys_climber.getPosition())
                                         >= Math.abs(Constants.kClimber.TRAP_TRIGGER_POS)),
+                Commands.waitSeconds(0.2),
                 Commands.runOnce(
                         () -> sys_deployment.setPosition(kDeployment.kSetpoints.TRAP_POSITION),
                         sys_cartridge),
@@ -43,6 +45,8 @@ public class ScoreTrap extends SequentialCommandGroup {
                 Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),
                 Commands.runOnce(
                         () -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME),
-                        sys_deployment));
+                        sys_deployment),
+                Commands.waitSeconds(0.3),
+                Commands.runOnce(() -> sys_climber.setPosition(kClimber.MIDDLE, kClimber.KSLOW_SLOT), sys_climber));
     }
 }
