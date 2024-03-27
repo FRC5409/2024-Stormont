@@ -335,8 +335,8 @@ public class RobotContainer {
                                                         trapRotation);
                                         },
                                         sys_drivetrain,
-                                        false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        true,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
@@ -366,8 +366,8 @@ public class RobotContainer {
                                                         trapRotation);
                                         },
                                         sys_drivetrain,
-                                        false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        true,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
@@ -397,8 +397,8 @@ public class RobotContainer {
                                                         trapRotation);
                                         },
                                         sys_drivetrain,
-                                        false,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        true,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE)
                                 .andThen(
                                         new AlignToPose(
