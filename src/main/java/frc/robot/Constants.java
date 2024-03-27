@@ -171,6 +171,7 @@ public final class Constants {
         public static final double CAMERA_STATUS_TIMEOUT = 3000; //3 seconds
         public static final double MAX_JUMP_DISTANCE = 1; //m
         public static final boolean DO_JUMP_FILTERING = false;
+        public static final double TAG_MIN_AREA = 0.15;
 
     }
 

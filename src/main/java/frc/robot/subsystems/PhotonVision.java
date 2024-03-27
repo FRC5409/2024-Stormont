@@ -9,6 +9,8 @@ import frc.robot.subsystems.Drivetrain;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -29,8 +31,6 @@ import frc.robot.Constants.kPhotonVision;
 import frc.robot.Constants.kDrive.kAutoAlign;
 
 public class PhotonVision extends SubsystemBase {
-    private Drivetrain sys_drivetrain;
-
     AprilTagFieldLayout aprilTagFieldLayout;
     PhotonCamera frontCamera;
     PhotonCamera backCamera;
@@ -127,12 +127,7 @@ public class PhotonVision extends SubsystemBase {
         if (camera.isConnected()) {
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
-                //return isWithinAmbiguityThreshold(
-                //                photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled
-                //        ? photonData
-                //        : Optional.empty();
-
-                if (isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled) {
+                if (isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled && isTagWithinRange(photonData.get().targetsUsed, kPhotonVision.TAG_MIN_AREA)) {
                     if (kPhotonVision.DO_JUMP_FILTERING && getPoseDistance(lastEstimatedPose, photonData.get().estimatedPose.toPose2d()) > kPhotonVision.MAX_JUMP_DISTANCE) {
                         lastEstimatedPose = photonData.get().estimatedPose.toPose2d();
                         System.out.println("[PV] Jump Detected");
@@ -179,6 +174,15 @@ public class PhotonVision extends SubsystemBase {
             }
         }
         return lowestAmbiguity;
+    }
+
+    public boolean isTagWithinRange(List<PhotonTrackedTarget> tagsUsed, double minimumArea) {
+        for (PhotonTrackedTarget tag : tagsUsed) {
+            if (tag.getArea() < kPhotonVision.TAG_MIN_AREA) { 
+                return false; 
+            }
+        }
+        return true;
     }
 
     public Pose2d getNearestTagPoseWithOffset(Drivetrain sys_drivetrain, double offset, double targetRotation) {
