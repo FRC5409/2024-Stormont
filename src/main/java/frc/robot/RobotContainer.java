@@ -217,7 +217,7 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> {
                                     sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
-                                    sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                    sys_intake.setVoltage(-12.0);
                                 },
                                 sys_cartridge,
                                 sys_intake))
@@ -234,7 +234,13 @@ public class RobotContainer {
                                 .onTrue(cmd_intakeToSensor)
                                 .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
 
-        m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        m_primaryController.start()
+                                .onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(-12), sys_cartridge))
+                                .onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge));
+        
+        m_primaryController.back()
+                                .onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(12), sys_cartridge))
+                                .onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge));
 
         m_primaryController
                 .leftBumper()
