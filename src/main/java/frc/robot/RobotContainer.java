@@ -150,11 +150,8 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
-        new Trigger(() -> sys_indexer.checkIR())
+        new Trigger(() -> sys_intake.checkIR())
                 .and(DriverStation::isTeleop)
-                .onTrue(
-                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
-                                .onlyIf(DriverStation::isTeleop))
                 .onTrue(
                         Commands.runOnce(
                                         () ->
@@ -170,6 +167,13 @@ public class RobotContainer {
                                                                 .setRumble(
                                                                         RumbleType.kBothRumble,
                                                                         0.0))));
+
+
+        new Trigger(() -> sys_indexer.checkIR())
+                .and(DriverStation::isTeleop)
+                .onTrue(
+                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                                .onlyIf(DriverStation::isTeleop));
     }
 
     /**
