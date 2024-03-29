@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -68,6 +69,7 @@ public class RobotContainer {
 
     // Commands
     private final Command cmd_teleopDrive;
+    private final Command cmd_intakeToSensor;
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
@@ -75,6 +77,7 @@ public class RobotContainer {
     // Autonomous
     private final SendableChooser<Command> sc_autoChooser;
     private final SendableChooser<Boolean> sc_alliance;
+    private final GenericEntry sb_autoDelay;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,6 +113,19 @@ public class RobotContainer {
                                                 - m_primaryController.getRightTriggerAxis())
                                         * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
+        cmd_intakeToSensor = 
+            Commands.runOnce(() -> {
+                sys_intake.setVoltage(kIntake.VOLTAGE);
+                sys_indexer.setVoltage(kIndexer.VOLTAGE);
+            }, 
+            sys_intake, sys_indexer)
+            .andThen(Commands.waitUntil(() -> sys_intake.checkIR()))
+            .andThen(Commands.runOnce(() -> {
+                sys_intake.setVoltage(0);
+                sys_indexer.setVoltage(0);
+            }, 
+            sys_intake, sys_indexer));
+
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
         registerPathplannerCommands();
@@ -122,6 +138,8 @@ public class RobotContainer {
         sc_alliance.addOption("Blue", false);
         sc_alliance.addOption("Red", true);
         sc_alliance.setDefaultOption("Blue", false);
+
+        sb_autoDelay = sb_driveteamTab.add("Auto delay", 0.0).getEntry();
 
         // Autonomous
         sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
@@ -204,7 +222,7 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> {
                                     sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
-                                    sys_intake.setVoltage(-kIntake.VOLTAGE);
+                                    sys_intake.setVoltage(-12);
                                 },
                                 sys_cartridge,
                                 sys_intake))
@@ -216,6 +234,10 @@ public class RobotContainer {
                                 },
                                 sys_cartridge,
                                 sys_intake));
+
+        m_primaryController.y()
+                                .onTrue(cmd_intakeToSensor)
+                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
@@ -438,6 +460,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sc_autoChooser.getSelected();
+        return Commands.waitSeconds(sb_autoDelay.getDouble(0.0)).andThen(
+        sc_autoChooser.getSelected());
     }
 }
