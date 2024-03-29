@@ -216,7 +216,7 @@ public final class Constants {
 
     public static final class kIntake {
         public static final int IR_CHANNEL = 2;
-        
+
         public static final int CURRENT_LIMIT = 40;
 
         public static final double VOLTAGE = 7;
@@ -251,7 +251,7 @@ public final class Constants {
         public static final double IR_ZERO_DISTANCE = 0;
 
         public static final double LOW = 0;
-        public static final double MIDDLE = -33;
+        public static final double MIDDLE = -15;
         public static final double HIGH = -60;
         public static final double TRAP_TRIGGER_POS = -40;
     }
