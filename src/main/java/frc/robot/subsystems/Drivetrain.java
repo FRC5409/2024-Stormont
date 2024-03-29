@@ -24,6 +24,8 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
@@ -330,8 +332,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
     }
 
-    public Pose2d getAmpWaypoint(boolean isRed) {
-        return isRed ? kWaypoints.AMP_ZONE_BLUE : kWaypoints.AMP_ZONE_RED;
+    public Pose2d getAmpWaypoint(boolean isRed, double offset) {
+        return isRed ? kWaypoints.AMP_ZONE_BLUE.plus(new Transform2d(offset, 0, new Rotation2d(0))) : kWaypoints.AMP_ZONE_RED.plus(new Transform2d(offset, 0, new Rotation2d(0)));
     }
 
     public double getTrapRotation(double index) {

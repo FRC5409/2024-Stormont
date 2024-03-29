@@ -80,6 +80,7 @@ public class RobotContainer {
     private final SendableChooser<Boolean> sc_alliance;
     private final GenericEntry sb_autoDelay;
     private final GenericEntry sb_trapOffset;
+    private final GenericEntry sb_ampOffset; 
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -149,6 +150,7 @@ public class RobotContainer {
 
         //Automations
         sb_trapOffset = sb_driveteamTab.add("Trap Offset", 0).getEntry();
+        sb_ampOffset = sb_driveteamTab.add("Amp X Offset", 0).getEntry();
 
 
         // Configure the trigger bindings
@@ -261,7 +263,7 @@ public class RobotContainer {
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(
                         new AlignToPose(
-                                () -> sys_drivetrain.getAmpWaypoint(isRed()),
+                                () -> sys_drivetrain.getAmpWaypoint(isRed(), sb_ampOffset.getDouble(0)),
                                 sys_drivetrain,
                                 true,
                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
