@@ -25,8 +25,6 @@ import frc.robot.subsystems.PhotonVision;
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
-    private PhotonVision sys_photonVision;
-
     private RobotContainer m_robotContainer;
 
 
@@ -53,9 +51,7 @@ public class Robot extends TimedRobot {
                                                 m_robotContainer.sys_drivetrain
                                                         .setAllMotorsNeutralMode(
                                                                 NeutralModeValue.Coast))
-                                .ignoringDisable(true));
-        
-        sys_photonVision = PhotonVision.getInstance();
+                                .ignoringDisable(true));        
     }
 
     /**
