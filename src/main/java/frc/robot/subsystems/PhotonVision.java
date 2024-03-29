@@ -17,6 +17,8 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -167,6 +169,11 @@ public class PhotonVision extends SubsystemBase {
             instance = new PhotonVision();
         }
         return instance;
+    }
+
+    public void updateCameraStatus() {
+        SmartDashboard.putBoolean("FrontCamera", frontCamera.isConnected());
+        SmartDashboard.putBoolean("Back Camera", backCamera.isConnected());
     }
 
     @Override
