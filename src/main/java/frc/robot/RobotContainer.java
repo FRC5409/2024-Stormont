@@ -234,7 +234,7 @@ public class RobotContainer {
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(
                         new AlignToPose(
-                                () -> sys_drivetrain.getAmpWaypoint(),
+                                () -> sys_drivetrain.getAmpWaypoint(isRed()),
                                 sys_drivetrain,
                                 true,
                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
