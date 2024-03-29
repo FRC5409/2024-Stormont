@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.networktables.GenericEntry;
@@ -450,6 +451,16 @@ public class RobotContainer {
         NamedCommands.registerCommand("offsetFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-90), isRed()), sys_drivetrain));
         NamedCommands.registerCommand("offsetFieldRelativeBackward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-180), isRed()), sys_drivetrain));
         NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
+
+        // Applying PID values to drivetrain
+        FieldCentric driveForward =
+                sys_drivetrain
+                        .teleopDrive
+                        .withVelocityX(2.0)
+                        .withVelocityY(0.0)
+                        .withRotationalRate(0.0);
+
+        NamedCommands.registerCommand("DriveForward", Commands.runOnce(() -> sys_drivetrain.runRequest(() -> driveForward), sys_drivetrain));
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));
 
