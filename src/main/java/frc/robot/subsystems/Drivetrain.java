@@ -144,13 +144,9 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
 
-    public void updateFieldRelative(double rotationOffset) {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-
-        if (alliance.isPresent()) {
-            if (alliance.get() == Alliance.Red) {
-                rotationOffset += Math.toRadians(180);
-            }
+    public void offsetFieldRelative(double rotationOffset, boolean isRed) {
+        if (isRed) {
+            rotationOffset += Math.toRadians(180);
         }
         
         Rotation2d robotRotation = getState().Pose.getRotation();
