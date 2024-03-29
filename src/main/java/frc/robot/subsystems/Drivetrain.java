@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.io.InputStreamReader;
 import java.sql.Driver;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -330,17 +331,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
     }
 
-    public Pose2d getAmpWaypoint() {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (alliance.isPresent() && kRobot.IS_HOME_FIELD == false) {
-            if (alliance.get() == Alliance.Red) {
-                return kWaypoints.AMP_ZONE_RED;
-            } else if (alliance.get() == Alliance.Blue) {
-                System.out.println("Returned blue");
-                return kWaypoints.AMP_ZONE_BLUE;
-            }
-        }
-        return kWaypoints.AMP_ZONE_BLUE;
+    public Pose2d getAmpWaypoint(boolean isRed) {
+        return isRed ? kWaypoints.AMP_ZONE_BLUE : kWaypoints.AMP_ZONE_RED;
     }
 
     public double getTrapRotation(double index) {
