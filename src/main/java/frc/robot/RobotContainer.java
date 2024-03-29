@@ -142,15 +142,15 @@ public class RobotContainer {
         sc_alliance.addOption("Red", true);
         sc_alliance.setDefaultOption("Blue", false);
 
-        sb_autoDelay = sb_driveteamTab.add("Auto delay", 0.0).getEntry();
+        sb_autoDelay = sb_driveteamTab.add("Auto delay", 0.0).withPosition(4, 0).withSize(1, 1).getEntry();
 
         // Autonomous
         sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
         sb_driveteamTab.add("Alliance", sc_alliance).withPosition(0, 1).withSize(3, 1);
 
         //Automations
-        sb_trapOffset = sb_driveteamTab.add("Trap Offset", 0).withPosition(4, 0).withSize(1, 1).getEntry();
-        sb_ampOffset = sb_driveteamTab.add("Amp X Offset", 0).withPosition(4, 1).withSize(1, 1).getEntry();
+        sb_trapOffset = sb_driveteamTab.add("Trap Offset", 0).withPosition(5, 0).withSize(1, 1).getEntry();
+        sb_ampOffset = sb_driveteamTab.add("Amp X Offset", 0).withPosition(5, 1).withSize(1, 1).getEntry();
 
 
         // Configure the trigger bindings
