@@ -6,20 +6,17 @@ package frc.robot.subsystems;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -64,7 +61,9 @@ public class PhotonVision extends SubsystemBase {
         poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         sb_driveteamtab = Shuffleboard.getTab("Drive team");
-        updateCameraStatus();
+        sb_driveteamtab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(3, 0);
+        sb_driveteamtab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(3, 1);
+
     }
 
     /**
@@ -175,11 +174,6 @@ public class PhotonVision extends SubsystemBase {
             instance = new PhotonVision();
         }
         return instance;
-    }
-
-    public void updateCameraStatus() {
-        sb_driveteamtab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(3, 0);
-        sb_driveteamtab.addBoolean("FrontCamera", () -> backCamera.isConnected()).withPosition(3, 1);
     }
 
     @Override

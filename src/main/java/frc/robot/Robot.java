@@ -86,7 +86,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         m_robotContainer.sys_climber.setVoltage(0);
-        sys_photonVision.updateCameraStatus();
     }
 
     @Override
