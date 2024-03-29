@@ -74,6 +74,7 @@ public class RobotContainer {
 
     // Autonomous
     private final SendableChooser<Command> sc_autoChooser;
+    private final SendableChooser<Boolean> sc_alliance;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -116,7 +117,16 @@ public class RobotContainer {
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sc_autoChooser = AutoBuilder.buildAutoChooser();
-        addShuffleboardItems();
+
+        sc_alliance = new SendableChooser<>();
+        sc_alliance.addOption("Blue", false);
+        sc_alliance.addOption("Red", true);
+        sc_alliance.setDefaultOption("Blue", false);
+
+        // Autonomous
+        sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
+        sb_driveteamTab.add("Alliance", sc_alliance).withPosition(0, 1).withSize(3, 1);
+
 
         // Configure the trigger bindings
         configureBindings();
@@ -389,41 +399,6 @@ public class RobotContainer {
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
     }
 
-    private void addShuffleboardItems() {
-
-        // Re-zero
-        sb_driveteamTab
-                .add(
-                        "Seed field relative",
-                        Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                .withPosition(0, 0);
-
-        // Intake note for auto, on Shuffleboard
-        Command intakeNote =
-                Commands.race(
-                        Commands.startEnd(
-                                () -> {
-                                    sys_intake.setVoltage(kIntake.VOLTAGE);
-                                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                                },
-                                () -> {
-                                    sys_intake.setVoltage(0);
-                                    sys_indexer.setVoltage(0);
-                                },
-                                sys_intake,
-                                sys_indexer),
-                        Commands.waitUntil(() -> sys_indexer.checkIR()));
-        Command bringNoteToCartridge = new BringNoteToCartridge(sys_cartridge, sys_indexer);
-        Command intakeForAuto = intakeNote.andThen(bringNoteToCartridge);
-        sb_driveteamTab
-                .add("Intake note for auto", intakeForAuto)
-                .withPosition(1, 0)
-                .withSize(2, 1);
-
-        // Autonomous
-        sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 1).withSize(3, 1);
-    }
-
     public void registerPathplannerCommands() {
 
         NamedCommands.registerCommand(
@@ -448,6 +423,13 @@ public class RobotContainer {
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));
 
+    }
+
+    /**
+     * @return True if alliance color that is selected is true
+     */
+    public boolean isRed() {
+        return sc_alliance.getSelected();
     }
 
     /**
