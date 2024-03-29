@@ -18,6 +18,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
@@ -31,6 +32,8 @@ public class PhotonVision extends SubsystemBase {
     PhotonPoseEstimator poseEstimatorFront;
     PhotonPoseEstimator poseEstimatorBack;
     private static PhotonVision instance = null;
+
+    private ShuffleboardTab sb_driveteamtab;
 
     public PhotonVision() {
         try {
@@ -59,6 +62,9 @@ public class PhotonVision extends SubsystemBase {
                         backCamera,
                         kCameras.BACK_CAMERA_OFFSET);
         poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+        sb_driveteamtab = Shuffleboard.getTab("Drive team");
+        updateCameraStatus();
     }
 
     /**
@@ -172,10 +178,11 @@ public class PhotonVision extends SubsystemBase {
     }
 
     public void updateCameraStatus() {
-        SmartDashboard.putBoolean("FrontCamera", frontCamera.isConnected());
-        SmartDashboard.putBoolean("Back Camera", backCamera.isConnected());
+        sb_driveteamtab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(3, 0);
+        sb_driveteamtab.addBoolean("FrontCamera", () -> backCamera.isConnected()).withPosition(3, 1);
     }
 
     @Override
     public void periodic() {}
 }
+
