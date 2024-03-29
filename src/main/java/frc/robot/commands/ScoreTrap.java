@@ -40,12 +40,12 @@ public class ScoreTrap extends SequentialCommandGroup {
                         () -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge),
                 Commands.waitSeconds(0.1),
                 Commands.waitUntil(() -> sys_cartridge.checkir()),
-                Commands.waitSeconds(0.2),
+                Commands.waitSeconds(0.3),
                 Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),
                 Commands.runOnce(
                         () -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME),
                         sys_deployment),
-                Commands.waitSeconds(0.3),
+                Commands.waitSeconds(0.5),
                 Commands.runOnce(() -> sys_climber.setPosition(kClimber.MIDDLE, kClimber.KSLOW_SLOT), sys_climber));
     }
 }

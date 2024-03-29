@@ -4,11 +4,10 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.signals.IsPROLicensedValue;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
@@ -30,7 +29,7 @@ public class AlignToPose extends Command {
     private double controllerTolerance;
     private double reachedPoseTimeout;
     private double reachedPoseTolerance;
-    private boolean isRed; 
+    private BooleanSupplier isRed; 
 
     /**
      * AlignToPose Constructor
@@ -44,7 +43,7 @@ public class AlignToPose extends Command {
             boolean doSlowMode,
             double reachedPoseTimeout,
             double reachedPoseTolerance,
-            boolean isRed) {
+            BooleanSupplier isRed) {
 
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
@@ -151,7 +150,7 @@ public class AlignToPose extends Command {
                         targetPose.getRotation().getRadians(),
                         kAutoAlign.ROTATION_TOLERANCE);
 
-        if (isRed) {
+        if (isRed.getAsBoolean()) {
             xControllerOutput = -xControllerOutput;
             yControllerOutput = -yControllerOutput;
         }

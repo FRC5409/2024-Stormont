@@ -140,8 +140,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
 
-    public void offsetFieldRelative(double rotationOffset, boolean isRed) {
-        if (isRed) {
+    public void offsetFieldRelative(double rotationOffset, BooleanSupplier isRed) {
+        if (isRed.getAsBoolean()) {
             rotationOffset += Math.toRadians(180);
         }
         
@@ -323,32 +323,26 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
     }
 
-    public Pose2d getAmpWaypoint(boolean isRed, double offset) {
-        return isRed ? kWaypoints.AMP_ZONE_BLUE.plus(new Transform2d(offset, 0, new Rotation2d(0))) : kWaypoints.AMP_ZONE_RED.plus(new Transform2d(offset, 0, new Rotation2d(0)));
+    public Pose2d getAmpWaypoint(BooleanSupplier isRed, double offset) {
+        return isRed.getAsBoolean() ? kWaypoints.AMP_ZONE_RED.plus(new Transform2d(offset, 0, new Rotation2d(0))) : kWaypoints.AMP_ZONE_BLUE.plus(new Transform2d(offset, 0, new Rotation2d(0)));
     }
 
-    public double getTrapRotation(double index) {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-            if (alliance.get() == Alliance.Red) {
-                if (index == 1) {
-                    // LEFT
-                    return kAutoAlign.TRAP_POSITION_11;
-                } else if (index == 2) {
-                    // RIGHT
-                    return kAutoAlign.TRAP_POSITION_12;
-                } else if (index == 3) {
-                    return kAutoAlign.TRAP_POSITION_13;
-                }
-            } else if (alliance.get() == Alliance.Blue) {
-                if (index == 1) {
-                    // LEFT
-                    return kAutoAlign.TRAP_POSITION_15;
-                } else if (index == 2) {
-                    return kAutoAlign.TRAP_POSITION_16;
-                } else if (index == 3) {
-                    return kAutoAlign.TRAP_POSITION_14;
-                }
+    public double getTrapRotation(BooleanSupplier isRed, double index) {
+        if (isRed.getAsBoolean()) {
+            if (index == 1) {
+                return kAutoAlign.TRAP_POSITION_11;
+            } else if (index == 2) {
+                return kAutoAlign.TRAP_POSITION_12;
+            } else if (index == 3) {
+                return kAutoAlign.TRAP_POSITION_13;
+            }
+        } else {
+            if (index == 1) {
+                return kAutoAlign.TRAP_POSITION_15;
+            } else if (index == 2) {
+                return kAutoAlign.TRAP_POSITION_16;
+            } else if (index == 3) {
+                return kAutoAlign.TRAP_POSITION_14;
             }
         }
         return kAutoAlign.TRAP_POSITION_15;

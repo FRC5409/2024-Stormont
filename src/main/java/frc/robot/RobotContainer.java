@@ -244,7 +244,10 @@ public class RobotContainer {
 
         m_primaryController.y()
                                 .onTrue(cmd_intakeToSensor)
-                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+                                .onFalse(Commands.runOnce(() -> {
+                                    sys_intake.setVoltage(0);
+                                    sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
@@ -263,12 +266,12 @@ public class RobotContainer {
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(
                         new AlignToPose(
-                                () -> sys_drivetrain.getAmpWaypoint(isRed(), sb_ampOffset.getDouble(0)),
+                                () -> sys_drivetrain.getAmpWaypoint(() -> isRed(), sb_ampOffset.getDouble(0)),
                                 sys_drivetrain,
                                 true,
                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                isRed()));
+                                () -> isRed()));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -340,7 +343,7 @@ public class RobotContainer {
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(1);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
@@ -350,11 +353,11 @@ public class RobotContainer {
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
-                                        isRed())
+                                        () -> isRed())
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(1);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
@@ -364,14 +367,14 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                isRed())));
+                                                () -> isRed())));
 
         m_secondaryController
                 .b()
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(2);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
@@ -381,11 +384,11 @@ public class RobotContainer {
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
-                                        isRed())
+                                        () -> isRed())
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(2);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
@@ -395,14 +398,14 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                isRed())));
+                                                () -> isRed())));
 
         m_secondaryController
                 .a()
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(3);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
@@ -412,11 +415,11 @@ public class RobotContainer {
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
-                                        isRed())
+                                        () -> isRed())
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(3);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
@@ -426,7 +429,7 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                isRed())));
+                                                () -> isRed())));
     }
 
     public void registerPathplannerCommands() {
@@ -446,10 +449,10 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
-        NamedCommands.registerCommand("offsetFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(0, isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(90), isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-90), isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeBackward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-180), isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("offsetFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(0, () -> isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("offsetFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(90), () -> isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("offsetFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-90), () -> isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("offsetFieldRelativeBackward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-180), () -> isRed()), sys_drivetrain));
         NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
 
         // Applying PID values to drivetrain
