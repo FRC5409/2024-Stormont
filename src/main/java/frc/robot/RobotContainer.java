@@ -260,7 +260,8 @@ public class RobotContainer {
                                 sys_drivetrain,
                                 true,
                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE));
+                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                isRed()));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -342,7 +343,8 @@ public class RobotContainer {
                                         sys_drivetrain,
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
-                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE,
+                                        isRed())
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
@@ -356,7 +358,8 @@ public class RobotContainer {
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                                isRed())));
 
         m_secondaryController
                 .b()
@@ -373,7 +376,8 @@ public class RobotContainer {
                                         sys_drivetrain,
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
-                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE,
+                                        isRed())
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
@@ -387,7 +391,8 @@ public class RobotContainer {
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                                isRed())));
 
         m_secondaryController
                 .a()
@@ -404,7 +409,8 @@ public class RobotContainer {
                                         sys_drivetrain,
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
-                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE,
+                                        isRed())
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
@@ -418,7 +424,8 @@ public class RobotContainer {
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                                isRed())));
     }
 
     public void registerPathplannerCommands() {
