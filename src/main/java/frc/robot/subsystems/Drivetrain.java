@@ -29,6 +29,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -99,6 +100,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
         // shuffleboard
         m_field = new Field2d();
+
+        Shuffleboard.getTab("Drive team").add(m_field).withPosition(5, 0).withSize(4, 3);
 
         setDriveMotorInversions();
     }
