@@ -139,7 +139,7 @@ public class RobotContainer {
 
         sc_alliance = new SendableChooser<>();
         sc_alliance.addOption("Blue", false);
-        sc_alliance.addOption("Red", true);
+        sc_alliance.addOption("Red", false);
         sc_alliance.setDefaultOption("Blue", false);
 
         sb_autoDelay = sb_driveteamTab.add("Auto delay", 0.0).withPosition(4, 0).withSize(1, 1).getEntry();
@@ -250,6 +250,13 @@ public class RobotContainer {
                                 }, sys_intake, sys_indexer));
 
         m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        
+        m_primaryController.back()
+            .onTrue(
+                Commands.runOnce(() -> sys_cartridge.setVoltage(kCartridge.VOLTAGE))
+            ).onFalse(
+                Commands.runOnce(() -> sys_cartridge.setVoltage(0.0))
+            );
 
         m_primaryController
                 .leftBumper()
@@ -266,12 +273,12 @@ public class RobotContainer {
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(
                         new AlignToPose(
-                                () -> sys_drivetrain.getAmpWaypoint(() -> isRed(), sb_ampOffset.getDouble(0)),
+                                () -> sys_drivetrain.getAmpWaypoint(this::isRed, sb_ampOffset.getDouble(0)),
                                 sys_drivetrain,
                                 true,
                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                () -> isRed()));
+                                this::isRed));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -343,7 +350,7 @@ public class RobotContainer {
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 1);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
@@ -353,11 +360,11 @@ public class RobotContainer {
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
-                                        () -> isRed())
+                                        this::isRed)
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 1);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
@@ -367,14 +374,14 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                () -> isRed())));
+                                                this::isRed)));
 
         m_secondaryController
                 .b()
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 2);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
@@ -384,11 +391,11 @@ public class RobotContainer {
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
-                                        () -> isRed())
+                                        this::isRed)
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 2);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
@@ -398,14 +405,14 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                () -> isRed())));
+                                                this::isRed)));
 
         m_secondaryController
                 .a()
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 3);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
@@ -415,11 +422,11 @@ public class RobotContainer {
                                         false,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
-                                        () -> isRed())
+                                        this::isRed)
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(() -> isRed(), 3);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
@@ -429,7 +436,7 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                () -> isRed())));
+                                                this::isRed)));
     }
 
     public void registerPathplannerCommands() {
