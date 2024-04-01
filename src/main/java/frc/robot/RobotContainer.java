@@ -229,7 +229,7 @@ public class RobotContainer {
                         Commands.runOnce(
                                 () -> {
                                     sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
-                                    sys_intake.setVoltage(-12);
+                                    sys_intake.setVoltage(-12.0);
                                 },
                                 sys_cartridge,
                                 sys_intake))
@@ -474,6 +474,15 @@ public class RobotContainer {
         // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
         // sys_drivetrain)));
 
+        NamedCommands.registerCommand(
+            "EjectNote",
+            Commands.runOnce(() -> {
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+                sys_intake.setVoltage(-kIntake.VOLTAGE);
+            }, 
+            sys_cartridge).withTimeout(1));
+
+        NamedCommands.registerCommand("IntakeToSensor", cmd_intakeToSensor);
     }
 
     /**

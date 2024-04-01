@@ -99,14 +99,14 @@ public final class Constants {
             }
 
             public static final class kPIDDriveSlow {
-                public static final double T_CONTROLLER_P = 3;
+                public static final double T_CONTROLLER_P = 2.5;
                 public static final double T_CONTROLLER_I = 0;
-                public static final double T_CONTROLLER_D = 0;
+                public static final double T_CONTROLLER_D = 0.02;
                 public static final double T_CONTROLLER_FF = .55;
                 public static final double T_CONTROLLER_TOLERANCE = 0.005;
             }
 
-            public static final double R_CONTROLLER_P = 10;
+            public static final double R_CONTROLLER_P = 8;
             public static final double R_CONTROLLER_I = 0;
             public static final double R_CONTROLLER_D = 1.5;
             public static final double R_CONTROLLER_FF = .45;
@@ -144,9 +144,9 @@ public final class Constants {
         public static final int IR_SWITCH_PORT = 0;
         public static final double TOLERANCE = 2;
 
-        public static final double kP = 0.1;
+        public static final double kP = 0.6;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.1;
 
         public static class kSetpoints {
             public static final double AMP_POSITION = -35;
@@ -168,8 +168,11 @@ public final class Constants {
     public static final class kPhotonVision {
         public static final String FIELD_LAYOUT = AprilTagFields.k2024Crescendo.m_resourceFile;
         public static final double AMBIGUITY_THRESHOLD = 0.4;
-        // public static final Transform3d kFrontCameraOffset = new Transform3d(new
-        // Translation3d(10, 0.0, 0.26416), new Rotation3d(0,0,0));
+        public static final double CAMERA_STATUS_TIMEOUT = 3000; //3 seconds
+        public static final double MAX_JUMP_DISTANCE = 1; //m
+        public static final boolean DO_JUMP_FILTERING = false;
+        public static final double TAG_MIN_AREA = 0.15;
+
     }
 
     public static final class kCameras {
@@ -210,7 +213,7 @@ public final class Constants {
                 new Pose2d(14.7, 7.78, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-        public static final double TRAP_OFFSET = 0.28;
+        public static final double TRAP_OFFSET = 0.335;
         public static final double TRAP_DISTANT_OFFSET = .67;
     }
 
