@@ -76,8 +76,8 @@ public class RobotContainer {
     public final ShuffleboardTab sb_driveteamTab;
 
     // Autonomous
-    private final SendableChooser<Command> sc_autoChooser;
-    private final SendableChooser<Boolean> sc_alliance;
+    public final SendableChooser<Command> sc_autoChooser;
+    public final SendableChooser<Boolean> sc_alliance;
     private final GenericEntry sb_autoDelay;
     private final GenericEntry sb_trapOffset;
     private final GenericEntry sb_ampOffset; 

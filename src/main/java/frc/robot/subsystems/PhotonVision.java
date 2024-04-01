@@ -4,17 +4,13 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.subsystems.Drivetrain;
-
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import com.fasterxml.jackson.databind.node.BooleanNode;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,7 +18,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCameras;
 import frc.robot.Constants.kPhotonVision;
@@ -36,9 +31,6 @@ public class PhotonVision extends SubsystemBase {
     PhotonPoseEstimator poseEstimatorBack;
     private double lastResponseFront, lastResponseBack; 
     private static PhotonVision instance = null;
-    private boolean useCameraFront = true; 
-    private boolean useCameraBack = true;
-    private Pose2d lastEstimatedPose;
 
     private ShuffleboardTab sb_driveteamtab;
 
@@ -83,8 +75,8 @@ public class PhotonVision extends SubsystemBase {
      * @return Positioning data
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-        Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront, useCameraFront);
-        Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack, useCameraBack);
+        Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront);
+        Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
         if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
@@ -123,20 +115,15 @@ public class PhotonVision extends SubsystemBase {
         }
     }
 
-    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(PhotonCamera camera, PhotonPoseEstimator poseEstimator, boolean isCameraEnabled) {
+    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(
+            PhotonCamera camera, PhotonPoseEstimator poseEstimator) {
         if (camera.isConnected()) {
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
-                if (isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isCameraEnabled && isTagWithinRange(photonData.get().targetsUsed, kPhotonVision.TAG_MIN_AREA)) {
-                    if (kPhotonVision.DO_JUMP_FILTERING && getPoseDistance(lastEstimatedPose, photonData.get().estimatedPose.toPose2d()) > kPhotonVision.MAX_JUMP_DISTANCE) {
-                        lastEstimatedPose = photonData.get().estimatedPose.toPose2d();
-                        System.out.println("[PV] Jump Detected");
-                        return Optional.empty();
-                    }
-                    return photonData;
-                } else {
-                    return Optional.empty();
-                }
+                return isWithinAmbiguityThreshold(
+                                photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
+                        ? photonData
+                        : Optional.empty();
             }
         }
         return Optional.empty();
@@ -156,14 +143,6 @@ public class PhotonVision extends SubsystemBase {
             }
         }
         return true;
-    }
-
-    public void useFrontCamera(boolean state) {
-        useCameraFront = state;
-    }
-
-    public void useBackCamera(boolean state) {
-        useCameraBack = state;
     }
 
     public double getMeasurementAmbiguity(List<PhotonTrackedTarget> targets) {
