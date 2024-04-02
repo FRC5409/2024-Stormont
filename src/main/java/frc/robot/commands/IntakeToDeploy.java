@@ -46,6 +46,6 @@ public class IntakeToDeploy extends SequentialCommandGroup {
                 Commands.waitUntil(
                         () -> sys_deployment.atSetpoint(Constants.kDeployment.kSetpoints.LOW)),
                 Commands.waitSeconds(1),
-                new BringNoteToCartridge(sys_cartridge, sys_indexer));
+                new BringNoteToCartridge(sys_indexer, sys_cartridge));
     }
 }

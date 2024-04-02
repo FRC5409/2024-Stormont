@@ -156,10 +156,16 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
 
-        new Trigger(() -> sys_indexer.checkIR())
+        new Trigger(() -> sys_intake.checkIR())
                 .and(DriverStation::isTeleop)
                 .onTrue(
-                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                    new BringNoteToCartridge(sys_intake, sys_indexer, sys_cartridge).onlyIf(() -> !(m_primaryController.y().getAsBoolean()))
+                );
+
+        new Trigger(() -> sys_intake.checkIR())
+                .and(DriverStation::isTeleop)
+                .onTrue(
+                        new BringNoteToCartridge(sys_intake, sys_indexer, sys_cartridge)
                                 .onlyIf(DriverStation::isTeleop))
                 .onTrue(
                         Commands.runOnce(
@@ -249,7 +255,7 @@ public class RobotContainer {
                                     sys_indexer.setVoltage(0);
                                 }, sys_intake, sys_indexer));
 
-        m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        m_primaryController.start().onTrue(new BringNoteToCartridge(sys_indexer, sys_cartridge));
         
         m_primaryController.back()
             .onTrue(
@@ -261,7 +267,7 @@ public class RobotContainer {
         m_primaryController
                 .leftBumper()
                 .onTrue(
-                        new BringNoteToCartridge(sys_cartridge, sys_indexer)
+                        Commands.waitUntil(() -> sys_cartridge.checkir())
                                 .andThen(
                                         Commands.runOnce(
                                                 () ->
@@ -340,7 +346,7 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // Bring note from indexer to cartridge, when stuck
-        m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_indexer, sys_cartridge));
 
         // Climb, extend and score, endgame sequence
         m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
@@ -453,7 +459,7 @@ public class RobotContainer {
                         .until(sys_indexer::checkIR));
 
         NamedCommands.registerCommand(
-                "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
+                "BringNoteToCartridge", new BringNoteToCartridge(sys_indexer, sys_cartridge));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
         NamedCommands.registerCommand("offsetFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(0, () -> isRed()), sys_drivetrain));

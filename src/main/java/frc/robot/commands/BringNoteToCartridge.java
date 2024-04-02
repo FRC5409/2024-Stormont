@@ -1,44 +1,64 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.commands;
 
-// 5409: The Chargers
-// http://github.com/FRC5409
-
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kIndexer;
+import frc.robot.Constants.kIntake;
 import frc.robot.subsystems.Cartridge;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 
-/**
- * @author
- */
-public class BringNoteToCartridge extends Command {
-
-    private final Indexer sys_Indexer;
-    private final Cartridge sys_Cartridge;
-
-    public BringNoteToCartridge(Cartridge cartridge, Indexer indexer) {
-        sys_Indexer = Indexer.getInstance();
-        sys_Cartridge = Cartridge.getInstance();
-
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(sys_Indexer, sys_Cartridge);
+public class BringNoteToCartridge extends SequentialCommandGroup {
+    /** Creates a new BringNoteToCartridge. */
+    public BringNoteToCartridge(
+            Intake sys_intake,
+            Indexer sys_indexer,
+            Cartridge sys_cartridge) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
+            Commands.runOnce(() -> {
+                sys_intake.setVoltage(kIntake.VOLTAGE);
+                sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+            }, sys_intake, sys_indexer, sys_cartridge),
+            Commands.waitUntil(() -> sys_cartridge.checkir()),
+            Commands.runOnce(() -> {
+                sys_indexer.setVoltage(0);
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE / 2.0);
+            }, sys_indexer, sys_cartridge),
+            Commands.waitSeconds(0.25),
+            Commands.waitUntil(() -> sys_cartridge.checkir()),
+            Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge)
+        );
     }
 
-    @Override
-    public void initialize() {
-        sys_Indexer.setVoltage(kIndexer.VOLTAGE);
-        sys_Cartridge.setVoltage(-kCartridge.VOLTAGE);
+    /** Creates a new BringNoteToCartridge. */
+    public BringNoteToCartridge(
+            Indexer sys_indexer,
+            Cartridge sys_cartridge) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
+            Commands.runOnce(() -> {
+                sys_indexer.setVoltage(kIndexer.VOLTAGE);
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+            }, sys_indexer, sys_cartridge),
+            Commands.waitUntil(() -> sys_cartridge.checkir()),
+            Commands.runOnce(() -> {
+                sys_indexer.setVoltage(0);
+                sys_cartridge.setVoltage(-kCartridge.VOLTAGE / 2.0);
+            }, sys_indexer, sys_cartridge),
+            Commands.waitSeconds(0.25),
+            Commands.waitUntil(() -> sys_cartridge.checkir()),
+            Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge)
+        );
     }
 
-    @Override
-    public void end(boolean interrupted) {
-        sys_Indexer.setVoltage(0);
-        sys_Cartridge.setVoltage(0);
-    }
 
-    @Override
-    public boolean isFinished() {
-        return sys_Cartridge.checkir();
-    }
 }
