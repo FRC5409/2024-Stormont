@@ -4,15 +4,12 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.kDrive.kAutoAlign;
 import frc.robot.subsystems.Drivetrain;
@@ -29,6 +26,7 @@ public class AlignToPose extends Command {
     private double controllerTolerance;
     private double reachedPoseTimeout;
     private double reachedPoseTolerance;
+    private BooleanSupplier isRed; 
 
     /**
      * AlignToPose Constructor
@@ -41,13 +39,16 @@ public class AlignToPose extends Command {
             Drivetrain sys_Drivetrain,
             boolean doSlowMode,
             double reachedPoseTimeout,
-            double reachedPoseTolerance) {
+            double reachedPoseTolerance,
+            BooleanSupplier isRed) {
+
         this.sys_drivetrain = sys_Drivetrain;
         this.notInLineTime = System.currentTimeMillis();
         this.targetPose = targetPoseSupplier.get();
         this.targetPoseSupplier = targetPoseSupplier;
         this.reachedPoseTimeout = reachedPoseTimeout;
         this.reachedPoseTolerance = reachedPoseTolerance;
+        this.isRed = isRed;
 
         // Initializing PID Controllers
         if (doSlowMode) {
@@ -146,12 +147,9 @@ public class AlignToPose extends Command {
                         targetPose.getRotation().getRadians(),
                         kAutoAlign.ROTATION_TOLERANCE);
 
-        // Invert for field centric if alliance is red
-        if (DriverStation.getAlliance().isPresent()) {
-            if (DriverStation.getAlliance().get() == Alliance.Red) {
-                xControllerOutput = -xControllerOutput;
-                yControllerOutput = -yControllerOutput;
-            }
+        if (isRed.getAsBoolean()) {
+            xControllerOutput = -xControllerOutput;
+            yControllerOutput = -yControllerOutput;
         }
 
         // Applying PID values to drivetrain

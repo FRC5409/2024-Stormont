@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.networktables.GenericEntry;
@@ -77,7 +78,9 @@ public class RobotContainer {
     // Autonomous
     public final SendableChooser<Command> sc_autoChooser;
     public final SendableChooser<Boolean> sc_alliance;
-    public final GenericEntry sb_autoDelay;
+    private final GenericEntry sb_autoDelay;
+    private final GenericEntry sb_trapOffset;
+    private final GenericEntry sb_ampOffset; 
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -114,17 +117,17 @@ public class RobotContainer {
                                         * kDrive.MAX_TURN_ANGULAR_VELOCITY);
 
         cmd_intakeToSensor = 
-                Commands.runOnce(() -> {
-                    sys_intake.setVoltage(kIntake.VOLTAGE);
-                    sys_indexer.setVoltage(kIndexer.VOLTAGE);
-                }, 
-                sys_intake, sys_indexer)
-                .andThen(Commands.waitUntil(() -> sys_intake.checkIR()))
-                .andThen(Commands.runOnce(() -> {
-                    sys_intake.setVoltage(0);
-                    sys_indexer.setVoltage(0);
-                }, 
-                sys_intake, sys_indexer));
+            Commands.runOnce(() -> {
+                sys_intake.setVoltage(kIntake.VOLTAGE);
+                sys_indexer.setVoltage(kIndexer.VOLTAGE);
+            }, 
+            sys_intake, sys_indexer)
+            .andThen(Commands.waitUntil(() -> sys_intake.checkIR()))
+            .andThen(Commands.runOnce(() -> {
+                sys_intake.setVoltage(0);
+                sys_indexer.setVoltage(0);
+            }, 
+            sys_intake, sys_indexer));
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
@@ -135,17 +138,20 @@ public class RobotContainer {
         sc_autoChooser = AutoBuilder.buildAutoChooser();
 
         sc_alliance = new SendableChooser<>();
-
-        sc_alliance.addOption("Red", true);
         sc_alliance.addOption("Blue", false);
+        sc_alliance.addOption("Red", false);
+        sc_alliance.setDefaultOption("Blue", false);
 
-        sc_alliance.setDefaultOption("Red", true);
-        
-        // Auto
+        sb_autoDelay = sb_driveteamTab.add("Auto delay", 0.0).withPosition(4, 0).withSize(1, 1).getEntry();
+
+        // Autonomous
         sb_driveteamTab.add("Choose auto", sc_autoChooser).withPosition(0, 0).withSize(3, 1);
         sb_driveteamTab.add("Alliance", sc_alliance).withPosition(0, 1).withSize(3, 1);
 
-        sb_autoDelay = sb_driveteamTab.add("Auto delay", 0).withPosition(4, 0).getEntry();
+        //Automations
+        sb_trapOffset = sb_driveteamTab.add("Trap Offset", 0).withPosition(5, 0).withSize(1, 1).getEntry();
+        sb_ampOffset = sb_driveteamTab.add("Amp X Offset", 0).withPosition(5, 1).withSize(1, 1).getEntry();
+
 
         // Configure the trigger bindings
         configureBindings();
@@ -238,15 +244,19 @@ public class RobotContainer {
 
         m_primaryController.y()
                                 .onTrue(cmd_intakeToSensor)
-                                .onFalse(Commands.runOnce(() -> sys_intake.setVoltage(0), sys_intake));
+                                .onFalse(Commands.runOnce(() -> {
+                                    sys_intake.setVoltage(0);
+                                    sys_indexer.setVoltage(0);
+                                }, sys_intake, sys_indexer));
 
-        m_primaryController.start()
-                                .onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(-12), sys_cartridge))
-                                .onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge));
+        m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
         
         m_primaryController.back()
-                                .onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(12), sys_cartridge))
-                                .onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge));
+            .onTrue(
+                Commands.runOnce(() -> sys_cartridge.setVoltage(kCartridge.VOLTAGE))
+            ).onFalse(
+                Commands.runOnce(() -> sys_cartridge.setVoltage(0.0))
+            );
 
         m_primaryController
                 .leftBumper()
@@ -263,11 +273,12 @@ public class RobotContainer {
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(
                         new AlignToPose(
-                                () -> sys_drivetrain.getAmpWaypoint(),
+                                () -> sys_drivetrain.getAmpWaypoint(this::isRed, sb_ampOffset.getDouble(0)),
                                 sys_drivetrain,
                                 true,
                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE));
+                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                this::isRed));
 
         // Secondary Controller
         // *************************************************************************************************************
@@ -339,87 +350,93 @@ public class RobotContainer {
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(1);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
                                                         trapRotation);
                                         },
                                         sys_drivetrain,
-                                        true,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE,
+                                        this::isRed)
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(1);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_OFFSET,
+                                                        kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
                                                         trapRotation);
                                         },
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                                this::isRed)));
 
         m_secondaryController
                 .b()
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(2);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
                                                         trapRotation);
                                         },
                                         sys_drivetrain,
-                                        true,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE,
+                                        this::isRed)
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(2);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_OFFSET,
+                                                        kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
                                                         trapRotation);
                                         },
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                                this::isRed)));
 
         m_secondaryController
                 .a()
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(3);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_DISTANT_OFFSET,
+                                                        kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
                                                         trapRotation);
                                         },
                                         sys_drivetrain,
-                                        true,
-                                        kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                        kAutoAlign.REACHED_POSITION_TOLERANCE)
+                                        false,
+                                        kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
+                                        kAutoAlign.REACHED_POSITION_TOLERANCE,
+                                        this::isRed)
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(3);
+                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
-                                                        kWaypoints.TRAP_OFFSET,
+                                                        kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
                                                         trapRotation);
                                         },
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE)));
+                                                kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
+                                                this::isRed)));
     }
 
     public void registerPathplannerCommands() {
@@ -439,6 +456,23 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
+        NamedCommands.registerCommand("offsetFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(0, () -> isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("offsetFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(90), () -> isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("offsetFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-90), () -> isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("offsetFieldRelativeBackward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-180), () -> isRed()), sys_drivetrain));
+        NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
+
+        // Applying PID values to drivetrain
+        FieldCentric driveForward =
+                sys_drivetrain
+                        .teleopDrive
+                        .withVelocityX(2.0)
+                        .withVelocityY(0.0)
+                        .withRotationalRate(0.0);
+
+        NamedCommands.registerCommand("DriveForward", Commands.runOnce(() -> sys_drivetrain.runRequest(() -> driveForward), sys_drivetrain));
+        // .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
+        // sys_drivetrain)));
 
         NamedCommands.registerCommand(
             "EjectNote",
@@ -452,17 +486,19 @@ public class RobotContainer {
     }
 
     /**
+     * @return True if alliance color that is selected is true
+     */
+    public boolean isRed() {
+        return sc_alliance.getSelected();
+    }
+
+    /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return Commands.waitSeconds(sb_autoDelay.getDouble(0)).andThen(
-            sc_autoChooser.getSelected()
-        );
-    }
-
-    public boolean isRedAlliance() {
-        return sc_alliance.getSelected();
+        return Commands.waitSeconds(sb_autoDelay.getDouble(0.0)).andThen(
+        sc_autoChooser.getSelected());
     }
 }

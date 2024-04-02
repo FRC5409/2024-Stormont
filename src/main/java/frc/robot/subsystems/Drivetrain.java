@@ -20,6 +20,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
@@ -139,16 +140,13 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
     }
 
 
-    public void updateFieldRelative(Pose2d startingPose) {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-
-        if (alliance.isPresent()) {
-            if (alliance.get() == Alliance.Red) {
-                startingPose.getRotation().plus(Rotation2d.fromDegrees(180));
-            }
+    public void offsetFieldRelative(double rotationOffset, BooleanSupplier isRed) {
+        if (isRed.getAsBoolean()) {
+            rotationOffset += Math.toRadians(180);
         }
         
-        m_poseEstimator.resetPosition(startingPose.getRotation(), m_modulePositions, startingPose);
+        Rotation2d robotRotation = getState().Pose.getRotation();
+        m_fieldRelativeOffset = (new Rotation2d(robotRotation.getRadians() +  rotationOffset));
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -325,41 +323,26 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         }
     }
 
-    public Pose2d getAmpWaypoint() {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (alliance.isPresent() && kRobot.IS_HOME_FIELD == false) {
-            if (alliance.get() == Alliance.Red) {
-                return kWaypoints.AMP_ZONE_RED;
-            } else if (alliance.get() == Alliance.Blue) {
-                System.out.println("Returned blue");
-                return kWaypoints.AMP_ZONE_BLUE;
-            }
-        }
-        return kWaypoints.AMP_ZONE_BLUE;
+    public Pose2d getAmpWaypoint(BooleanSupplier isRed, double offset) {
+        return isRed.getAsBoolean() ? kWaypoints.AMP_ZONE_RED.plus(new Transform2d(offset, 0, new Rotation2d(0))) : kWaypoints.AMP_ZONE_BLUE.plus(new Transform2d(offset, 0, new Rotation2d(0)));
     }
 
-    public double getTrapRotation(double index) {
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-            if (alliance.get() == Alliance.Red) {
-                if (index == 1) {
-                    // LEFT
-                    return kAutoAlign.TRAP_POSITION_11;
-                } else if (index == 2) {
-                    // RIGHT
-                    return kAutoAlign.TRAP_POSITION_12;
-                } else if (index == 3) {
-                    return kAutoAlign.TRAP_POSITION_13;
-                }
-            } else if (alliance.get() == Alliance.Blue) {
-                if (index == 1) {
-                    // LEFT
-                    return kAutoAlign.TRAP_POSITION_15;
-                } else if (index == 2) {
-                    return kAutoAlign.TRAP_POSITION_16;
-                } else if (index == 3) {
-                    return kAutoAlign.TRAP_POSITION_14;
-                }
+    public double getTrapRotation(BooleanSupplier isRed, double index) {
+        if (isRed.getAsBoolean()) {
+            if (index == 1) {
+                return kAutoAlign.TRAP_POSITION_11;
+            } else if (index == 2) {
+                return kAutoAlign.TRAP_POSITION_12;
+            } else if (index == 3) {
+                return kAutoAlign.TRAP_POSITION_13;
+            }
+        } else {
+            if (index == 1) {
+                return kAutoAlign.TRAP_POSITION_15;
+            } else if (index == 2) {
+                return kAutoAlign.TRAP_POSITION_16;
+            } else if (index == 3) {
+                return kAutoAlign.TRAP_POSITION_14;
             }
         }
         return kAutoAlign.TRAP_POSITION_15;

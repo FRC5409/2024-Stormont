@@ -5,13 +5,11 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.PhotonVision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,8 +24,6 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
-
-    private PhotonVision sys_photonvision; 
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -51,9 +47,7 @@ public class Robot extends TimedRobot {
                                                 m_robotContainer.sys_drivetrain
                                                         .setAllMotorsNeutralMode(
                                                                 NeutralModeValue.Coast))
-                                .ignoringDisable(true));
-        
-        this.sys_photonvision = PhotonVision.getInstance();
+                                .ignoringDisable(true));        
     }
 
     /**
@@ -88,7 +82,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        sys_photonvision.updateCameraStatus();
     }
 
     /**
@@ -99,17 +92,6 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
 
         m_robotContainer.sys_drivetrain.setAllMotorsNeutralMode(NeutralModeValue.Brake);
-
-        // If Red
-        if (m_robotContainer.sc_alliance.getSelected()) {
-            m_robotContainer.sys_drivetrain.updateFieldRelative(
-                PathPlannerAuto.getPathGroupFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).get(0).flipPath().getPreviewStartingHolonomicPose()
-            );
-        } else {
-            m_robotContainer.sys_drivetrain.updateFieldRelative(
-                PathPlannerAuto.getPathGroupFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).get(0).getPreviewStartingHolonomicPose()
-            );
-        }
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
