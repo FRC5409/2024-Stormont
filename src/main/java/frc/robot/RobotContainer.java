@@ -477,9 +477,14 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "EjectNote",
-            Commands.runOnce(() -> {
+            Commands.startEnd(
+            () -> {
                 sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
                 sys_intake.setVoltage(-kIntake.VOLTAGE);
+            }, 
+            () -> {
+                sys_cartridge.setVoltage(0.0);
+                sys_intake.setVoltage(0.0);
             }, 
             sys_cartridge).withTimeout(1));
 
