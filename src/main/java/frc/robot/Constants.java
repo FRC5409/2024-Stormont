@@ -111,6 +111,7 @@ public final class Constants {
             public static final double R_CONTROLLER_D = 1.5;
             public static final double R_CONTROLLER_FF = .45;
             public static final double ROTATION_TOLERANCE = 0.015;
+            public static final double ROTATION_TOLERANCE_CUTOFF = 0.018;
 
             public static final double REACHED_POSITION_TOLERANCE_ClOSE = 0.1;
             public static final double REACHED_POSITION_TOLERANCE = 0.2;
@@ -172,6 +173,9 @@ public final class Constants {
         public static final double MAX_JUMP_DISTANCE = 1; //m
         public static final boolean DO_JUMP_FILTERING = false;
         public static final double TAG_MIN_AREA = 0.15;
+
+        public static final boolean ENABLE_FRONT_CAMERA = true;
+        public static final boolean ENABLE_BACK_CAMERA = true;
 
     }
 
