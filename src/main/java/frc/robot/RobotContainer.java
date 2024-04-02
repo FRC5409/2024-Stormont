@@ -158,12 +158,6 @@ public class RobotContainer {
         new Trigger(() -> sys_intake.checkIR())
                 .and(DriverStation::isTeleop)
                 .onTrue(
-                    new BringNoteToCartridge(sys_intake, sys_indexer, sys_cartridge).onlyIf(() -> !(m_primaryController.y().getAsBoolean()))
-                );
-
-        new Trigger(() -> sys_intake.checkIR())
-                .and(DriverStation::isTeleop)
-                .onTrue(
                         new BringNoteToCartridge(sys_intake, sys_indexer, sys_cartridge)
                                 .onlyIf(DriverStation::isTeleop))
                 .onTrue(

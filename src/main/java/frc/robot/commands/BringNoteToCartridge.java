@@ -29,7 +29,7 @@ public class BringNoteToCartridge extends SequentialCommandGroup {
             }, sys_intake, sys_indexer, sys_cartridge),
             Commands.waitUntil(() -> sys_cartridge.checkir()),
             Commands.runOnce(() -> {
-                sys_indexer.setVoltage(0);
+                sys_indexer.setVoltage(0.0);
                 sys_cartridge.setVoltage(-kCartridge.VOLTAGE / 2.0);
             }, sys_indexer, sys_cartridge),
             Commands.waitSeconds(0.25),
