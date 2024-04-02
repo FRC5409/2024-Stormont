@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -139,7 +143,7 @@ public class RobotContainer {
 
         sc_alliance = new SendableChooser<>();
         sc_alliance.addOption("Blue", false);
-        sc_alliance.addOption("Red", false);
+        sc_alliance.addOption("Red", true);
         sc_alliance.setDefaultOption("Blue", false);
 
         sb_autoDelay = sb_driveteamTab.add("Auto delay", 0.0).withPosition(4, 0).withSize(1, 1).getEntry();
@@ -350,11 +354,10 @@ public class RobotContainer {
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
-                                                        trapRotation);
+                                                        sys_drivetrain.getTrapRotation(this::isRed, 1));
                                         },
                                         sys_drivetrain,
                                         false,
@@ -364,11 +367,10 @@ public class RobotContainer {
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 1);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
-                                                        trapRotation);
+                                                        sys_drivetrain.getTrapRotation(this::isRed, 1));
                                         },
                                                 sys_drivetrain,
                                                 true,
@@ -381,11 +383,10 @@ public class RobotContainer {
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
-                                                        trapRotation);
+                                                        sys_drivetrain.getTrapRotation(this::isRed, 2));
                                         },
                                         sys_drivetrain,
                                         false,
@@ -395,11 +396,10 @@ public class RobotContainer {
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 2);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
-                                                        trapRotation);
+                                                        sys_drivetrain.getTrapRotation(this::isRed, 2));
                                         },
                                                 sys_drivetrain,
                                                 true,
@@ -409,14 +409,14 @@ public class RobotContainer {
 
         m_secondaryController
                 .a()
+                .onTrue(Commands.runOnce(() -> sys_photonvision.setCameraEnableStatus(false, "Front"), sys_photonvision))
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
-                                                        trapRotation);
+                                                         sys_drivetrain.getTrapRotation(this::isRed, 3));
                                         },
                                         sys_drivetrain,
                                         false,
@@ -426,17 +426,17 @@ public class RobotContainer {
                                 .andThen(
                                         new AlignToPose(
                                                 () -> {
-                                            double trapRotation = sys_drivetrain.getTrapRotation(this::isRed, 3);
                                             return sys_photonvision.getNearestTagPoseWithOffset(
                                                         sys_drivetrain,
                                                         kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
-                                                        trapRotation);
+                                                         sys_drivetrain.getTrapRotation(this::isRed, 3));
                                         },
                                                 sys_drivetrain,
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                this::isRed)));
+                                                this::isRed)))
+                .onFalse(Commands.runOnce(() -> sys_photonvision.setCameraEnableStatus(true, "Front"), sys_photonvision));
     }
 
     public void registerPathplannerCommands() {

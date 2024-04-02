@@ -119,9 +119,11 @@ public class AlignToPose extends Command {
     public void moveToPose(Pose2d targetPose) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
         // Rotation2d angle = targetPose.getRotation();
+        System.out.printf("%.2f %.2f\n", targetPose.getRotation().getRadians(), currentPose.getRotation().getRadians());
 
         m_xController.setSetpoint(targetPose.getX());
         m_yController.setSetpoint(targetPose.getY());
+        m_rController.setSetpoint(targetPose.getRotation().getRadians());
 
         // Updating PID controllers
         double xControllerOutput =

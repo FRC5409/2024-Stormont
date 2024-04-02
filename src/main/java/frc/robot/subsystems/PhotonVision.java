@@ -25,8 +25,8 @@ import frc.robot.Constants.kDrive.kAutoAlign;
 
 public class PhotonVision extends SubsystemBase {
     AprilTagFieldLayout aprilTagFieldLayout;
-    PhotonCamera frontCamera;
-    PhotonCamera backCamera;
+    PhotonCamera frontCamera, backCamera;
+    private boolean enableFrontCamera, enableBackCamera; 
     PhotonPoseEstimator poseEstimatorFront;
     PhotonPoseEstimator poseEstimatorBack;
     private double lastResponseFront, lastResponseBack; 
@@ -66,6 +66,8 @@ public class PhotonVision extends SubsystemBase {
         sb_driveteamtab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(3, 0);
         sb_driveteamtab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(3, 1);
 
+        this.enableFrontCamera = kPhotonVision.ENABLE_FRONT_CAMERA;
+        this.enableBackCamera = kPhotonVision.ENABLE_BACK_CAMERA;
     }
 
     /**
@@ -79,17 +81,21 @@ public class PhotonVision extends SubsystemBase {
         Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
+        if (!enableFrontCamera) {
+            System.out.println("FRONT CAMERA NOT ENABLED");
+        }
+
         if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
             // pick one with better ambiguity
             if (getMeasurementAmbiguity(poseEstimateFront.get().targetsUsed)
-                    < getMeasurementAmbiguity(poseEstimateBack.get().targetsUsed)) {
+                    < getMeasurementAmbiguity(poseEstimateBack.get().targetsUsed) && enableFrontCamera) {
                 poseEstimateOut = poseEstimateFront;
-            } else {
+            } else if (enableBackCamera) {
                 poseEstimateOut = poseEstimateBack;
             }
-        } else if (poseEstimateFront.isPresent()) {
+        } else if (poseEstimateFront.isPresent() && enableFrontCamera) {
             poseEstimateOut = poseEstimateFront;
-        } else if (poseEstimateBack.isPresent()) {
+        } else if (poseEstimateBack.isPresent() && enableBackCamera) {
             poseEstimateOut = poseEstimateBack;
         }
         return poseEstimateOut;
@@ -193,6 +199,17 @@ public class PhotonVision extends SubsystemBase {
             instance = new PhotonVision();
         }
         return instance;
+    }
+
+    public void setCameraEnableStatus(boolean isEnabled, String camera) {
+        switch (camera) {
+            case "Front":
+                this.enableFrontCamera = isEnabled;
+                break;
+            case "Back":
+                this.enableBackCamera = isEnabled;
+                break;
+        }
     }
 
     @Override
