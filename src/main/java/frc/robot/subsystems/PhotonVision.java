@@ -82,7 +82,7 @@ public class PhotonVision extends SubsystemBase {
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
 
         if (!enableFrontCamera) {
-            System.out.println("FRONT CAMERA NOT ENABLED");
+            // System.out.println("FRONT CAMERA NOT ENABLED");
         }
 
         if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
