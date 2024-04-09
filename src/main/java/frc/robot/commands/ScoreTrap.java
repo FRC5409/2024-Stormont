@@ -5,7 +5,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
 import frc.robot.Constants.kCartridge;
 import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kDeployment;
@@ -23,16 +22,16 @@ public class ScoreTrap extends SequentialCommandGroup {
                 Commands.runOnce(
                         () ->
                                 sys_climber.setPosition(
-                                        Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT),
+                                        kClimber.LOW, kClimber.KFAST_SLOT),
                         sys_climber),
                 Commands.waitSeconds(0.1),
                 Commands.waitUntil(
                         () ->
                                 Math.abs(sys_climber.getPosition())
-                                        >= Math.abs(Constants.kClimber.TRAP_TRIGGER_POS)),
+                                        >= Math.abs(kClimber.TRAP_TRIGGER_POS)),
                 Commands.waitSeconds(0.2),
                 Commands.runOnce(
-                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.TRAP_POSITION),
+                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.TRAP_POSITION, kDeployment.kPID.kSlowSlot.slot),
                         sys_cartridge),
                 Commands.waitUntil(
                         () -> sys_deployment.atSetpoint(kDeployment.kSetpoints.TRAP_POSITION)),
@@ -44,7 +43,7 @@ public class ScoreTrap extends SequentialCommandGroup {
                 Commands.waitSeconds(0.3),
                 Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),
                 Commands.runOnce(
-                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME),
+                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kSlowSlot.slot),
                         sys_deployment),
                 Commands.waitSeconds(0.5),
                 Commands.runOnce(() -> sys_climber.setPosition(kClimber.MIDDLE, kClimber.KSLOW_SLOT), sys_climber));
