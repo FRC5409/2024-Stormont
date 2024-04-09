@@ -22,7 +22,7 @@ public class ScoreNote extends SequentialCommandGroup {
         addCommands(
                 // Brings the deployment to the amp position
                 Commands.runOnce(
-                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.AMP_POSITION),
+                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.AMP_POSITION, kDeployment.kPID.kFastSlot.slot),
                         sys_deployment),
                 Commands.waitUntil(
                         // waits until it passes the trigger
@@ -39,7 +39,7 @@ public class ScoreNote extends SequentialCommandGroup {
 
                 // go back home
                 Commands.runOnce(
-                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME),
+                        () -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kFastSlot.slot),
                         sys_deployment),
                 // stops the rollers
                 Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),

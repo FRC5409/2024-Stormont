@@ -145,9 +145,21 @@ public final class Constants {
         public static final int IR_SWITCH_PORT = 0;
         public static final double TOLERANCE = 2;
 
-        public static final double kP = 0.6;
-        public static final double kI = 0;
-        public static final double kD = 0.1;
+        public static class kPID {
+            public static class kFastSlot {
+                public static final int slot = 1;
+                public static final double kP = 0.6;
+                public static final double kI = 0.0;
+                public static final double kD = 0.1;
+            }
+
+            public static class kSlowSlot {
+                public static final int slot = 0;
+                public static final double kP = 0.1;
+                public static final double kI = 0.0;
+                public static final double kD = 0.0;
+            }
+        }
 
         public static class kSetpoints {
             public static final double AMP_POSITION = -35;
