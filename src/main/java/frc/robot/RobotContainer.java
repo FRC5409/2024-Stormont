@@ -4,13 +4,9 @@
 
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -344,7 +340,8 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
         // Bring note from indexer to cartridge, when stuck
-        m_secondaryController.back().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+        m_secondaryController.back()
+            .onTrue(Commands.runOnce(() -> sys_drivetrain.setDriveMotorInversions(), sys_drivetrain));
 
         // Climb, extend and score, endgame sequence
         m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));

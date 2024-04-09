@@ -303,7 +303,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         pathfind.schedule();
     }
 
-    private void setDriveMotorInversions() {
+    public void setDriveMotorInversions() {
 
         for (int i = 0; i < this.ModuleCount; i++) {
             SwerveModule module = this.getModule(i);
@@ -330,7 +330,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
     public double getTrapRotation(BooleanSupplier isRed, double index) {
         if (isRed.getAsBoolean()) {
-            System.out.println("returned red");
+            // System.out.println("returned red");
             if (index == 1) {
                 return kAutoAlign.TRAP_POSITION_11;
             } else if (index == 2) {
@@ -339,7 +339,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
                 return kAutoAlign.TRAP_POSITION_13;
             }
         } else {
-            System.out.println("returned blue");
+            // System.out.println("returned blue");
             if (index == 1) {
                 return kAutoAlign.TRAP_POSITION_15;
             } else if (index == 2) {

@@ -1,0 +1,13 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Drive team/Alliance": "String Chooser",
+      "/Shuffleboard/Drive team/Choose auto": "String Chooser",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}
