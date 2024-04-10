@@ -43,7 +43,8 @@ public class PhotonVision extends SubsystemBase {
         // Cameras
         // frontCamera = new PhotonCamera(kCameras.FRONT_CAMERA_ID);
         frontCamera = new PhotonCamera(kCameras.FRONT_CAMERA_ID);
-        backCamera = new PhotonCamera(kCameras.BACK_CAMERA_ID);
+        //backCamera = new PhotonCamera(kCameras.BACK_CAMERA_ID);
+        backCamera = new PhotonCamera(kCameras.TRAP_CAMERA_ID);
 
         // Pose Estimator
         poseEstimatorFront =
@@ -54,12 +55,22 @@ public class PhotonVision extends SubsystemBase {
                         kCameras.FRONT_CAMERA_OFFSET);
         poseEstimatorFront.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
+        /**
         poseEstimatorBack =
                 new PhotonPoseEstimator(
                         aprilTagFieldLayout,
                         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                         backCamera,
                         kCameras.BACK_CAMERA_OFFSET);
+        poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+         */
+        
+        poseEstimatorBack =
+                new PhotonPoseEstimator(
+                        aprilTagFieldLayout,
+                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                        backCamera,
+                        kCameras.TRAP_CAMERA_OFFSET);
         poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         sb_driveteamtab = Shuffleboard.getTab("Drive team");
