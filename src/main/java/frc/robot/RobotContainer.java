@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kCartridge;
+import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
@@ -298,13 +299,18 @@ public class RobotContainer {
         // Climber setpoint high slow
         m_secondaryController
                 .povLeft()
+                // .onTrue(
+                //         Commands.runOnce(
+                //                 () ->
+                //                         sys_climber.setPosition(
+                //                                 Constants.kClimber.HIGH,
+                //                                 Constants.kClimber.KSLOW_SLOT),
+                //                 sys_climber));
                 .onTrue(
-                        Commands.runOnce(
-                                () ->
-                                        sys_climber.setPosition(
-                                                Constants.kClimber.HIGH,
-                                                Constants.kClimber.KSLOW_SLOT),
-                                sys_climber));
+                    Commands.runOnce(() -> sys_climber.setPosition(kClimber.HIGH, kClimber.KFAST_SLOT), sys_climber).andThen(
+                    Commands.waitUntil(() -> Math.abs(sys_climber.getPosition()) >= Math.abs(kClimber.SLOW_TRIGGER))).andThen(
+                    Commands.runOnce(() -> sys_climber.setPosition(kClimber.HIGH, kClimber.KSLOW_SLOT), sys_climber))
+                );
 
         // Climber setpoint low fast
         m_secondaryController
