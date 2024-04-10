@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.kCANID;
+import frc.robot.Constants.kCartridge;
 
 public class Cartridge extends SubsystemBase {
 
@@ -29,7 +29,7 @@ public class Cartridge extends SubsystemBase {
         m_motor = new CANSparkMax(kCANID.CARTRIDGE_MOTOR_ID, MotorType.kBrushless);
         m_motor.restoreFactoryDefaults();
         m_motor.setIdleMode(IdleMode.kBrake);
-        m_motor.setSmartCurrentLimit(Constants.kCartridge.CURRENT_LIMIT);
+        m_motor.setSmartCurrentLimit(kCartridge.CURRENT_LIMIT);
 
         // initialize irSwitch
         irSwitch = new DigitalInput(1);

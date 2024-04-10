@@ -268,7 +268,8 @@ public class RobotContainer {
                                                         sys_deployment.setPosition(
                                                                 kDeployment
                                                                         .kSetpoints
-                                                                        .AMP_POSITION),
+                                                                        .AMP_POSITION,
+                                                                        kDeployment.kPID.kFastSlot.slot),
                                                 sys_deployment)))
                 // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(), sys_drivetrain));
                 .whileTrue(
