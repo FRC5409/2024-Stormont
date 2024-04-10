@@ -357,7 +357,7 @@ public class RobotContainer {
                                                         sys_drivetrain.getTrapRotation(this::isRed, 1));
                                         },
                                         sys_drivetrain,
-                                        false,
+                                        true,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
                                         this::isRed)
@@ -386,7 +386,7 @@ public class RobotContainer {
                                                         sys_drivetrain.getTrapRotation(this::isRed, 2));
                                         },
                                         sys_drivetrain,
-                                        false,
+                                        true,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
                                         this::isRed)
@@ -416,7 +416,7 @@ public class RobotContainer {
                                                          sys_drivetrain.getTrapRotation(this::isRed, 3));
                                         },
                                         sys_drivetrain,
-                                        false,
+                                        true,
                                         kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
                                         kAutoAlign.REACHED_POSITION_TOLERANCE,
                                         this::isRed)

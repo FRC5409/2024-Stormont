@@ -205,8 +205,14 @@ public final class Constants {
                                 0,
                                 Math.toRadians(-42),
                                 Math.toRadians(180))); // 0.3556 m towards the
-        // BACK and 0.1524 m
-        // to the left
+        
+        // Arducam 3
+        public static final String TRAP_CAMERA_NAME = "Trap Camera";
+        public static final String TRAP_CAMERA_ID = "OV2311_ClimberCamera";
+        public static final String TRAP_CAMERA_URL = "placeholder";
+        public static final Transform3d TRAP_CAMERA_OFFSET = new Transform3d(
+            new Translation3d(0.1003965253, 0, 0.6490857384), 
+            new Rotation3d(0, Math.toRadians(-35), Math.toRadians(181.5)));
     }
 
     public static final class kWaypoints {
@@ -217,7 +223,7 @@ public final class Constants {
                 new Pose2d(14.7, 7.78, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-        public static final double TRAP_OFFSET = 0.335;
+        public static final double TRAP_OFFSET = 0.38;
         public static final double TRAP_DISTANT_OFFSET = .67;
     }
 
