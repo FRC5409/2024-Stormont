@@ -14,12 +14,6 @@
         {
           "type": "named",
           "data": {
-            "name": "offsetFieldRelativeForward"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ScoreNote"
           }
         },
