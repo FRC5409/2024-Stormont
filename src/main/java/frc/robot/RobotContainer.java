@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kCartridge;
+import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
@@ -199,7 +200,7 @@ public class RobotContainer {
         // drivetrain
         m_primaryController
                 .rightBumper()
-                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));
 
         // score command
         m_primaryController.a().onTrue(new ScoreNote(sys_deployment, sys_cartridge));
@@ -298,13 +299,18 @@ public class RobotContainer {
         // Climber setpoint high slow
         m_secondaryController
                 .povLeft()
+                // .onTrue(
+                //         Commands.runOnce(
+                //                 () ->
+                //                         sys_climber.setPosition(
+                //                                 Constants.kClimber.HIGH,
+                //                                 Constants.kClimber.KSLOW_SLOT),
+                //                 sys_climber));
                 .onTrue(
-                        Commands.runOnce(
-                                () ->
-                                        sys_climber.setPosition(
-                                                Constants.kClimber.HIGH,
-                                                Constants.kClimber.KSLOW_SLOT),
-                                sys_climber));
+                    Commands.runOnce(() -> sys_climber.setPosition(kClimber.HIGH, kClimber.KFAST_SLOT), sys_climber).andThen(
+                    Commands.waitUntil(() -> Math.abs(sys_climber.getPosition()) >= Math.abs(kClimber.SLOW_TRIGGER))).andThen(
+                    Commands.runOnce(() -> sys_climber.setPosition(kClimber.HIGH, kClimber.KSLOW_SLOT), sys_climber))
+                );
 
         // Climber setpoint low fast
         m_secondaryController
@@ -484,10 +490,6 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
-        NamedCommands.registerCommand("offsetFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(0, () -> isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(90), () -> isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-90), () -> isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeBackward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-180), () -> isRed()), sys_drivetrain));
         NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
 
         // Applying PID values to drivetrain
@@ -511,6 +513,15 @@ public class RobotContainer {
             sys_cartridge).withTimeout(1));
 
         NamedCommands.registerCommand("IntakeToSensor", cmd_intakeToSensor);
+
+        NamedCommands.registerCommand("EjectPreload", 
+            Commands.waitSeconds(0.6).andThen(
+            Commands.runOnce(() -> sys_cartridge.setVoltage(5), sys_cartridge),
+            Commands.runOnce(() -> sys_deployment.setPosition(-25, kDeployment.kPID.kSlowSlot.slot), sys_deployment),
+            Commands.waitSeconds(0.4),
+            Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),
+            Commands.runOnce(() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kFastSlot.slot), sys_deployment))
+        );
     }
 
     /**
@@ -526,7 +537,13 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return Commands.waitSeconds(sb_autoDelay.getDouble(0.0)).andThen(
-        sc_autoChooser.getSelected());
+        double delay = sb_autoDelay.getDouble(0);
+
+        if (delay == 0) {
+            return sc_autoChooser.getSelected();
+        } else {
+            return Commands.waitSeconds(delay).andThen(
+            sc_autoChooser.getSelected());
+        }
     }
 }

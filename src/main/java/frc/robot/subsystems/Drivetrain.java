@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
@@ -140,14 +139,14 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         this.setControl(autoRequest.withSpeeds(speeds));
     }
 
+    public void setPose(Pose2d pose, boolean isRed) {
+        m_poseEstimator.resetPosition(pose.getRotation(), m_modulePositions, pose);
+        m_fieldRelativeOffset = Rotation2d.fromDegrees(isRed ? 180.0 : 0.0);
+        updateFieldMap();
+    }
 
-    public void offsetFieldRelative(double rotationOffset, BooleanSupplier isRed) {
-        if (isRed.getAsBoolean()) {
-            rotationOffset += Math.toRadians(180);
-        }
-        
-        Rotation2d robotRotation = getState().Pose.getRotation();
-        m_fieldRelativeOffset = (new Rotation2d(robotRotation.getRadians() +  rotationOffset));
+    public void setPose(Pose2d pose, Rotation2d rotation, boolean isRed) {
+        setPose(new Pose2d(pose.getTranslation(), rotation), isRed);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {

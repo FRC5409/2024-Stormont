@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.23517407718576,
-        "y": 4.092954054853979
+        "x": 6.235473667528531,
+        "y": 6.689056341075646
       },
       "prevControl": null,
       "nextControl": {
-        "x": 9.088847351483876,
-        "y": 3.0521743094768246
+        "x": 6.63307491857149,
+        "y": 5.765218140122891
       },
       "isLocked": false,
-      "linkedName": "CenterNote3"
+      "linkedName": "EjectPosition"
     },
     {
       "anchor": {
-        "x": 8.3053390038404,
-        "y": 0.7367317298737166
+        "x": 8.08315006943404,
+        "y": 5.753523985680451
       },
       "prevControl": {
-        "x": 8.3053390038404,
-        "y": 1.7367317298737166
+        "x": 7.030676169614447,
+        "y": 5.84707722121997
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterNote5"
+      "linkedName": "CenterNote2"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.4,
-      "rotationDegrees": -35.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,14 +39,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0,
+    "rotation": 0.0,
     "rotateFast": true
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
-    "velocity": 0
+    "rotation": 180.0,
+    "velocity": 0.0
   },
   "useDefaultConstraints": true
 }
