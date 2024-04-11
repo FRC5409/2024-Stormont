@@ -62,7 +62,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeToSensor"
+                  "name": "IntakeFromFloor"
                 }
               }
             ]
@@ -72,6 +72,12 @@
           "type": "path",
           "data": {
             "pathName": "Center2ToEject"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BringNoteToCartridge"
           }
         }
       ]
