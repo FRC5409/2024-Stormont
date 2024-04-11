@@ -62,7 +62,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeFromFloor"
+                  "name": "IntakeToSensor"
                 }
               }
             ]
@@ -75,9 +75,41 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "BringNoteToCartridge"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "EjectToCenterNote3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeFromFloor"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CenterNote3ThenUnderStage"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "BringNoteToCartridge"
+                }
+              }
+            ]
           }
         }
       ]

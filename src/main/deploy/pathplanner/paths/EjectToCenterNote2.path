@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.276553003248456,
-        "y": 7.016492665463964
+        "x": 6.235473667528531,
+        "y": 6.689056341075646
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.276553003248456,
-        "y": 7.016492665463964
+        "x": 6.63307491857149,
+        "y": 5.765218140122891
       },
       "isLocked": false,
       "linkedName": "EjectPosition"
@@ -20,8 +20,8 @@
         "y": 5.753523985680451
       },
       "prevControl": {
-        "x": 7.381500802887644,
-        "y": 6.443479097784407
+        "x": 7.030676169614447,
+        "y": 5.84707722121997
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -30.0,
+    "rotation": 0.0,
     "rotateFast": true
   },
   "reversed": false,

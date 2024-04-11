@@ -487,7 +487,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("EjectPreload", 
             Commands.waitSeconds(0.6).andThen(
             Commands.runOnce(() -> sys_cartridge.setVoltage(5), sys_cartridge),
-            Commands.runOnce(() -> sys_deployment.setPosition(-21, kDeployment.kPID.kSlowSlot.slot), sys_deployment),
+            Commands.runOnce(() -> sys_deployment.setPosition(-25, kDeployment.kPID.kSlowSlot.slot), sys_deployment),
             Commands.waitSeconds(0.4),
             Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),
             Commands.runOnce(() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kFastSlot.slot), sys_deployment))

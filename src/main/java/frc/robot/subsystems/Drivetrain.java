@@ -139,15 +139,14 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
         this.setControl(autoRequest.withSpeeds(speeds));
     }
 
-    public void setPose(Pose2d pose) {
-        m_fieldRelativeOffset = pose.getRotation();
+    public void setPose(Pose2d pose, boolean isRed) {
         m_poseEstimator.resetPosition(pose.getRotation(), m_modulePositions, pose);
-        m_pigeon2.setYaw(pose.getRotation().getDegrees());
+        m_fieldRelativeOffset = Rotation2d.fromDegrees(isRed ? 180.0 : 0.0);
         updateFieldMap();
     }
 
-    public void setPose(Pose2d pose, Rotation2d rotation) {
-        setPose(new Pose2d(pose.getTranslation(), rotation));
+    public void setPose(Pose2d pose, Rotation2d rotation, boolean isRed) {
+        setPose(new Pose2d(pose.getTranslation(), rotation), isRed);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {

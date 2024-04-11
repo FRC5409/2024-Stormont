@@ -106,11 +106,13 @@ public class Robot extends TimedRobot {
             if (m_robotContainer.isRed()) {
                 m_robotContainer.sys_drivetrain.setPose(
                     PathPlannerAuto.getPathGroupFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).get(0).flipPath().getPreviewStartingHolonomicPose(),
-                    PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).getRotation()
+                    PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).getRotation(),
+                    m_robotContainer.isRed()
                 );
             } else {
                 m_robotContainer.sys_drivetrain.setPose(
-                    PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName())
+                    PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()),
+                    m_robotContainer.isRed()
                 );
             }
         } catch (Exception e) {}
