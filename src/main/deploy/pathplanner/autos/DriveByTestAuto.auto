@@ -12,25 +12,76 @@
     "data": {
       "commands": [
         {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "AmpDriveByToCenterNote1"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "EjectPreload"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeToSensor"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "StartToAmp"
+            "pathName": "Center1EjectBack"
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ScoreNote"
-          }
-        },
-        {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "AmpToCloseNote1"
+                  "pathName": "EjectToCenterNote2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeToSensor"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center2ToEject"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "EjectToCenterNote3"
                 }
               },
               {
@@ -43,13 +94,13 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CloseNote1ToAmp"
+                  "pathName": "CenterNote3ThenUnderStage"
                 }
               },
               {
@@ -59,56 +110,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreNote"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "AmpToCenterPickup"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeFromFloor"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "CenterPickupToAmp"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "BringNoteToCartridge"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreNote"
           }
         }
       ]

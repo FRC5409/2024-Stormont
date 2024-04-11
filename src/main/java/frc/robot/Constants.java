@@ -284,5 +284,6 @@ public final class Constants {
         public static final double MIDDLE = -15;
         public static final double HIGH = -60;
         public static final double TRAP_TRIGGER_POS = -40;
+        public static final double SLOW_TRIGGER = -30;
     }
 }
