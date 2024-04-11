@@ -79,6 +79,7 @@ public class PhotonVision extends SubsystemBase {
         sb_driveteamtab = Shuffleboard.getTab("Drive team");
         sb_driveteamtab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(3, 0);
         sb_driveteamtab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(3, 1);
+        sb_driveteamtab.addBoolean("TopCamera", () -> topCamera.isConnected()).withPosition(4, 1);
 
         this.enableFrontCamera = kPhotonVision.ENABLE_FRONT_CAMERA;
         this.enableBackCamera = kPhotonVision.ENABLE_BACK_CAMERA;
@@ -98,34 +99,35 @@ public class PhotonVision extends SubsystemBase {
         poseEstimates[2] = getPoseEstimatorUpdate(currentRobotPose, topCamera, poseEstimatorTop, enableTopCamera); // Top
         
         boolean foundMultiTagReading = false; 
-        double lowestAmbiguity = getMeasurementAmbiguity(poseEstimates[0].get().targetsUsed);
+        double lowestAmbiguity = 1;
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
         // IN ORDER OF FALLBACK PRIORITY. LAST INDEX IS MOST IMPORTANT
 
-
-
         for (Optional<EstimatedRobotPose> poseEstimate : poseEstimates) {
             // MultiTag-PNP Search
-            if (kPhotonVision.DO_MULTITAG_PRIORITIZATION) { 
-                if (poseEstimate.get().strategy == PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR) {
-                    double multiTagAmbiguity = getMeasurementAmbiguity(poseEstimate.get().targetsUsed);
-                    if (multiTagAmbiguity < lowestAmbiguity) {
-                        poseEstimateOut = poseEstimate;
-                        lowestAmbiguity = multiTagAmbiguity;
-                        foundMultiTagReading = true; 
-                        continue;
+            if (poseEstimate.isPresent()){
+                if (kPhotonVision.DO_MULTITAG_PRIORITIZATION) { 
+                    if (poseEstimate.get().strategy == PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR) {
+                        double multiTagAmbiguity = getMultiTagAmbiguity(poseEstimate.get().targetsUsed);
+                        if (multiTagAmbiguity < lowestAmbiguity) {
+                            poseEstimateOut = poseEstimate;
+                            lowestAmbiguity = multiTagAmbiguity;
+                            foundMultiTagReading = true; 
+                            continue;
+                        }
                     }
                 }
-            }
 
-            // Normal Search
-            double singleTagAmbiguity = getMeasurementAmbiguity(poseEstimate.get().targetsUsed);
-            if (singleTagAmbiguity < lowestAmbiguity && !foundMultiTagReading) {
-                poseEstimateOut = poseEstimate;
-                lowestAmbiguity = singleTagAmbiguity;
+                // Normal Search
+                double singleTagAmbiguity = getMeasurementAmbiguity(poseEstimate.get().targetsUsed);
+                if (singleTagAmbiguity < lowestAmbiguity && !foundMultiTagReading) {
+                    poseEstimateOut = poseEstimate;
+                    lowestAmbiguity = singleTagAmbiguity;
+                }
             }
         }
 
+        //System.out.println("IM UPDATIng");
         return poseEstimateOut;
     }
 
@@ -183,6 +185,7 @@ public class PhotonVision extends SubsystemBase {
                             return photonData;
                         } else {
                             System.out.println("CUTOFF TAG");
+                            System.out.println(getPoseDistance(currentRobotPose.getEstimatedPosition(), getPoseFromTransform(photonData.get().targetsUsed.get(0).getBestCameraToTarget())));
                             return Optional.empty();
                         }
                     }
