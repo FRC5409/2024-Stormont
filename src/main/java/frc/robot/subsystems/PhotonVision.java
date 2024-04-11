@@ -82,6 +82,7 @@ public class PhotonVision extends SubsystemBase {
 
         this.enableFrontCamera = kPhotonVision.ENABLE_FRONT_CAMERA;
         this.enableBackCamera = kPhotonVision.ENABLE_BACK_CAMERA;
+        this.enableTopCamera = kPhotonVision.ENABLE_TOP_CAMERA;
     }
 
     /**
