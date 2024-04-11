@@ -185,9 +185,14 @@ public final class Constants {
         public static final double MAX_JUMP_DISTANCE = 1; //m
         public static final boolean DO_JUMP_FILTERING = false;
         public static final double TAG_MIN_AREA = 0.15;
+        public static final double SINGLE_DISTANCE_CUTOFF = 8; //m
 
         public static final boolean ENABLE_FRONT_CAMERA = true;
         public static final boolean ENABLE_BACK_CAMERA = true;
+        public static final boolean ENABLE_TOP_CAMERA = false;
+
+        public static final boolean DO_MULTITAG_PRIORITIZATION = true; 
+        public static final boolean DO_SINGLE_DISTANCE_FILTERING = false; 
 
     }
 
@@ -235,7 +240,7 @@ public final class Constants {
                 new Pose2d(14.7, 7.78, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-        public static final double TRAP_OFFSET = 0.38;
+        public static final double TRAP_OFFSET = 0.34;
         public static final double TRAP_DISTANT_OFFSET = .67;
     }
 

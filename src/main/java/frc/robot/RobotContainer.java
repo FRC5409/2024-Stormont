@@ -349,6 +349,11 @@ public class RobotContainer {
 
         m_secondaryController
                 .x()
+                .onTrue(Commands.runOnce(() -> {
+                    sys_photonvision.setCameraEnableStatus(false, "Front");
+                    sys_photonvision.setCameraEnableStatus(false, "Back"); 
+                    sys_photonvision.setCameraEnableStatus(true, "Top"); 
+                }, sys_photonvision))
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
@@ -374,10 +379,21 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                this::isRed)));
+                                                this::isRed))
+                            )
+                .onFalse(Commands.runOnce(() -> {
+                    sys_photonvision.setCameraEnableStatus(true, "Front");
+                    sys_photonvision.setCameraEnableStatus(true, "Back"); 
+                    sys_photonvision.setCameraEnableStatus(false, "Top");                    
+                }, sys_photonvision));
 
         m_secondaryController
                 .b()
+                .onTrue(Commands.runOnce(() -> {
+                    sys_photonvision.setCameraEnableStatus(false, "Front");
+                    sys_photonvision.setCameraEnableStatus(false, "Back"); 
+                    sys_photonvision.setCameraEnableStatus(true, "Top"); 
+                }, sys_photonvision))
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
@@ -403,11 +419,21 @@ public class RobotContainer {
                                                 true,
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
-                                                this::isRed)));
+                                                this::isRed))
+                                                )
+                .onFalse(Commands.runOnce(() -> {
+                    sys_photonvision.setCameraEnableStatus(true, "Front");
+                    sys_photonvision.setCameraEnableStatus(true, "Back"); 
+                    sys_photonvision.setCameraEnableStatus(false, "Top");                    
+                }, sys_photonvision));
 
         m_secondaryController
                 .a()
-                .onTrue(Commands.runOnce(() -> sys_photonvision.setCameraEnableStatus(false, "Front"), sys_photonvision))
+                .onTrue(Commands.runOnce(() -> {
+                    sys_photonvision.setCameraEnableStatus(false, "Front");
+                    sys_photonvision.setCameraEnableStatus(false, "Back"); 
+                    sys_photonvision.setCameraEnableStatus(true, "Top");                                        
+                }, sys_photonvision))
                 .whileTrue(
                         new AlignToPose(
                                         () -> {
@@ -434,7 +460,11 @@ public class RobotContainer {
                                                 kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
                                                 kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE,
                                                 this::isRed)))
-                .onFalse(Commands.runOnce(() -> sys_photonvision.setCameraEnableStatus(true, "Front"), sys_photonvision));
+                .onFalse(Commands.runOnce(() -> {
+                    sys_photonvision.setCameraEnableStatus(true, "Front");
+                    sys_photonvision.setCameraEnableStatus(true, "Back"); 
+                    sys_photonvision.setCameraEnableStatus(false, "Top");                    
+                }, sys_photonvision));
     }
 
     public void registerPathplannerCommands() {
