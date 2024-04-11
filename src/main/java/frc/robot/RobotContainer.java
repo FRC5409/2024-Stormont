@@ -200,7 +200,7 @@ public class RobotContainer {
         // drivetrain
         m_primaryController
                 .rightBumper()
-                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));
 
         // score command
         m_primaryController.a().onTrue(new ScoreNote(sys_deployment, sys_cartridge));
@@ -483,6 +483,15 @@ public class RobotContainer {
             sys_cartridge).withTimeout(1));
 
         NamedCommands.registerCommand("IntakeToSensor", cmd_intakeToSensor);
+
+        NamedCommands.registerCommand("EjectPreload", 
+            Commands.waitSeconds(0.6).andThen(
+            Commands.runOnce(() -> sys_cartridge.setVoltage(5), sys_cartridge),
+            Commands.runOnce(() -> sys_deployment.setPosition(-18, kDeployment.kPID.kSlowSlot.slot), sys_deployment),
+            Commands.waitSeconds(0.4),
+            Commands.runOnce(() -> sys_cartridge.setVoltage(0), sys_cartridge),
+            Commands.runOnce(() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kFastSlot.slot), sys_deployment))
+        );
     }
 
     /**
@@ -498,7 +507,13 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return Commands.waitSeconds(sb_autoDelay.getDouble(0.0)).andThen(
-        sc_autoChooser.getSelected());
+        double delay = sb_autoDelay.getDouble(0);
+
+        if (delay == 0) {
+            return sc_autoChooser.getSelected();
+        } else {
+            return Commands.waitSeconds(delay).andThen(
+            sc_autoChooser.getSelected());
+        }
     }
 }

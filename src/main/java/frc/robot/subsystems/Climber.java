@@ -80,7 +80,7 @@ public class Climber extends SubsystemBase {
         m_controller.setP(kClimber.KP_0, 1);
         m_controller.setI(kClimber.KI_0, 1);
         m_controller.setD(kClimber.KD_0, 1);
-        m_controller.setOutputRange(-0.75, 0.75, 1);
+        m_controller.setOutputRange(-0.4, 0.4, 1);
     }
 
     // Zero encoder

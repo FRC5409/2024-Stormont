@@ -3,51 +3,56 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.74,
-        "y": 7.67
+        "x": 1.4,
+        "y": 7.3
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.878767609654412,
+        "x": 1.4993411183403562,
+        "y": 7.5895062331435215
+      },
+      "isLocked": false,
+      "linkedName": "StartingPosition"
+    },
+    {
+      "anchor": {
+        "x": 1.74,
         "y": 7.67
+      },
+      "prevControl": {
+        "x": 1.8299059361675092,
+        "y": 7.674113713874804
+      },
+      "nextControl": {
+        "x": 0.23637243855684284,
+        "y": 7.601200387585961
       },
       "isLocked": false,
       "linkedName": "Amp"
     },
     {
       "anchor": {
-        "x": 3.417975978809101,
-        "y": 7.67
+        "x": 8.14162084164624,
+        "y": 7.3322348354098414
       },
       "prevControl": {
-        "x": 2.4918405126839223,
-        "y": 7.7625
-      },
-      "nextControl": {
-        "x": 4.344111444934276,
-        "y": 7.5775
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 8.14,
-        "y": 7.418546103223573
-      },
-      "prevControl": {
-        "x": 6.619309367425444,
-        "y": 7.418546103223573
+        "x": 4.212384948986422,
+        "y": 7.83508347643476
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterPickup"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.05,
-      "rotationDegrees": 0,
+      "waypointRelativePos": 1,
+      "rotationDegrees": -90.0,
+      "rotateFast": true
+    },
+    {
+      "waypointRelativePos": 1.1,
+      "rotationDegrees": 0.0,
       "rotateFast": true
     }
   ],
@@ -62,10 +67,13 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 0,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "previewStartingState": {
+    "rotation": -90.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }
