@@ -1,8 +1,5 @@
 package frc.robot.commands;
 
-// 5409: The Chargers
-// http://github.com/FRC5409
-
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.kCartridge;
