@@ -20,12 +20,12 @@
         "y": 7.67
       },
       "prevControl": {
-        "x": 1.8299059361675092,
-        "y": 7.674113713874804
+        "x": 1.6560234842168269,
+        "y": 7.702371975486804
       },
       "nextControl": {
-        "x": 0.23637243855684284,
-        "y": 7.601200387585961
+        "x": 2.130825458232113,
+        "y": 7.519341306488881
       },
       "isLocked": false,
       "linkedName": "Amp"
@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 4.212384948986422,
-        "y": 7.83508347643476
+        "y": 8.080660719725998
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,7 +56,19 @@
       "rotateFast": true
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 1.25,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.56,

@@ -460,10 +460,6 @@ public class RobotContainer {
                 "BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
         NamedCommands.registerCommand(
                 "ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
-        NamedCommands.registerCommand("offsetFieldRelativeForward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(0, () -> isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeLeft", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(90), () -> isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeRight", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-90), () -> isRed()), sys_drivetrain));
-        NamedCommands.registerCommand("offsetFieldRelativeBackward", Commands.runOnce(() -> sys_drivetrain.offsetFieldRelative(Math.toRadians(-180), () -> isRed()), sys_drivetrain));
         NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
 
         // Applying PID values to drivetrain

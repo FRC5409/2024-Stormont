@@ -12,13 +12,7 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "offsetFieldRelativeLeft"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -40,13 +34,44 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "IntakeFromFloor"
+                        "name": "IntakeToSensor"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center1EjectBack"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "EjectToCenterNote2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeToSensor"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center2ToEject"
           }
         }
       ]

@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.14162084164624,
+        "y": 7.3322348354098414
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.14162084164624,
+        "y": 7.3322348354098414
+      },
+      "isLocked": false,
+      "linkedName": "CenterNote1"
+    },
+    {
+      "anchor": {
+        "x": 5.276553003248456,
+        "y": 7.016492665463964
+      },
+      "prevControl": {
+        "x": 6.276553003248456,
+        "y": 7.016492665463964
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "EjectPosition"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 0.8,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "EjectNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.56,
+    "maxAcceleration": 2.3,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 1.5,
+    "rotation": 180.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

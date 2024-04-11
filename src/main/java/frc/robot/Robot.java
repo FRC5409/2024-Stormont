@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -99,6 +101,20 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
         }
+
+        try {
+            // If Red
+            if (m_robotContainer.isRed()) {
+                m_robotContainer.sys_drivetrain.setPose(
+                    PathPlannerAuto.getPathGroupFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).get(0).flipPath().getPreviewStartingHolonomicPose(),
+                    PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName()).getRotation().rotateBy(Rotation2d.fromDegrees(180.0))
+                );
+            } else {
+                m_robotContainer.sys_drivetrain.setPose(
+                    PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.sc_autoChooser.getSelected().getName())
+                );
+            }
+        } catch (Exception e) {}
     }
 
     /** This function is called periodically during autonomous. */
