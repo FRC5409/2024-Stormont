@@ -240,7 +240,7 @@ public final class Constants {
                 new Pose2d(14.7, 7.78, new Rotation2d(0, Math.toRadians(-90)));
         public static final Pose2d TRAP_ZONE_15 =
                 new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-        public static final double TRAP_OFFSET = 0.38;
+        public static final double TRAP_OFFSET = 0.34;
         public static final double TRAP_DISTANT_OFFSET = .67;
     }
 
