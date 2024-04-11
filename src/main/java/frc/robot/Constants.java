@@ -185,13 +185,14 @@ public final class Constants {
         public static final double MAX_JUMP_DISTANCE = 1; //m
         public static final boolean DO_JUMP_FILTERING = false;
         public static final double TAG_MIN_AREA = 0.15;
+        public static final double SINGLE_DISTANCE_CUTOFF = 8; //m
 
         public static final boolean ENABLE_FRONT_CAMERA = true;
         public static final boolean ENABLE_BACK_CAMERA = true;
         public static final boolean ENABLE_TOP_CAMERA = true;
 
-        public static final boolean DO_DISTANCE_FILTERING = false;
         public static final boolean DO_MULTITAG_PRIORITIZATION = true; 
+        public static final boolean DO_SINGLE_DISTANCE_FILTERING = true; 
 
     }
 

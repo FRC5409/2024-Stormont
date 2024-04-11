@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.swing.text.html.Option;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -13,8 +16,11 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -87,11 +93,11 @@ public class PhotonVision extends SubsystemBase {
      *
      * @return Positioning data
      */
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(SwerveDrivePoseEstimator currentRobotPose) {
         Optional<EstimatedRobotPose>[] poseEstimates = new Optional[3];
-        poseEstimates[0] = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront, enableFrontCamera); //Front
-        poseEstimates[1] = getPoseEstimatorUpdate(backCamera, poseEstimatorBack, enableBackCamera); // Back
-        poseEstimates[2] = getPoseEstimatorUpdate(topCamera, poseEstimatorTop, enableTopCamera); // Top
+        poseEstimates[0] = getPoseEstimatorUpdate(currentRobotPose, frontCamera, poseEstimatorFront, enableFrontCamera); //Front
+        poseEstimates[1] = getPoseEstimatorUpdate(currentRobotPose, backCamera, poseEstimatorBack, enableBackCamera); // Back
+        poseEstimates[2] = getPoseEstimatorUpdate(currentRobotPose, topCamera, poseEstimatorTop, enableTopCamera); // Top
         
         boolean foundMultiTagReading = false; 
         double lowestAmbiguity = getMeasurementAmbiguity(poseEstimates[0].get().targetsUsed);
@@ -167,12 +173,25 @@ public class PhotonVision extends SubsystemBase {
      * @param isEnabled Is camera enabled
      * @return Pose estimate
      */
-    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(
-            PhotonCamera camera, PhotonPoseEstimator poseEstimator, boolean isEnabled) {
+    private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(SwerveDrivePoseEstimator currentRobotPose, PhotonCamera camera, PhotonPoseEstimator poseEstimator, boolean isEnabled) {
         if (camera.isConnected()) {
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
-                return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isEnabled ? photonData : Optional.empty();
+                if (isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isEnabled) {
+                    
+                    //Single tag distance filtering
+                    if (photonData.get().targetsUsed.size() == 1 && kPhotonVision.DO_SINGLE_DISTANCE_FILTERING) {
+                        if (getPoseDistance(currentRobotPose.getEstimatedPosition(), getPoseFromTransform(photonData.get().targetsUsed.get(0).getBestCameraToTarget())) < kPhotonVision.SINGLE_DISTANCE_CUTOFF) {
+                            return photonData;
+                        } else {
+                            System.out.println("CUTOFF TAG");
+                            return Optional.empty();
+                        }
+                    }
+
+                    return photonData;
+                }
+                //return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isEnabled ? photonData : Optional.empty();
             }
         }
         return Optional.empty();
@@ -258,10 +277,25 @@ public class PhotonVision extends SubsystemBase {
         return new Pose2d(x, y, new Rotation2d(targetRotation));
     }
 
+    /**
+     * Returns the distance between 2 pose2d objects
+     * @param pose1 Position 1
+     * @param pose2 Position 2
+     * @return Distance between 2 positions
+     */
     private double getPoseDistance(Pose2d pose1, Pose2d pose2) {
         return Math.abs(Math.sqrt(
                 Math.pow(pose2.getX() - pose1.getX(), 2)
                         + Math.pow(pose2.getY() - pose1.getY(), 2)));
+    }
+
+    /**
+     * Converts Transform3d to Pose2d 
+     * @param transform Transform3d to convert
+     * @return Pose2d of Transform3d 
+     */
+    private Pose2d getPoseFromTransform(Transform3d transform) {
+        return new Pose2d(transform.getX(), transform.getY(), transform.getRotation().toRotation2d());
     }
 
     /**
