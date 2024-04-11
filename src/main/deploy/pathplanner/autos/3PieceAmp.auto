@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "offsetFieldRelativeLeft"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "StartToAmp"
