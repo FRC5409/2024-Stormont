@@ -188,6 +188,10 @@ public final class Constants {
 
         public static final boolean ENABLE_FRONT_CAMERA = true;
         public static final boolean ENABLE_BACK_CAMERA = true;
+        public static final boolean ENABLE_TOP_CAMERA = true;
+
+        public static final boolean DO_DISTANCE_FILTERING = false;
+        public static final boolean DO_MULTITAG_PRIORITIZATION = true; 
 
     }
 

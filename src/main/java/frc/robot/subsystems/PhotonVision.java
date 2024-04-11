@@ -25,11 +25,10 @@ import frc.robot.Constants.kDrive.kAutoAlign;
 
 public class PhotonVision extends SubsystemBase {
     AprilTagFieldLayout aprilTagFieldLayout;
-    PhotonCamera frontCamera, backCamera;
-    private boolean enableFrontCamera, enableBackCamera; 
-    PhotonPoseEstimator poseEstimatorFront;
-    PhotonPoseEstimator poseEstimatorBack;
-    private double lastResponseFront, lastResponseBack; 
+    PhotonCamera frontCamera, topCamera, backCamera;
+    private boolean enableFrontCamera, enableTopCamera, enableBackCamera; 
+    PhotonPoseEstimator poseEstimatorFront, poseEstimatorTop, poseEstimatorBack;
+    private double lastResponseFront, lastResponseTop, lastResponseBack; 
     private static PhotonVision instance = null;
 
     private ShuffleboardTab sb_driveteamtab;
@@ -41,12 +40,11 @@ public class PhotonVision extends SubsystemBase {
         }
 
         // Cameras
-        // frontCamera = new PhotonCamera(kCameras.FRONT_CAMERA_ID);
         frontCamera = new PhotonCamera(kCameras.FRONT_CAMERA_ID);
-        //backCamera = new PhotonCamera(kCameras.BACK_CAMERA_ID);
-        backCamera = new PhotonCamera(kCameras.TRAP_CAMERA_ID);
+        backCamera = new PhotonCamera(kCameras.BACK_CAMERA_ID);
+        topCamera = new PhotonCamera(kCameras.TRAP_CAMERA_ID);
 
-        // Pose Estimator
+        //Front Camera
         poseEstimatorFront =
                 new PhotonPoseEstimator(
                         aprilTagFieldLayout,
@@ -55,7 +53,7 @@ public class PhotonVision extends SubsystemBase {
                         kCameras.FRONT_CAMERA_OFFSET);
         poseEstimatorFront.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-        /**
+        //Back Camera
         poseEstimatorBack =
                 new PhotonPoseEstimator(
                         aprilTagFieldLayout,
@@ -63,16 +61,18 @@ public class PhotonVision extends SubsystemBase {
                         backCamera,
                         kCameras.BACK_CAMERA_OFFSET);
         poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-         */
-        
-        poseEstimatorBack =
+         
+        //Top Camera
+        poseEstimatorTop =
                 new PhotonPoseEstimator(
                         aprilTagFieldLayout,
                         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                        backCamera,
+                        topCamera,
                         kCameras.TRAP_CAMERA_OFFSET);
-        poseEstimatorBack.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        poseEstimatorTop.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
+
+        //Shuffleboard
         sb_driveteamtab = Shuffleboard.getTab("Drive team");
         sb_driveteamtab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(3, 0);
         sb_driveteamtab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(3, 1);
@@ -88,59 +88,91 @@ public class PhotonVision extends SubsystemBase {
      * @return Positioning data
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-        Optional<EstimatedRobotPose> poseEstimateFront = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront);
-        Optional<EstimatedRobotPose> poseEstimateBack = getPoseEstimatorUpdate(backCamera, poseEstimatorBack);
+        Optional<EstimatedRobotPose>[] poseEstimates = new Optional[3];
+        poseEstimates[0] = getPoseEstimatorUpdate(frontCamera, poseEstimatorFront, enableFrontCamera); //Front
+        poseEstimates[1] = getPoseEstimatorUpdate(backCamera, poseEstimatorBack, enableBackCamera); // Back
+        poseEstimates[2] = getPoseEstimatorUpdate(topCamera, poseEstimatorTop, enableTopCamera); // Top
+        
+        boolean foundMultiTagReading = false; 
+        double lowestAmbiguity = getMeasurementAmbiguity(poseEstimates[0].get().targetsUsed);
         Optional<EstimatedRobotPose> poseEstimateOut = Optional.empty();
+        // IN ORDER OF FALLBACK PRIORITY. LAST INDEX IS MOST IMPORTANT
 
-        if (!enableFrontCamera) {
-            // System.out.println("FRONT CAMERA NOT ENABLED");
-        }
 
-        if (poseEstimateFront.isPresent() && poseEstimateBack.isPresent()) {
-            // pick one with better ambiguity
-            if (getMeasurementAmbiguity(poseEstimateFront.get().targetsUsed)
-                    < getMeasurementAmbiguity(poseEstimateBack.get().targetsUsed) && enableFrontCamera) {
-                poseEstimateOut = poseEstimateFront;
-            } else if (enableBackCamera) {
-                poseEstimateOut = poseEstimateBack;
+
+        for (Optional<EstimatedRobotPose> poseEstimate : poseEstimates) {
+            // MultiTag-PNP Search
+            if (kPhotonVision.DO_MULTITAG_PRIORITIZATION) { 
+                if (poseEstimate.get().strategy == PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR) {
+                    double multiTagAmbiguity = getMeasurementAmbiguity(poseEstimate.get().targetsUsed);
+                    if (multiTagAmbiguity < lowestAmbiguity) {
+                        poseEstimateOut = poseEstimate;
+                        lowestAmbiguity = multiTagAmbiguity;
+                        foundMultiTagReading = true; 
+                        continue;
+                    }
+                }
             }
-        } else if (poseEstimateFront.isPresent() && enableFrontCamera) {
-            poseEstimateOut = poseEstimateFront;
-        } else if (poseEstimateBack.isPresent() && enableBackCamera) {
-            poseEstimateOut = poseEstimateBack;
+
+            // Normal Search
+            double singleTagAmbiguity = getMeasurementAmbiguity(poseEstimate.get().targetsUsed);
+            if (singleTagAmbiguity < lowestAmbiguity && !foundMultiTagReading) {
+                poseEstimateOut = poseEstimate;
+                lowestAmbiguity = singleTagAmbiguity;
+            }
         }
+
         return poseEstimateOut;
     }
 
+    /**
+     * Displays status of all cameras on smartdashboard when called
+     */
     public void updateCameraStatus() {
+        // Front Camera
         if (!frontCamera.isConnected()) {
             if ((System.currentTimeMillis() - lastResponseFront) > kPhotonVision.CAMERA_STATUS_TIMEOUT) {
                 SmartDashboard.putBoolean("[PV] Front", false);
             }
         } else {
             lastResponseFront = System.currentTimeMillis();
-            SmartDashboard.putBoolean("[PV] Front", true); //is this going to cause too much traffic?
+            SmartDashboard.putBoolean("[PV] Front", true); 
         }
 
+        // Back Camera
         if (!backCamera.isConnected()) {
             if ((System.currentTimeMillis() - lastResponseBack) > kPhotonVision.CAMERA_STATUS_TIMEOUT) {
                 SmartDashboard.putBoolean("[PV] Back", false);
             }
         } else {
             lastResponseBack = System.currentTimeMillis();
-            SmartDashboard.putBoolean("[PV] Back", true); //is this going to cause too much traffic?
+            SmartDashboard.putBoolean("[PV] Back", true); 
+        }
+
+        // Top Camera
+        if (!topCamera.isConnected()) {
+            if ((System.currentTimeMillis() - lastResponseTop) > kPhotonVision.CAMERA_STATUS_TIMEOUT) {
+                SmartDashboard.putBoolean("[PV] Top", false);
+            } else {
+                lastResponseTop = System.currentTimeMillis();
+                SmartDashboard.putBoolean("[PV] Top", true);
+            }
         }
     }
 
+    /**
+     * Returns a pose estimate from given camera if it is connected and enabled 
+     * @param camera Camera for pose estimate
+     * @param poseEstimator Pose estimator to use for update
+     * @param isEnabled Is camera enabled
+     * @return Pose estimate
+     */
     private Optional<EstimatedRobotPose> getPoseEstimatorUpdate(
-            PhotonCamera camera, PhotonPoseEstimator poseEstimator) {
+            PhotonCamera camera, PhotonPoseEstimator poseEstimator, boolean isEnabled) {
         if (camera.isConnected()) {
             Optional<EstimatedRobotPose> photonData = poseEstimator.update();
             if (photonData.isPresent()) {
-                return isWithinAmbiguityThreshold(
-                                photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD)
-                        ? photonData
-                        : Optional.empty();
+                return isWithinAmbiguityThreshold(photonData.get().targetsUsed, kPhotonVision.AMBIGUITY_THRESHOLD) && isEnabled ? photonData : Optional.empty();
             }
         }
         return Optional.empty();
@@ -162,6 +194,11 @@ public class PhotonVision extends SubsystemBase {
         return true;
     }
 
+    /**
+     * Returns lowest ambiguity value from a list of tags
+     * @param targets Targets to search
+     * @return Lowest ambiguity value found in targets
+     */
     public double getMeasurementAmbiguity(List<PhotonTrackedTarget> targets) {
         double lowestAmbiguity = targets.get(0).getPoseAmbiguity();
         for (PhotonTrackedTarget target : targets) {
@@ -172,6 +209,28 @@ public class PhotonVision extends SubsystemBase {
         return lowestAmbiguity;
     }
 
+    /**
+     * Returns average ambiguity value from a list of tags
+     * @param targets Targets to search
+     * @return Average ambiguity value of targets
+     */
+    public double getMultiTagAmbiguity(List<PhotonTrackedTarget> targets) {
+        double ambiguity = 0;
+
+        for (PhotonTrackedTarget target : targets) {
+            ambiguity += target.getPoseAmbiguity();
+        }
+
+        return (ambiguity/targets.size());
+    }
+
+    /**
+     * Returns a pose that is offset by a specified amount in field space relative to the nearest tag. 
+     * @param sys_drivetrain Drivetrain Subsystem 
+     * @param offset Offset distance
+     * @param targetRotation Rotation at which to calculate offset
+     * @return Offset position from nearest tag
+     */
     public Pose2d getNearestTagPoseWithOffset(
         Drivetrain sys_drivetrain, double offset, double targetRotation) {
         Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
@@ -205,6 +264,10 @@ public class PhotonVision extends SubsystemBase {
                         + Math.pow(pose2.getY() - pose1.getY(), 2)));
     }
 
+    /**
+     * Returns instance of PhotonVision subsystem and creates a new one if not present
+     * @return PhotonVision Subsystem
+     */
     public static PhotonVision getInstance() {
         if (instance == null) {
             instance = new PhotonVision();
@@ -212,6 +275,11 @@ public class PhotonVision extends SubsystemBase {
         return instance;
     }
 
+    /**
+     * Updates enable status of a specified camera
+     * @param isEnabled Status to set
+     * @param camera Camera to modify
+     */
     public void setCameraEnableStatus(boolean isEnabled, String camera) {
         switch (camera) {
             case "Front":
@@ -219,6 +287,9 @@ public class PhotonVision extends SubsystemBase {
                 break;
             case "Back":
                 this.enableBackCamera = isEnabled;
+                break;
+            case "Top":
+                this.enableTopCamera = isEnabled;
                 break;
         }
     }
