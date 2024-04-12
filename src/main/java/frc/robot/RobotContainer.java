@@ -334,9 +334,12 @@ public class RobotContainer {
 
 	public void registerPathplannerCommands() {
 
-		NamedCommands.registerCommand("IntakeFromFloor", Commands.run(() -> {
+		NamedCommands.registerCommand("IntakeFromFloor", Commands.startEnd(() -> {
 			sys_intake.setVoltage(kIntake.VOLTAGE);
 			sys_indexer.setVoltage(kIndexer.VOLTAGE);
+		}, () -> {
+			sys_intake.setVoltage(0.0);
+			sys_indexer.setVoltage(0.0);
 		}, sys_intake, sys_indexer).until(sys_indexer::checkIR));
 
 		NamedCommands.registerCommand("BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
@@ -363,6 +366,11 @@ public class RobotContainer {
 
 		NamedCommands.registerCommand("EndIfNotInIntake", Commands.waitUntil(() -> !sys_intake.checkIR())
 				.andThen(Commands.waitSeconds(0.8)).andThen(Commands.waitUntil(() -> !sys_intake.checkIR())));
+
+		NamedCommands.registerCommand("BringCartridgeUp",
+				Commands.runOnce(
+						() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kFastSlot.slot),
+						sys_deployment));
 	}
 
 	/**
