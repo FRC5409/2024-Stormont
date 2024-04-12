@@ -72,15 +72,15 @@ public class PhotonVision extends SubsystemBase {
 		sb_driveteamtab.addBoolean("TopCamera", () -> topCamera.isConnected()).withPosition(4, 1);
 
 		sb_calibrationTab = Shuffleboard.getTab("Calibration");
-		sb_calibrationTab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(6, 0);
-		sb_calibrationTab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(6, 1);
-		sb_calibrationTab.addBoolean("TopCamera", () -> topCamera.isConnected()).withPosition(6, 2);
+		sb_calibrationTab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(5, 0);
+		sb_calibrationTab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(5, 1);
+		sb_calibrationTab.addBoolean("TopCamera", () -> topCamera.isConnected()).withPosition(5, 2);
 
-		sb_calibrationTab.addBoolean("[EN] FrontCamera", () -> enableFrontCamera).withPosition(7, 0);
-		sb_calibrationTab.addBoolean("[EN] BackCamera", () -> enableBackCamera).withPosition(7, 1);
-		sb_calibrationTab.addBoolean("[EN] TopCamera", () -> enableTopCamera).withPosition(7, 2);
+		sb_calibrationTab.addBoolean("[EN] FrontCamera", () -> enableFrontCamera).withPosition(6, 0);
+		sb_calibrationTab.addBoolean("[EN] BackCamera", () -> enableBackCamera).withPosition(6, 1);
+		sb_calibrationTab.addBoolean("[EN] TopCamera", () -> enableTopCamera).withPosition(6, 2);
 
-		sb_calibrationTab.addDouble("Trap Distance", () -> calibrationDistanceToTrap).withPosition(8, 0);
+		sb_calibrationTab.addDouble("Trap Distance", () -> calibrationDistanceToTrap).withPosition(7, 0);
 
 		this.enableFrontCamera = kPhotonVision.ENABLE_FRONT_CAMERA;
 		this.enableBackCamera = kPhotonVision.ENABLE_BACK_CAMERA;
@@ -351,15 +351,12 @@ public class PhotonVision extends SubsystemBase {
 		switch (camera) {
 			case "Front" :
 				this.enableFrontCamera = isEnabled;
-				frontCamera.setDriverMode(isEnabled);
 				break;
 			case "Back" :
 				this.enableBackCamera = isEnabled;
-				backCamera.setDriverMode(isEnabled);
 				break;
 			case "Top" :
 				this.enableTopCamera = isEnabled;
-				topCamera.setDriverMode(isEnabled);
 				break;
 		}
 	}
