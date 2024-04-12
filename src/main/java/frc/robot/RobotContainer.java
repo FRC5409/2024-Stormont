@@ -346,7 +346,8 @@ public class RobotContainer {
 						() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kFastSlot.slot),
 						sys_deployment)));
 
-		NamedCommands.registerCommand("EndIfNotInIntake", Commands.waitUntil(() -> !sys_intake.checkIR()));
+		NamedCommands.registerCommand("EndIfNotInIntake",
+				Commands.waitUntil(() -> !sys_intake.checkIR()).andThen(Commands.waitSeconds(0.4)));
 	}
 
 	/**
