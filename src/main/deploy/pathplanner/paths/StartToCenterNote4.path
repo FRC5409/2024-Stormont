@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.417802479310422,
-        "y": 1.7354569626003862
+        "x": 6.9020404707476075,
+        "y": 1.9178413285601514
       },
       "isLocked": false,
       "linkedName": "EjectPosition2"
@@ -20,8 +20,8 @@
         "y": 2.375434505498641
       },
       "prevControl": {
-        "x": 6.827292324418378,
-        "y": 1.90120285228694
+        "x": 6.57460414635929,
+        "y": 2.385607506257749
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 30.0,
+    "rotation": 0.0,
     "rotateFast": true
   },
   "reversed": false,
