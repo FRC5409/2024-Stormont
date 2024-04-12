@@ -12,7 +12,7 @@
     "data": {
       "commands": [
         {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -44,13 +44,26 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "Center1EjectBack"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center1EjectBack"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndIfNotInIntake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -69,13 +82,26 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "Center2ToEject"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center2ToEject"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndIfNotInIntake"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
               {

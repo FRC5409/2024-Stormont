@@ -8,29 +8,47 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.715334842009307,
-        "y": 0.7367317298737164
+        "x": 6.70054546759925,
+        "y": 0.8092299319990566
       },
       "isLocked": false,
       "linkedName": "CenterNote5"
     },
     {
       "anchor": {
-        "x": 1.4174820372432768,
-        "y": 2.982009382822185
+        "x": 5.24783149328769,
+        "y": 1.8134550283352364
       },
       "prevControl": {
-        "x": 3.049182024289975,
-        "y": 1.6085446476448508
+        "x": 6.066811183503602,
+        "y": 1.1309719531553095
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "StartMid"
+      "linkedName": "EjectPosition2"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "EjectNote",
+      "waypointRelativePos": 0.85,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "EjectNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.56,
     "maxAcceleration": 3.0,
@@ -38,12 +56,12 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -60.0,
-    "rotateFast": false
+    "velocity": 1.5,
+    "rotation": 140.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": null,
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
