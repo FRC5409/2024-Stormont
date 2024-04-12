@@ -121,7 +121,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 	public void driveFromChassisSpeeds(ChassisSpeeds speeds) {
 		// SmartDashboard.putNumber("Xspeed", speeds.vxMetersPerSecond);
 		// SmartDashboard.putNumber("Yspeed", speeds.vxMetersPerSecond);
-		// SmartDashboard.putNumber("deg/s", Math.toDegrees(speeds.omegaRadiansPerSecond));
+		// SmartDashboard.putNumber("deg/s",
+		// Math.toDegrees(speeds.omegaRadiansPerSecond));
 		this.setControl(autoRequest.withSpeeds(speeds));
 	}
 
