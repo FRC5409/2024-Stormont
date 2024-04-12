@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.networktables.GenericEntry;
@@ -326,23 +325,15 @@ public class RobotContainer {
 		}, sys_intake, sys_indexer).until(sys_indexer::checkIR));
 
 		NamedCommands.registerCommand("BringNoteToCartridge", new BringNoteToCartridge(sys_cartridge, sys_indexer));
-		NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1));
-		NamedCommands.registerCommand("EjectNote",
-				Commands.runOnce(() -> sys_cartridge.setVoltage(-kCartridge.VOLTAGE), sys_cartridge).withTimeout(1));
+		NamedCommands.registerCommand("ScoreNote", new ScoreNote(sys_deployment, sys_cartridge).withTimeout(1.0));
 
-		// Applying PID values to drivetrain
-		FieldCentric driveForward = sys_drivetrain.teleopDrive.withVelocityX(2.0).withVelocityY(0.0)
-				.withRotationalRate(0.0);
-
-		NamedCommands.registerCommand("DriveForward",
-				Commands.runOnce(() -> sys_drivetrain.runRequest(() -> driveForward), sys_drivetrain));
-		// .alongWith(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(),
-		// sys_drivetrain)));
-
-		NamedCommands.registerCommand("EjectNote", Commands.runOnce(() -> {
+		NamedCommands.registerCommand("EjectNote", Commands.startEnd(() -> {
 			sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
-			sys_intake.setVoltage(-kIntake.VOLTAGE);
-		}, sys_cartridge).withTimeout(1));
+			sys_intake.setVoltage(-12.0);
+		}, () -> {
+			sys_cartridge.setVoltage(0.0);
+			sys_intake.setVoltage(0.0);
+		}, sys_cartridge, sys_intake).withTimeout(1.0));
 
 		NamedCommands.registerCommand("IntakeToSensor", cmd_intakeToSensor);
 
@@ -354,6 +345,8 @@ public class RobotContainer {
 				Commands.runOnce(
 						() -> sys_deployment.setPosition(kDeployment.kSetpoints.HOME, kDeployment.kPID.kFastSlot.slot),
 						sys_deployment)));
+
+		NamedCommands.registerCommand("EndIfNotInIntake", Commands.waitUntil(() -> !sys_intake.checkIR()));
 	}
 
 	/**

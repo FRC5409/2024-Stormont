@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.475353628769936,
-        "y": 3.8356826571202998
+        "x": 6.963788939454926,
+        "y": 4.0851486928627985
       },
       "isLocked": false,
       "linkedName": "CenterNote3"
     },
     {
       "anchor": {
-        "x": 4.446268037835221,
-        "y": 4.829685784727695
+        "x": 6.57460414635929,
+        "y": 4.092954054853979
       },
       "prevControl": {
-        "x": 5.182999767708936,
-        "y": 4.3385312981452175
+        "x": 7.744019590603283,
+        "y": 4.092954054853979
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -40.0,
+    "rotation": 0.0,
     "rotateFast": true
   },
   "reversed": false,
