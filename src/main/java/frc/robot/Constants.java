@@ -29,6 +29,7 @@ public final class Constants {
 	public static final class kControllers {
 		public static final int PRIMARY_CONTROLLER = 0;
 		public static final int SECONDARY_CONTROLLER = 1;
+		public static final int CALIBRATION_CONTROLLER = 2;
 		public static final int TEST_CONTROLLER = 2;
 	}
 
@@ -187,7 +188,7 @@ public final class Constants {
 		public static final boolean ENABLE_TOP_CAMERA = false;
 
 		public static final boolean DO_MULTITAG_PRIORITIZATION = true;
-		public static final boolean DO_SINGLE_DISTANCE_FILTERING = false;
+		public static final boolean DO_SINGLE_DISTANCE_FILTERING = false; // DO NOT ENABLE | INCONSISTANT
 
 	}
 
