@@ -55,8 +55,8 @@ public class RobotContainer {
 	 */
 	// Joysticks
 	private final CommandXboxController m_primaryController;
-
 	private final CommandXboxController m_secondaryController;
+	private final CommandXboxController m_calibrationController;
 
 	// Subsystems
 	public final Drivetrain sys_drivetrain;
@@ -89,6 +89,7 @@ public class RobotContainer {
 		// Joysticks
 		m_primaryController = new CommandXboxController(kControllers.PRIMARY_CONTROLLER);
 		m_secondaryController = new CommandXboxController(kControllers.SECONDARY_CONTROLLER);
+		m_calibrationController = new CommandXboxController(kControllers.CALIBRATION_CONTROLLER);
 		DriverStation.silenceJoystickConnectionWarning(true);
 
 		// Subsystems
@@ -316,6 +317,20 @@ public class RobotContainer {
 					sys_photonvision.setCameraEnableStatus(true, "Back");
 					sys_photonvision.setCameraEnableStatus(false, "Top");
 				}, sys_photonvision));
+
+		// CALIBRATION CONTROLLER
+		m_calibrationController.x().onTrue(Commands.runOnce(() -> {
+			sys_photonvision.setCameraEnableStatus(false, "Front");
+			sys_photonvision.setCameraEnableStatus(false, "Back");
+			sys_photonvision.setCameraEnableStatus(true, "Top");
+		}, sys_photonvision).ignoringDisable(true));
+
+		m_calibrationController.b().onTrue(Commands.runOnce(() -> {
+			sys_photonvision.setCameraEnableStatus(true, "Front");
+			sys_photonvision.setCameraEnableStatus(true, "Back");
+			sys_photonvision.setCameraEnableStatus(false, "Top");
+		}, sys_photonvision).ignoringDisable(true));
+
 	}
 
 	public void registerPathplannerCommands() {

@@ -31,7 +31,7 @@ public class PhotonVision extends SubsystemBase {
 	private boolean enableFrontCamera, enableTopCamera, enableBackCamera;
 	PhotonPoseEstimator poseEstimatorFront, poseEstimatorTop, poseEstimatorBack;
 	private double lastResponseFront, lastResponseTop, lastResponseBack;
-    private double calibrationDistanceToTrap;
+	private double calibrationDistanceToTrap;
 	private static PhotonVision instance = null;
 
 	private ShuffleboardTab sb_driveteamtab, sb_calibrationTab;
@@ -62,8 +62,8 @@ public class PhotonVision extends SubsystemBase {
 				topCamera, kCameras.TRAP_CAMERA_OFFSET);
 		poseEstimatorTop.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
-        //Field Calibration
-        calibrationDistanceToTrap = 0;
+		// Field Calibration
+		calibrationDistanceToTrap = 0;
 
 		// Shuffleboard
 		sb_driveteamtab = Shuffleboard.getTab("Drive team");
@@ -71,11 +71,16 @@ public class PhotonVision extends SubsystemBase {
 		sb_driveteamtab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(3, 1);
 		sb_driveteamtab.addBoolean("TopCamera", () -> topCamera.isConnected()).withPosition(4, 1);
 
-        sb_calibrationTab = Shuffleboard.getTab("Calibration");
-        sb_driveteamtab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(0, 0);
-        sb_driveteamtab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(1, 0);
-        sb_driveteamtab.addBoolean("TopCamera", () -> topCamera.isConnected()).withPosition(2, 0);
-        sb_driveteamtab.addDouble("Trap Distance", () -> calibrationDistanceToTrap);
+		sb_calibrationTab = Shuffleboard.getTab("Calibration");
+		sb_calibrationTab.addBoolean("FrontCamera", () -> frontCamera.isConnected()).withPosition(6, 0);
+		sb_calibrationTab.addBoolean("BackCamera", () -> backCamera.isConnected()).withPosition(6, 1);
+		sb_calibrationTab.addBoolean("TopCamera", () -> topCamera.isConnected()).withPosition(6, 2);
+
+		sb_calibrationTab.addBoolean("[EN] FrontCamera", () -> enableFrontCamera).withPosition(7, 0);
+		sb_calibrationTab.addBoolean("[EN] BackCamera", () -> enableBackCamera).withPosition(7, 1);
+		sb_calibrationTab.addBoolean("[EN] TopCamera", () -> enableTopCamera).withPosition(7, 2);
+
+		sb_calibrationTab.addDouble("Trap Distance", () -> calibrationDistanceToTrap).withPosition(8, 0);
 
 		this.enableFrontCamera = kPhotonVision.ENABLE_FRONT_CAMERA;
 		this.enableBackCamera = kPhotonVision.ENABLE_BACK_CAMERA;
@@ -162,12 +167,12 @@ public class PhotonVision extends SubsystemBase {
 		}
 	}
 
-    public void updateCalibrationValues(Drivetrain sys_drivetrain) {
-        // Only called on disabled in order minimize unnecessary resource usage
-        Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
-        Pose2d closestTagPose = getNearestTagPoseWithOffset(sys_drivetrain, 0, 0);
-        calibrationDistanceToTrap = getPoseDistance(currentPose, closestTagPose);
-    }
+	public void updateCalibrationValues(Drivetrain sys_drivetrain) {
+		// Only called on disabled in order minimize unnecessary resource usage
+		Pose2d currentPose = sys_drivetrain.getAutoRobotPose();
+		Pose2d closestTagPose = getNearestTagPoseWithOffset(sys_drivetrain, 0, 0);
+		calibrationDistanceToTrap = getPoseDistance(currentPose, closestTagPose);
+	}
 
 	/**
 	 * Returns a pose estimate from given camera if it is connected and enabled
@@ -346,15 +351,15 @@ public class PhotonVision extends SubsystemBase {
 		switch (camera) {
 			case "Front" :
 				this.enableFrontCamera = isEnabled;
-                frontCamera.setDriverMode(isEnabled);
+				frontCamera.setDriverMode(isEnabled);
 				break;
 			case "Back" :
 				this.enableBackCamera = isEnabled;
-                backCamera.setDriverMode(isEnabled);
+				backCamera.setDriverMode(isEnabled);
 				break;
 			case "Top" :
 				this.enableTopCamera = isEnabled;
-                topCamera.setDriverMode(isEnabled);
+				topCamera.setDriverMode(isEnabled);
 				break;
 		}
 	}

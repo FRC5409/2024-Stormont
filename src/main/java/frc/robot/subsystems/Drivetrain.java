@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,6 +57,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
 	// shuffleboard
 	private final Field2d m_field;
+	private final ShuffleboardTab sb_calibrationTab;
 
 	private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
@@ -86,6 +89,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 
 		// shuffleboard
 		m_field = new Field2d();
+		sb_calibrationTab = Shuffleboard.getTab("Calibration");
+		sb_calibrationTab.add("Field Map", m_field).withPosition(0, 0).withSize(5, 3);
 
 		setDriveMotorInversions();
 	}
@@ -226,7 +231,6 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 	 */
 	private void updateFieldMap() {
 		m_field.setRobotPose(m_poseEstimator.getEstimatedPosition());
-		SmartDashboard.putData(m_field);
 
 		// DEBUG Shuffleboard printouts
 		if (kAutoAlign.AUTO_ALIGN_DEBUG) {
