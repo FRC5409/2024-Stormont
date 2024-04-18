@@ -183,11 +183,13 @@ public class RobotContainer {
 		// Eject note command
 		m_primaryController.b().onTrue(Commands.runOnce(() -> {
 			sys_cartridge.setVoltage(-kCartridge.VOLTAGE);
+			sys_indexer.setVoltage(kIndexer.VOLTAGE);
 			sys_intake.setVoltage(-12.0);
-		}, sys_cartridge, sys_intake)).onFalse(Commands.runOnce(() -> {
+		}, sys_cartridge, sys_indexer, sys_intake)).onFalse(Commands.runOnce(() -> {
 			sys_cartridge.setVoltage(0);
+			sys_indexer.setVoltage(0);
 			sys_intake.setVoltage(0);
-		}, sys_cartridge, sys_intake));
+		}, sys_cartridge, sys_indexer, sys_intake));
 
 		m_primaryController.y().onTrue(cmd_intakeToSensor).onFalse(Commands.runOnce(() -> {
 			sys_intake.setVoltage(0);

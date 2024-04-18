@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.kCANID;
 import frc.robot.Constants.kIntake;
@@ -18,6 +20,9 @@ public class Intake extends SubsystemBase {
 	// Sensors
 	private final DigitalInput irSensor;
 
+	// Shuffleboard
+	// private final ShuffleboardTab sb_tab;
+
 	private Intake() {
 		// Motors
 		motor = new CANSparkMax(kCANID.INTAKE_MOTOR_ID, MotorType.kBrushless);
@@ -25,6 +30,10 @@ public class Intake extends SubsystemBase {
 		configMotor(motor, false);
 
 		irSensor = new DigitalInput(kIntake.IR_CHANNEL);
+
+		// Shuffleboard
+		// sb_tab = Shuffleboard.getTab("Intake");
+		// sb_tab.addBoolean("IR Sensor Value", () -> checkIR());
 	}
 
 	// Get subsystem
