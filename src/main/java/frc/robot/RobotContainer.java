@@ -272,7 +272,7 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(() -> {
 					sys_photonvision.setCameraEnableStatus(true, "Front");
 					sys_photonvision.setCameraEnableStatus(true, "Back");
-					sys_photonvision.setCameraEnableStatus(false, "Top");
+					sys_photonvision.setCameraEnableStatus(true, "Top");
 				}, sys_photonvision));
 
 		m_secondaryController.b().onTrue(Commands.runOnce(() -> {
@@ -293,7 +293,7 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(() -> {
 					sys_photonvision.setCameraEnableStatus(true, "Front");
 					sys_photonvision.setCameraEnableStatus(true, "Back");
-					sys_photonvision.setCameraEnableStatus(false, "Top");
+					sys_photonvision.setCameraEnableStatus(true, "Top");
 				}, sys_photonvision));
 
 		m_secondaryController.a().onTrue(Commands.runOnce(() -> {
@@ -314,7 +314,7 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(() -> {
 					sys_photonvision.setCameraEnableStatus(true, "Front");
 					sys_photonvision.setCameraEnableStatus(true, "Back");
-					sys_photonvision.setCameraEnableStatus(false, "Top");
+					sys_photonvision.setCameraEnableStatus(true, "Top");
 				}, sys_photonvision));
 
 		// CALIBRATION CONTROLLER
@@ -327,9 +327,8 @@ public class RobotContainer {
 		m_calibrationController.b().onTrue(Commands.runOnce(() -> {
 			sys_photonvision.setCameraEnableStatus(true, "Front");
 			sys_photonvision.setCameraEnableStatus(true, "Back");
-			sys_photonvision.setCameraEnableStatus(false, "Top");
+			sys_photonvision.setCameraEnableStatus(true, "Top");
 		}, sys_photonvision).ignoringDisable(true));
-
 	}
 
 	public void registerPathplannerCommands() {
