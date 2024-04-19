@@ -200,6 +200,7 @@ public class RobotContainer {
 				.onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0.0)));
 
 		m_primaryController.leftBumper()
+				.onTrue(Commands.runOnce(() -> sys_photonvision.setCameraEnableStatus(false, "Top"), sys_photonvision))
 				.onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer)
 						.andThen(Commands.runOnce(() -> sys_deployment.setPosition(kDeployment.kSetpoints.AMP_POSITION,
 								kDeployment.kPID.kFastSlot.slot), sys_deployment)))
