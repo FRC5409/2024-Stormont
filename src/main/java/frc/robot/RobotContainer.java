@@ -194,10 +194,10 @@ public class RobotContainer {
 			sys_indexer.setVoltage(0);
 		}, sys_intake, sys_indexer));
 
-		m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+		//  m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
 
-		m_primaryController.back().onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(kCartridge.VOLTAGE)))
-				.onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0.0)));
+		// m_primaryController.back().onTrue(Commands.runOnce(() -> sys_cartridge.setVoltage(kCartridge.VOLTAGE)))
+		// 		.onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0.0)));
 
 		m_primaryController.leftBumper()
 				.onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer)
@@ -248,6 +248,8 @@ public class RobotContainer {
 		m_secondaryController.start().onTrue(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
 		// Bring note from indexer to cartridge, when stuck
+        m_secondaryController.a().onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer));
+
 		m_secondaryController.back()
 				.onTrue(Commands.runOnce(() -> sys_drivetrain.setDriveMotorInversions(), sys_drivetrain));
 
