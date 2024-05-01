@@ -211,6 +211,11 @@ public class RobotContainer {
 		// Secondary Controller
 		// *************************************************************************************************************
 
+        // Stop bot
+        m_secondaryController.x()
+                .onTrue(Commands.runOnce(() -> sys_drivetrain.setMaxVelo(0), sys_drivetrain))
+                .onFalse(Commands.runOnce(() -> sys_drivetrain.setMaxVelo(4.56), sys_drivetrain));
+
 		// Climber setpoint high fast
 		m_secondaryController.povUp().onTrue(Commands.runOnce(
 				() -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT), sys_climber));

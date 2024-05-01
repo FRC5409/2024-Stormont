@@ -59,7 +59,7 @@ public final class Constants {
 		public static final double DRIVE_GEAR_RATIO = 6.75;
 		public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
-		public static final double MAX_DRIVE_VELOCIY = 4.56; // metres per second
+		public static double MAX_DRIVE_VELOCIY = 4.56; // metres per second
 		public static final double MAX_DRIVE_ACCELERATION = 2;
 		public static final double MAX_TURN_ANGULAR_VELOCITY = 10 / 2;
 		public static final double MAX_TURN_ANGULAR_ACCELERATION = 2 * Math.toRadians(360);

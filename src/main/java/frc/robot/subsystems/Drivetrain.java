@@ -329,4 +329,8 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 		updatePoseEstimator();
 		updateFieldMap();
 	}
+
+    public void setMaxVelo(double newVelo) {
+        kDrive.MAX_DRIVE_VELOCIY = newVelo;
+    }
 }
