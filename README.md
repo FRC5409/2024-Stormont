@@ -19,6 +19,8 @@
 
 [Button Bindings](https://docs.google.com/spreadsheets/d/1HSiYmBb3gUdGuNg3Dq-xGTUsblrMMzPB7j3w7IODIzY/edit?usp=sharing)
 
+[DemoMode Bindings](https://docs.google.com/spreadsheets/d/11x9uss_wYLsHrRyKqwUMyLzyd3Q1nghVpB42tWu8XM8/edit?usp=sharing)
+
 [CAN IDs](https://docs.google.com/spreadsheets/d/1e_u3waKVk8dI_7sqbLWBXy6xubhJGqY-UIRehofz2PU/edit?usp=sharing)
 
 [Auto routines diagram](./doc/placeholder.pdf)
