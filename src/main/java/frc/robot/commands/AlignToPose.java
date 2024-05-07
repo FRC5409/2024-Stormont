@@ -27,6 +27,7 @@ public class AlignToPose extends Command {
 	private double reachedPoseTimeout;
 	private double reachedPoseTolerance;
 	private BooleanSupplier isRed;
+	private BooleanSupplier isEanbled;
 
 	/**
 	 * AlignToPose Constructor
@@ -37,7 +38,7 @@ public class AlignToPose extends Command {
 	 *            Drivetrain
 	 */
 	public AlignToPose(Supplier<Pose2d> targetPoseSupplier, Drivetrain sys_Drivetrain, boolean doSlowMode,
-			double reachedPoseTimeout, double reachedPoseTolerance, BooleanSupplier isRed) {
+			double reachedPoseTimeout, double reachedPoseTolerance, BooleanSupplier isRed, BooleanSupplier isEnabled) {
 
 		this.sys_drivetrain = sys_Drivetrain;
 		this.notInLineTime = System.currentTimeMillis();
@@ -46,6 +47,7 @@ public class AlignToPose extends Command {
 		this.reachedPoseTimeout = reachedPoseTimeout;
 		this.reachedPoseTolerance = reachedPoseTolerance;
 		this.isRed = isRed;
+		this.isEanbled = isEnabled;
 
 		// Initializing PID Controllers
 		if (doSlowMode) {
@@ -127,6 +129,11 @@ public class AlignToPose extends Command {
 		if (isRed.getAsBoolean()) {
 			xControllerOutput = -xControllerOutput;
 			yControllerOutput = -yControllerOutput;
+		} else if (!(isEanbled.getAsBoolean())) {
+			// If not enabled, set pid outputs to 0
+			xControllerOutput = 0;
+			yControllerOutput = 0;
+			rControllerOutput = 0;
 		}
 
 		// Applying PID values to drivetrain

@@ -77,6 +77,8 @@ public final class Constants {
 		public static final double HEADING_D = 0;
 		public static final double HEADING_FF = 0.4;
 
+		public static final double INPUT_MULTIPLIER = 0.25;
+
 		public static final class kAutoPathPlanner {
 			public static final double TRANSLATION_P = 2.5;
 			public static final double TRANSLATION_I = 0;
