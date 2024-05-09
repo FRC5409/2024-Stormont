@@ -169,10 +169,6 @@ public class RobotContainer {
 
 		// Primary Controller
 
-		// drivetrain
-		m_primaryController.rightBumper()
-				.onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));
-
 		// score command
 		m_primaryController.a().onTrue(new ScoreNote(sys_deployment, sys_cartridge));
 
@@ -194,13 +190,6 @@ public class RobotContainer {
 			sys_intake.setVoltage(0);
 		}, sys_cartridge, sys_intake));
 
-		// Identical to X
-		// m_primaryController.y().onTrue(cmd_intakeToSensor).onFalse(Commands.runOnce(()
-		// -> {
-		// sys_intake.setVoltage(0);
-		// sys_indexer.setVoltage(0);
-		// }, sys_intake, sys_indexer));
-
 		m_primaryController.y().onTrue(Commands.runOnce(() -> {
 			sys_photonvision.setCameraEnableStatus(false, "Front");
 			sys_photonvision.setCameraEnableStatus(false, "Back");
@@ -221,44 +210,13 @@ public class RobotContainer {
 					sys_photonvision.setCameraEnableStatus(true, "Back");
 					sys_photonvision.setCameraEnableStatus(false, "Top");
 				}, sys_photonvision));
-
-		// m_primaryController.start().onTrue(new BringNoteToCartridge(sys_cartridge,
-		// sys_indexer));
-
-		// m_primaryController.back().onTrue(Commands.runOnce(() ->
-		// sys_cartridge.setVoltage(kCartridge.VOLTAGE)))
-		// .onFalse(Commands.runOnce(() -> sys_cartridge.setVoltage(0.0)));
-
-		// m_primaryController.leftBumper()
-		// .onTrue(new BringNoteToCartridge(sys_cartridge, sys_indexer)
-		// .andThen(Commands.runOnce(() ->
-		// sys_deployment.setPosition(kDeployment.kSetpoints.AMP_POSITION,
-		// kDeployment.kPID.kFastSlot.slot), sys_deployment)))
-		// // .whileTrue(new AlignToPose(sys_drivetrain.getAmpWaypoint(),
-		// sys_drivetrain));
-		// .whileTrue(new AlignToPose(() -> sys_drivetrain.getAmpWaypoint(this::isRed,
-		// sb_ampOffset.getDouble(0)),
-		// sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-		// kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE, this::isRed));
-
-		// Secondary Controller
-		// *************************************************************************************************************
-
-		// Stop bot
-		// m_secondaryController.x().onTrue(Commands.runOnce(() ->
-		// sys_drivetrain.setMaxVelo(0), sys_drivetrain))
-		// .onFalse(Commands.runOnce(() -> sys_drivetrain.setMaxVelo(4.56),
-		// sys_drivetrain));
-
-		m_secondaryController.x().onTrue(Commands.runOnce(() -> stopBot(true)))
-				.onFalse(Commands.runOnce(() -> stopBot(false)));
-
-		// Climber setpoint high fast
-		m_secondaryController.povUp().onTrue(Commands.runOnce(
+        
+        // Climber setpoint high fast
+		m_primaryController.povUp().onTrue(Commands.runOnce(
 				() -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT), sys_climber));
 
 		// Climber setpoint high slow
-		m_secondaryController.povLeft()
+		m_primaryController.povLeft()
 				// .onTrue(
 				// Commands.runOnce(
 				// () ->
@@ -273,8 +231,14 @@ public class RobotContainer {
 								sys_climber)));
 
 		// Climber setpoint low fast
-		m_secondaryController.povDown().onTrue(Commands.runOnce(
+		m_primaryController.povDown().onTrue(Commands.runOnce(
 				() -> sys_climber.setPosition(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT), sys_climber));
+
+		// Secondary Controller
+		// *************************************************************************************************************
+
+		m_secondaryController.x().onTrue(Commands.runOnce(() -> stopBot(true)))
+				.onFalse(Commands.runOnce(() -> stopBot(false)));
 
 		// Climber manual down
 		m_secondaryController.leftBumper()
@@ -298,71 +262,9 @@ public class RobotContainer {
 		// Climb, extend and score, endgame sequence
 		m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
 
-		// m_secondaryController.x().onTrue(Commands.runOnce(() -> {
-		// sys_photonvision.setCameraEnableStatus(false, "Front");
-		// sys_photonvision.setCameraEnableStatus(false, "Back");
-		// sys_photonvision.setCameraEnableStatus(true, "Top");
-		// }, sys_photonvision)).whileTrue(new AlignToPose(() -> {
-		// return sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain,
-		// kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
-		// sys_drivetrain.getTrapRotation(this::isRed, 1));
-		// }, sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
-		// kAutoAlign.REACHED_POSITION_TOLERANCE,
-		// this::isRed).andThen(new AlignToPose(() -> {
-		// return sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain,
-		// kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
-		// sys_drivetrain.getTrapRotation(this::isRed, 1));
-		// }, sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-		// kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE, this::isRed)))
-		// .onFalse(Commands.runOnce(() -> {
-		// sys_photonvision.setCameraEnableStatus(true, "Front");
-		// sys_photonvision.setCameraEnableStatus(true, "Back");
-		// sys_photonvision.setCameraEnableStatus(false, "Top");
-		// }, sys_photonvision));
-
-		// m_secondaryController.b().onTrue(Commands.runOnce(() -> {
-		// sys_photonvision.setCameraEnableStatus(false, "Front");
-		// sys_photonvision.setCameraEnableStatus(false, "Back");
-		// sys_photonvision.setCameraEnableStatus(true, "Top");
-		// }, sys_photonvision)).whileTrue(new AlignToPose(() -> {
-		// return sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain,
-		// kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
-		// sys_drivetrain.getTrapRotation(this::isRed, 2));
-		// }, sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
-		// kAutoAlign.REACHED_POSITION_TOLERANCE,
-		// this::isRed).andThen(new AlignToPose(() -> {
-		// return sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain,
-		// kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
-		// sys_drivetrain.getTrapRotation(this::isRed, 2));
-		// }, sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-		// kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE, this::isRed)))
-		// .onFalse(Commands.runOnce(() -> {
-		// sys_photonvision.setCameraEnableStatus(true, "Front");
-		// sys_photonvision.setCameraEnableStatus(true, "Back");
-		// sys_photonvision.setCameraEnableStatus(false, "Top");
-		// }, sys_photonvision));
-
-		// m_secondaryController.a().onTrue(Commands.runOnce(() -> {
-		// sys_photonvision.setCameraEnableStatus(false, "Front");
-		// sys_photonvision.setCameraEnableStatus(false, "Back");
-		// sys_photonvision.setCameraEnableStatus(true, "Top");
-		// }, sys_photonvision)).whileTrue(new AlignToPose(() -> {
-		// return sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain,
-		// kWaypoints.TRAP_DISTANT_OFFSET + sb_trapOffset.getDouble(0),
-		// sys_drivetrain.getTrapRotation(this::isRed, 3));
-		// }, sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_FAST,
-		// kAutoAlign.REACHED_POSITION_TOLERANCE,
-		// this::isRed).andThen(new AlignToPose(() -> {
-		// return sys_photonvision.getNearestTagPoseWithOffset(sys_drivetrain,
-		// kWaypoints.TRAP_OFFSET + sb_trapOffset.getDouble(0),
-		// sys_drivetrain.getTrapRotation(this::isRed, 3));
-		// }, sys_drivetrain, true, kAutoAlign.REACHED_POSITION_TIMEOUT_SLOW,
-		// kAutoAlign.REACHED_POSITION_TOLERANCE_ClOSE, this::isRed)))
-		// .onFalse(Commands.runOnce(() -> {
-		// sys_photonvision.setCameraEnableStatus(true, "Front");
-		// sys_photonvision.setCameraEnableStatus(true, "Back");
-		// sys_photonvision.setCameraEnableStatus(false, "Top");
-		// }, sys_photonvision));
+        // Drivetrain recalibrate to stage
+        m_secondaryController.b()
+				.onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));
 
 		// CALIBRATION CONTROLLER
 		m_calibrationController.x().onTrue(Commands.runOnce(() -> {
