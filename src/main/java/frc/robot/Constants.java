@@ -64,7 +64,7 @@ public final class Constants {
 		public static final double MAX_TURN_ANGULAR_VELOCITY = 10 / 2;
 		public static final double MAX_TURN_ANGULAR_ACCELERATION = 2 * Math.toRadians(360);
 
-		public static final double TRANSLATION_DEADBAND = 0.125;
+		public static final double TRANSLATION_DEADBAND = 0.05;
 		public static final double TARGET_HEADING_DEADBAND = 0.3;
 		public static final double MANUAL_ROTATION_DEADBAND = 0.2;
 
