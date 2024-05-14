@@ -62,7 +62,7 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 	private final SwerveRequest.ApplyChassisSpeeds autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
 	public final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-			.withDeadband(kDrive.MAX_DRIVE_VELOCIY * 0.1).withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY * 0.1)
+			.withDeadband(kDrive.MAX_DRIVE_VELOCIY).withRotationalDeadband(kDrive.MAX_TURN_ANGULAR_VELOCITY)
 			.withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
 	private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics,
