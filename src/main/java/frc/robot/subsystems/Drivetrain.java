@@ -306,23 +306,23 @@ public class Drivetrain extends SwerveDrivetrain implements Subsystem {
 		if (isRed.getAsBoolean()) {
 			// System.out.println("returned red");
 			if (index == 1) {
-				return kAutoAlign.TRAP_POSITION_11;
+				return kAutoAlign.TRAP_POSITION_16; // 11
 			} else if (index == 2) {
-				return kAutoAlign.TRAP_POSITION_12;
+				return kAutoAlign.TRAP_POSITION_16; // 12
 			} else if (index == 3) {
-				return kAutoAlign.TRAP_POSITION_13;
+				return kAutoAlign.TRAP_POSITION_16; // 13
 			}
 		} else {
 			// System.out.println("returned blue");
 			if (index == 1) {
-				return kAutoAlign.TRAP_POSITION_15;
+				return kAutoAlign.TRAP_POSITION_16; // 15
 			} else if (index == 2) {
 				return kAutoAlign.TRAP_POSITION_16;
 			} else if (index == 3) {
-				return kAutoAlign.TRAP_POSITION_14;
+				return kAutoAlign.TRAP_POSITION_16; // 14
 			}
 		}
-		return kAutoAlign.TRAP_POSITION_15;
+		return kAutoAlign.TRAP_POSITION_16; // 15
 	}
 
 	public void periodic() {
