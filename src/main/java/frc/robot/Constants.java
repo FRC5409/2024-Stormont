@@ -59,7 +59,7 @@ public final class Constants {
 		public static final double DRIVE_GEAR_RATIO = 6.75;
 		public static final double TURN_GEAR_RATIO = 150.0 / 7.0;
 
-		public static double MAX_DRIVE_VELOCIY = 4.56; // metres per second
+		public static final double MAX_DRIVE_VELOCIY = 4.56; // metres per second
 		public static final double MAX_DRIVE_ACCELERATION = 2;
 		public static final double MAX_TURN_ANGULAR_VELOCITY = 10 / 2;
 		public static final double MAX_TURN_ANGULAR_ACCELERATION = 2 * Math.toRadians(360);
@@ -229,7 +229,7 @@ public final class Constants {
 		public static final Pose2d AMP_ZONE_BLUE = new Pose2d(1.90, 7.78, new Rotation2d(0, Math.toRadians(-90)));
 		public static final Pose2d AMP_ZONE_RED = new Pose2d(14.7, 7.78, new Rotation2d(0, Math.toRadians(-90)));
 		public static final Pose2d TRAP_ZONE_15 = new Pose2d(4.26, 4.95, new Rotation2d(0, Math.toRadians(270)));
-		public static final double TRAP_OFFSET = 0.34;
+		public static final double TRAP_OFFSET = 0.32;
 		public static final double TRAP_DISTANT_OFFSET = .67;
 	}
 

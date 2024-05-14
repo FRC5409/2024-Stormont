@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kCartridge;
-import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
@@ -210,45 +209,18 @@ public class RobotContainer {
 					sys_photonvision.setCameraEnableStatus(true, "Back");
 					sys_photonvision.setCameraEnableStatus(false, "Top");
 				}, sys_photonvision));
-        
-        // Climber setpoint high fast
+
+		// Climber setpoint high fast
 		m_primaryController.povUp().onTrue(Commands.runOnce(
 				() -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KFAST_SLOT), sys_climber));
-
-		// Climber setpoint high slow
-		m_primaryController.povLeft()
-				// .onTrue(
-				// Commands.runOnce(
-				// () ->
-				// sys_climber.setPosition(
-				// Constants.kClimber.HIGH,
-				// Constants.kClimber.KSLOW_SLOT),
-				// sys_climber));
-				.onTrue(Commands.runOnce(() -> sys_climber.setPosition(kClimber.HIGH, kClimber.KFAST_SLOT), sys_climber)
-						.andThen(Commands.waitUntil(
-								() -> Math.abs(sys_climber.getPosition()) >= Math.abs(kClimber.SLOW_TRIGGER)))
-						.andThen(Commands.runOnce(() -> sys_climber.setPosition(kClimber.HIGH, kClimber.KSLOW_SLOT),
-								sys_climber)));
-
-		// Climber setpoint low fast
-		m_primaryController.povDown().onTrue(Commands.runOnce(
-				() -> sys_climber.setPosition(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT), sys_climber));
 
 		// Secondary Controller
 		// *************************************************************************************************************
 
+		m_secondaryController.rightBumper().onTrue(Commands.runOnce(() -> sys_drivetrain.seedFieldRelative()));
+
 		m_secondaryController.x().onTrue(Commands.runOnce(() -> stopBot(true)))
 				.onFalse(Commands.runOnce(() -> stopBot(false)));
-
-		// Climber manual down
-		m_secondaryController.leftBumper()
-				.onTrue(Commands.runOnce(() -> sys_climber.setVoltage(Constants.kClimber.VOLTAGE), sys_climber))
-				.onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
-
-		// Climber manual up
-		m_secondaryController.rightBumper()
-				.onTrue(Commands.runOnce(() -> sys_climber.setVoltage(-Constants.kClimber.VOLTAGE), sys_climber))
-				.onFalse(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
 
 		// turns off climber pid
 		m_secondaryController.start().onTrue(Commands.runOnce(() -> sys_climber.setVoltage(0), sys_climber));
@@ -262,9 +234,17 @@ public class RobotContainer {
 		// Climb, extend and score, endgame sequence
 		m_secondaryController.y().onTrue(new ScoreTrap(sys_deployment, sys_cartridge, sys_climber));
 
-        // Drivetrain recalibrate to stage
-        m_secondaryController.b()
+		// Drivetrain recalibrate to stage
+		m_secondaryController.b()
 				.onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));
+
+		// Climber setpoint high slow
+		m_secondaryController.povLeft().onTrue(Commands.runOnce(
+				() -> sys_climber.setPosition(Constants.kClimber.HIGH, Constants.kClimber.KSLOW_SLOT), sys_climber));
+
+		// Climber setpoint low fast
+		m_secondaryController.povDown().onTrue(Commands.runOnce(
+				() -> sys_climber.setPosition(Constants.kClimber.LOW, Constants.kClimber.KFAST_SLOT), sys_climber));
 
 		// CALIBRATION CONTROLLER
 		m_calibrationController.x().onTrue(Commands.runOnce(() -> {
