@@ -83,14 +83,21 @@ class Path(Item):
         self.points = getCurveFromPath(self.path_name, mul=conversion_factor)
 
 class ConditionalGroup(Item):
-    def __init__(self, master, on_delete, labelIn: str, condtion_name : str, add_path, delete_path) -> None:
+    def __init__(self, master, on_delete, labelIn: str, condition_name: str, add_path, delete_path) -> None:
         super().__init__(master, on_delete, labelIn)
 
-        self.items = [Item(self, on_delete, "", add_command=lambda: self.add_command(0)), Item(self, on_delete, "", add_command=lambda: self.add_command(1)), Item(self, on_delete, condtion_name)]
+        self.condition_name = condition_name
+        self.items = []
 
-        self.condtion_name = condtion_name
+        # Add header label for the condition
+        self.condition_label = ctk.CTkLabel(self, text=f"Condition: {self.condition_name}")
+        self.condition_label.pack(pady=5)
 
-        # Create a dropdown menu for add button
+        # Add button to allow adding either path or conditional group
+        self.add_button = ctk.CTkButton(self, text="Add Path/Conditional", command=self.show_add_menu)
+        self.add_button.pack(pady=5)
+
+        # Context menu for adding paths or conditionals
         self.add_menu = Menu(self, tearoff=0)
         self.add_menu.add_command(label="Add Path", command=self.prompt_add_path)
         self.add_menu.add_command(label="Add Conditional Group", command=self.prompt_add_conditional)
@@ -98,52 +105,35 @@ class ConditionalGroup(Item):
         self.add_path = add_path
         self.delete_path = delete_path
 
-        self.pressed = 0
-
-        self.on_delete = on_delete
-
-    def add_item(self, item: Item, index: int):
-        # Clear the current items
-        for existing_item in self.items:
-            existing_item.destroy()
-        self.items = []  # Reset the list of items
-    
-        # Logic to add items based on the reset conditions
-        if self.pressed == 1:
-            self.items.append(Item(self, self.on_delete, "", add_command=lambda: self.add_command(0)))
-    
-        # Add the new item
-        self.items.append(item)
-    
-        # Conditionally add a second placeholder if needed
-        if self.pressed == 0:
-            self.items.append(Item(self, self.on_delete, "", add_command=lambda: self.add_command(1)))
-    
-        # Add the conditional name item
-        self.items.append(Item(self, self.on_delete, self.condtion_name))
-
-
-    def add_command(self, button_pressed):
-        self.pressed = button_pressed
-        self.show_add_menu()
-
     def show_add_menu(self):
         # Show dropdown menu when add button is clicked
-        self.add_menu.post(self.items[self.pressed].add_button.winfo_rootx(), self.items[self.pressed].add_button.winfo_rooty() + self.items[self.pressed].add_button.winfo_height())
+        self.add_menu.post(self.add_button.winfo_rootx(), self.add_button.winfo_rooty() + self.add_button.winfo_height())
 
     def prompt_add_path(self):
         path_name = simpledialog.askstring("Add Path", "Enter path name:")
         if path_name:
-            self.add_item(self.add_path(path_name, self), self.pressed)
+            self.add_path_to_group(path_name)
 
     def prompt_add_conditional(self):
-        condition = simpledialog.askstring("Condition Name", "Condition name:")
-
+        condition = simpledialog.askstring("Add Condition", "Enter condition name:")
         if condition:
-            self.add_item(self.add_conditional_group(condition, self), self.pressed)
+            self.add_conditional_to_group(condition)
 
-    def add_conditional_group(self, condition : str, master):
-        ConditionalGroup(master, self.delete_path, "Conditional Command", condition, self.add_path, self.delete_path)
+    def add_path_to_group(self, path_name):
+        path_item = self.add_path(path_name, master=self)
+        self.items.append(path_item)
+
+    def add_conditional_to_group(self, condition_name):
+        conditional_group = ConditionalGroup(self, self.delete_path, "Conditional Group", condition_name, self.add_path, self.delete_path)
+        conditional_group.pack(fill="x")
+        self.items.append(conditional_group)
+
+    def delete(self):
+        # Delete both paths and conditional groups
+        for item in self.items:
+            item.delete()
+        super().delete()
+
 
 class AutoPlannerApp(ctk.CTk):
     def __init__(self):
@@ -169,14 +159,12 @@ class AutoPlannerApp(ctk.CTk):
         self.paths = []
         self.pathPoints = []
         
-        self.update_path()
-
         # Create sidebar
         self.sidebar = ctk.CTkFrame(self, width=250, corner_radius=0)
         self.sidebar.place(relx=1.0, rely=0.0, anchor="ne", relheight=1.0)
 
         # Create a frame to hold the list of paths and groups
-        self.pathListFrame = ctk.CTkFrame(self.sidebar)
+        self.pathListFrame = ctk.CTkFrame(self.sidebar)  # Initialize pathListFrame before update_path()
         self.pathListFrame.pack(padx=20, pady=20, fill="both", expand=True)
 
         # Add button to add new paths or groups
@@ -187,6 +175,10 @@ class AutoPlannerApp(ctk.CTk):
         self.add_menu = Menu(self, tearoff=0)
         self.add_menu.add_command(label="Add Path", command=self.prompt_add_path)
         self.add_menu.add_command(label="Add Conditional Group", command=self.prompt_add_conditional)
+
+        # Now call update_path after everything has been initialized
+        self.update_path()
+
 
     def show_add_menu(self):
         # Show dropdown menu when add button is clicked
@@ -231,15 +223,17 @@ class AutoPlannerApp(ctk.CTk):
         self.pathPoints = []  # Reset the list of path lines
 
         # Draw new paths
-        for item in self.paths:
-            if isinstance(item, ConditionalGroup):
-                for path in item.paths:
-                    line = self.canvas.create_line(path.points, fill="blue", smooth=True, width=2)
-                    self.pathPoints.append(line)
-            else:
-                pathPoints = getCurveFromPath(item, mul=self.meterToPixel)
+        for item in self.pathListFrame.winfo_children():
+            if isinstance(item, Path):
+                pathPoints = getCurveFromPath(item.path_name, mul=self.meterToPixel)
                 line = self.canvas.create_line(pathPoints, fill="blue", smooth=True, width=2)
                 self.pathPoints.append(line)
+            elif isinstance(item, ConditionalGroup):
+                for subitem in item.items:
+                    if isinstance(subitem, Path):
+                        pathPoints = getCurveFromPath(subitem.path_name, mul=self.meterToPixel)
+                        line = self.canvas.create_line(pathPoints, fill="green", smooth=True, width=2)
+                        self.pathPoints.append(line)
 
 if __name__ == "__main__":
     app = AutoPlannerApp()
