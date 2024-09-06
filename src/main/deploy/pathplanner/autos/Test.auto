@@ -16,37 +16,6 @@
           "data": {
             "pathName": "ASTART_TO_MNOTE1"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "MNOTE1_TO_CNOTE1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "MNOTE1_TO_MNOTE2"
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ASTART_TO_MNOTE1"
-                }
-              }
-            ]
-          }
         }
       ]
     }

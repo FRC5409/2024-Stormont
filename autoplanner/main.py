@@ -116,6 +116,10 @@ class MenuGroup(Item):
         self.add_menu = Menu(self, tearoff=0)
         self.add_menu.add_command(label="Add Path", command=self.prompt_add_path)
         self.add_menu.add_command(label="Add Conditional Group", command=self.prompt_add_conditional)
+        self.add_menu.add_command(label="Add Sequential Group", command=self.add_sequential)
+        self.add_menu.add_command(label="Add Parallel Group", command=self.add_parallel)
+        self.add_menu.add_command(label="Add Deadline Group", command=self.add_deadline)
+        self.add_menu.add_command(label="Add Race Group", command=self.add_race)
 
         self.add_path = add_path
         self.on_delete = on_delete
@@ -143,6 +147,18 @@ class MenuGroup(Item):
         conditional_group.pack(fill="x")
         self.items.append(conditional_group)
 
+    def add_sequential(self):
+        self.items.append(SequentialGroup(self, self.on_delete, self.add_path))
+
+    def add_parallel(self):
+        self.items.append(ParallelGroup(self, self.on_delete, self.add_path))
+
+    def add_deadline(self):
+        self.items.append(DeadlineGroup(self, self.on_delete, self.add_path))
+
+    def add_race(self):
+        self.items.append(RaceGroup(self, self.on_delete, self.add_path))
+
     def delete(self) -> dict[str]:
         # Delete Items
         for item in self.items:
@@ -159,9 +175,38 @@ class SequentialGroup(MenuGroup):
         super().__init__(master, on_delete, "Sequential", add_path)
 
     def toJSON(self) -> dict[str]:
-        print([item.toJSON() for item in self.items])
         return {
             "type" : "sequential",
+            "commands" : [item.toJSON() for item in self.items]
+        }
+
+class ParallelGroup(MenuGroup):
+    def __init__(self, master, on_delete, add_path) -> None:
+        super().__init__(master, on_delete, "Parallel", add_path)
+
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "parallel",
+            "commands" : [item.toJSON() for item in self.items]
+        }
+
+class RaceGroup(MenuGroup):
+    def __init__(self, master, on_delete, add_path) -> None:
+        super().__init__(master, on_delete, "Race", add_path)
+
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "race",
+            "commands" : [item.toJSON() for item in self.items]
+        }
+
+class DeadlineGroup(MenuGroup):
+    def __init__(self, master, on_delete, add_path) -> None:
+        super().__init__(master, on_delete, "Deadline", add_path)
+
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "deadline",
             "commands" : [item.toJSON() for item in self.items]
         }
 

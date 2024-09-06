@@ -78,7 +78,7 @@ public class RobotContainer {
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
-        NamedConditions.registerCondition("NOTE", () -> false);
+        NamedConditions.registerCondition("NOTE", () -> true);
 
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
