@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -16,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.AutoCreator.CustomAutoBuilder;
+import frc.robot.AutoCreator.NamedConditions;
 import frc.robot.Constants.kControllers;
 import frc.robot.Constants.kDrive;
 import frc.robot.generated.TunerConstants;
@@ -78,10 +78,16 @@ public class RobotContainer {
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
+        NamedConditions.registerCondition("NOTE", () -> true);
+
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
-        sc_autoChooser = AutoBuilder.buildAutoChooser();
-        addShuffleboardItems();
+        sc_autoChooser = CustomAutoBuilder.buildChooser();
+
+        // Autonomous
+        sb_driveteamTab.add("Choose auto", sc_autoChooser)
+            .withPosition(0, 1)
+            .withSize(3, 1);
 
         // Configure the trigger bindings
         configureBindings();
@@ -105,19 +111,6 @@ public class RobotContainer {
 
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
-
-    }
-
-    private void addShuffleboardItems() {
-
-        // Re-zero
-        sb_driveteamTab.add("Seed field relative", Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain))
-                .withPosition(0, 0);
-
-        // Autonomous
-        sb_driveteamTab.add("Choose auto", sc_autoChooser)
-                .withPosition(0, 1)
-                .withSize(3, 1);
 
     }
 

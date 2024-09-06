@@ -22,13 +22,20 @@ def cubic_bezier(p0, p1, p2, p3):
 def loadPath(pathName : str) -> dict:
     pathLocation = f"src/main/deploy/pathplanner/paths/{pathName}.path"
 
-    with open(pathLocation) as file:
-        data = json.load(file)
+    try:
+        with open(pathLocation) as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        print(f"Couldnt find file {pathLocation}")
+        return None
 
     return data
 
 def getCurveFromPath(pathName : str, mul=1.0):
     pathData = loadPath(pathName)
+
+    if pathData is None:
+        return
 
     waypoints = pathData['waypoints']
 
@@ -82,6 +89,12 @@ class Path(Item):
 
         self.points = getCurveFromPath(self.path_name, mul=conversion_factor)
 
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "path",
+            "name" : self.path_name
+        }
+
 class MenuGroup(Item):
     def __init__(self, master, on_delete, labelIn: str, add_path) -> None:
         super().__init__(master, on_delete, labelIn)
@@ -122,17 +135,27 @@ class MenuGroup(Item):
         conditional_group.pack(fill="x")
         self.items.append(conditional_group)
 
-    def delete(self):
+    def delete(self) -> dict[str]:
         # Delete Items
         for item in self.items:
             item.delete()
+            app.items.remove(item)
         super().delete()
+
+        app.items.remove(self)
 
         self.on_delete(self)
 
 class SequentialGroup(MenuGroup):
     def __init__(self, master, on_delete, add_path) -> None:
         super().__init__(master, on_delete, "Sequential", add_path)
+
+    def toJSON(self) -> dict[str]:
+        print([item.toJSON() for item in self.items])
+        return {
+            "type" : "sequential",
+            "commands" : [item.toJSON() for item in self.items]
+        }
 
 class ConditionalGroup(MenuGroup):
     def __init__(self, master, on_delete, labelIn: str, condition_name: str, add_path) -> None:
@@ -146,6 +169,13 @@ class ConditionalGroup(MenuGroup):
 
         self.add_path = add_path
         self.on_delete = on_delete
+
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "conditional",
+            "condition" : self.condition_name,
+            "commands" : [item.toJSON() for item in self.items]
+        }
 
 
 class AutoPlannerApp(ctk.CTk):
@@ -184,6 +214,10 @@ class AutoPlannerApp(ctk.CTk):
         self.add_button = ctk.CTkButton(self.sidebar, text="Add", command=self.show_add_menu)
         self.add_button.pack(padx=20, pady=10)
 
+        # Add button to add new paths or groups
+        self.add_button = ctk.CTkButton(self.sidebar, text="Save", command=self.save)
+        self.add_button.pack(padx=20, pady=10)
+
         # Create a dropdown menu for add button
         self.add_menu = Menu(self, tearoff=0)
         self.add_menu.add_command(label="Add Path", command=self.prompt_add_path)
@@ -192,6 +226,27 @@ class AutoPlannerApp(ctk.CTk):
         # Now call update_path after everything has been initialized
         self.update_path()
 
+        self.auto_name = None
+        self.items = []
+
+    def save(self):
+        if self.auto_name is None:
+            self.auto_name = simpledialog.askstring("Auto Name", "Enter auto name:")
+
+        if self.auto_name is None:
+            return
+
+        with open(f"src/main/deploy/autoplanner/autos/{self.auto_name}.auto", "w") as file:
+            json.dump(
+                {
+                    "command" : {
+                        "type" : "sequential",
+                        "commands" : [item.toJSON() for item in self.items]
+                    }
+                },
+                file,
+                indent=2
+            )
 
     def show_add_menu(self):
         # Show dropdown menu when add button is clicked
@@ -200,7 +255,7 @@ class AutoPlannerApp(ctk.CTk):
     def prompt_add_path(self):
         path_name = simpledialog.askstring("Add Path", "Enter path name:")
         if path_name:
-            self.add_path(path_name)
+            self.items.append(self.add_path(path_name))
 
     def add_path(self, path_name : str, master=None):
         self.paths.append(path_name)
@@ -221,7 +276,7 @@ class AutoPlannerApp(ctk.CTk):
         condition = simpledialog.askstring("Condition Name", "Condition name:")
 
         if condition:
-            self.add_conditional_group(condition)
+            self.items.append(self.add_conditional_group(condition))
 
     def add_conditional_group(self, condition : str, master=None):
         if master is None:
@@ -238,6 +293,10 @@ class AutoPlannerApp(ctk.CTk):
         # Draw new paths
         for path in self.paths:
             pathPoints = getCurveFromPath(path, mul=self.meterToPixel)
+
+            if pathPoints is None:
+                continue
+
             line = self.canvas.create_line(pathPoints, fill="blue", smooth=True, width=2)
             self.pathPoints.append(line)
     
