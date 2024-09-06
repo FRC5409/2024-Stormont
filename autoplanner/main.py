@@ -268,24 +268,44 @@ class AutoPlannerApp(ctk.CTk):
         self.commands = SequentialGroup(self.pathListFrame, self.delete_path, self.add_path, destroyable=False)
 
     def save(self):
-        if self.auto_name is None:
-            self.auto_name = simpledialog.askstring("Auto Name", "Enter auto name:")
-
-        if self.auto_name is None:
-            return
-
         startingPose = getStartingPos(self.commands.items[0].path_name)
-        startingPose['rot'] = float(simpledialog.askstring("Starting Rotation", "Enter robot rotation:"))
 
-        with open(f"src/main/deploy/autoplanner/autos/{self.auto_name}.auto", "w") as file:
-            json.dump(
-                {
-                    "startingPos" : startingPose,
-                    "command" : self.commands.toJSON()
-                },
-                file,
-                indent=2
-            )
+        menu = ctk.CTkToplevel(self)
+
+        menu.geometry("300x300")
+        menu.title("Save Auto")
+
+        menu.transient(self)  # Make the menu a transient window
+        menu.grab_set()  # Ensure the menu is modal and always on top
+        menu.focus()  # Set focus to the new window
+
+        name_label = ctk.CTkLabel(menu, text="Auto Name:")
+        name_label.pack(pady=10)
+        name_entry = ctk.CTkEntry(menu)
+        name_entry.pack(pady=10)
+
+        rot_label = ctk.CTkLabel(menu, text="Starting rotation:")
+        rot_label.pack(pady=10)
+        rot_entry = ctk.CTkEntry(menu)
+        rot_entry.pack(pady=10)
+
+        def get_entries():
+            self.auto_name = name_entry.get()
+            startingPose['rot'] = float(rot_entry.get())
+            menu.destroy()
+
+            with open(f"src/main/deploy/autoplanner/autos/{self.auto_name}.auto", "w") as file:
+                json.dump(
+                    {
+                        "startingPos" : startingPose,
+                        "command" : self.commands.toJSON()
+                    },
+                    file,
+                    indent=2
+                )
+
+        submit_button = ctk.CTkButton(menu, text="Submit", command=get_entries)
+        submit_button.pack(pady=20)
 
     def add_path(self, path_name : str, master=None):
         self.paths.append(path_name)
