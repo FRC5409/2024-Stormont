@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
         .negate()
         .debounce(5)
         .onTrue(
-            Commands.runOnce(() -> m_robotContainer.sys_drivetrain.setAllMotorsNeutralMode(NeutralModeValue.Coast))
+            Commands.runOnce(() -> m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Coast))
                 .ignoringDisable(true));
   }
 
@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    m_robotContainer.sys_drivetrain.setAllMotorsNeutralMode(NeutralModeValue.Brake);
+    m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Brake);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.sys_drivetrain.setAllMotorsNeutralMode(NeutralModeValue.Brake);
+    m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Brake);
   }
 
   /** This function is called periodically during operator control. */

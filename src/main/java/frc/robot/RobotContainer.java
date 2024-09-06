@@ -16,10 +16,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AutoCreator.CustomAutoBuilder;
 import frc.robot.AutoCreator.NamedConditions;
-import frc.robot.Constants.kControllers;
+import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,17 +34,17 @@ public class RobotContainer {
 
     // Joysticks
     private final CommandXboxController m_primaryController;
-    private final CommandXboxController m_secondaryController;
+    // private final CommandXboxController m_secondaryController;
 
     // Subsystems
-    public final Drivetrain sys_drivetrain;
+    public final Drive sys_drivetrain;
 
     // Commands
     private final Command cmd_teleopDrive;
 
     private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.kMaxDriveVelocity * 0.1)
-            .withRotationalDeadband(kDrive.kMaxTurnAngularVelocity * 0.1)
+            .withDeadband(kDrive.MAX_CHASSIS_SPEED * 0.1)
+            .withRotationalDeadband(kDrive.MAX_ROTATION_SPEED * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     // Shuffleboard
@@ -59,8 +59,8 @@ public class RobotContainer {
     public RobotContainer() {
 
         // Joysticks
-        m_primaryController = new CommandXboxController(kControllers.kPrimaryController);
-        m_secondaryController = new CommandXboxController(kControllers.kSecondaryController);
+        m_primaryController = new CommandXboxController(kController.kDriverControllerPort);
+        // m_secondaryController = new CommandXboxController(kController.kSecondaryController);
         DriverStation.silenceJoystickConnectionWarning(true);
 
         // Subsystems
@@ -69,19 +69,20 @@ public class RobotContainer {
         // Commands
         cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
             return teleopDrive
-                    .withVelocityX(-m_primaryController.getLeftY() * kDrive.kMaxDriveVelocity)
-                    .withVelocityY(-m_primaryController.getLeftX() * kDrive.kMaxDriveVelocity)
+                    .withVelocityX(-m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED)
+                    .withVelocityY(-m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED)
                     .withRotationalRate(
                             (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                                    * kDrive.kMaxTurnAngularVelocity);
+                                    * kDrive.MAX_ROTATION_SPEED);
         }).ignoringDisable(true);
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
-        NamedConditions.registerCondition("NOTE", () -> true);
+        NamedConditions.registerCondition("NOTE", () -> false);
 
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
+        sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
         sc_autoChooser = CustomAutoBuilder.buildChooser();
 
         // Autonomous

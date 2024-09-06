@@ -31,6 +31,14 @@ def loadPath(pathName : str) -> dict:
 
     return data
 
+def getStartingPos(pathName : str) -> dict[str]:
+    pathData = loadPath(pathName)
+
+    return {
+        "x" : pathData['waypoints'][0]['anchor']['x'],
+        "y" : FIELD_HEIGHT - pathData['waypoints'][0]['anchor']['y']
+    }
+
 def getCurveFromPath(pathName : str, mul=1.0):
     pathData = loadPath(pathName)
 
@@ -236,9 +244,13 @@ class AutoPlannerApp(ctk.CTk):
         if self.auto_name is None:
             return
 
+        startingPose = getStartingPos(self.items[0].path_name)
+        startingPose['rot'] = float(simpledialog.askstring("Starting Rotation", "Enter robot rotation:"))
+
         with open(f"src/main/deploy/autoplanner/autos/{self.auto_name}.auto", "w") as file:
             json.dump(
                 {
+                    "startingPos" : startingPose,
                     "command" : {
                         "type" : "sequential",
                         "commands" : [item.toJSON() for item in self.items]

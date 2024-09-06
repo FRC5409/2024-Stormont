@@ -1,4 +1,9 @@
 {
+  "startingPos": {
+    "x": 1.3949707899415804,
+    "y": 7.329728945172176,
+    "rot": 0.0
+  },
   "command": {
     "type": "sequential",
     "commands": [

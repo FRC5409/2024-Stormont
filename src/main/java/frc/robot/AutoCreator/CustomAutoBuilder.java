@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.json.simple.JSONArray;
@@ -13,6 +16,11 @@ import org.json.simple.parser.JSONParser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.GeometryUtil;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,9 +30,26 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class CustomAutoBuilder {
+
+    public static Consumer<Pose2d> m_resetPose;
+    public static BooleanSupplier m_shouldFlipPath;
+
+    public static void configureHolonomic(
+      Supplier<Pose2d> poseSupplier,
+      Consumer<Pose2d> resetPose,
+      Supplier<ChassisSpeeds> robotRelativeSpeedsSupplier,
+      Consumer<ChassisSpeeds> robotRelativeOutput,
+      HolonomicPathFollowerConfig config,
+      BooleanSupplier shouldFlipPath,
+      Subsystem driveSubsystem) {
+        AutoBuilder.configureHolonomic(poseSupplier, resetPose, robotRelativeSpeedsSupplier, robotRelativeOutput, config, shouldFlipPath, driveSubsystem);
+        m_resetPose = resetPose;
+        m_shouldFlipPath = shouldFlipPath;
+      }
 
     public static SendableChooser<Command> buildChooser() {
         SendableChooser<Command> sc_chooser = new SendableChooser<>();
@@ -85,7 +110,23 @@ public class CustomAutoBuilder {
     }
 
     public static Command buildAuto(String autoName) {
-        return getCommandFromJSON((JSONObject) loadJSON(autoName).get("command"));
+        JSONObject JSONAuto = (JSONObject) loadJSON(autoName);
+
+        JSONObject startingPos = (JSONObject) JSONAuto.get("startingPos");
+
+        System.out.println(startingPos.toJSONString());
+
+        Pose2d startingPose = new Pose2d((double) startingPos.get("x"), (double) startingPos.get("y"), Rotation2d.fromDegrees((double) startingPos.get("rot")));
+
+        Command resetCommand = Commands.runOnce(() -> {
+            if (m_shouldFlipPath.getAsBoolean()) {
+                m_resetPose.accept(GeometryUtil.flipFieldPose(startingPose));
+            } else {
+                m_resetPose.accept(startingPose);
+            }
+        });
+
+        return resetCommand.andThen(getCommandFromJSON((JSONObject) JSONAuto.get("command")));
     }
 
     public static Command[] getCommandsFromJSONArray(JSONArray arr) {
