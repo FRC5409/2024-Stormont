@@ -141,10 +141,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
     }
 
     public void resetOdometry(Pose2d pose) {
-        for (int i = 0; i < 100; i++) {
-            System.out.println(pose.toString());
-        }
         m_poseEstimator.resetPosition(pose.getRotation(), m_modulePositions, pose);
+        m_pigeon2.setYaw(pose.getRotation().getDegrees());
     }
 
     public void updateFieldRelative() {

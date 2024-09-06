@@ -1,0 +1,30 @@
+{
+  "startingPos": {
+    "x": 1.3949707899415804,
+    "y": 7.3297289451721766,
+    "rot": 0.0
+  },
+  "command": {
+    "type": "sequential",
+    "commands": [
+      {
+        "type": "path",
+        "name": "ASTART_TO_MNOTE1"
+      },
+      {
+        "type": "conditional",
+        "condition": "NOTE",
+        "commands": [
+          {
+            "type": "path",
+            "name": "MNOTE1_TO_CNOTE1"
+          },
+          {
+            "type": "path",
+            "name": "MNOTE1_TO_MNOTE2"
+          }
+        ]
+      }
+    ]
+  }
+}

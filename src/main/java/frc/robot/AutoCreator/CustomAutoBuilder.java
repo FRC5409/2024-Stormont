@@ -114,8 +114,6 @@ public class CustomAutoBuilder {
 
         JSONObject startingPos = (JSONObject) JSONAuto.get("startingPos");
 
-        System.out.println(startingPos.toJSONString());
-
         Pose2d startingPose = new Pose2d((double) startingPos.get("x"), (double) startingPos.get("y"), Rotation2d.fromDegrees((double) startingPos.get("rot")));
 
         Command resetCommand = Commands.runOnce(() -> {

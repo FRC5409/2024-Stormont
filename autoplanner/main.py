@@ -36,7 +36,7 @@ def getStartingPos(pathName : str) -> dict[str]:
 
     return {
         "x" : pathData['waypoints'][0]['anchor']['x'],
-        "y" : FIELD_HEIGHT - pathData['waypoints'][0]['anchor']['y']
+        "y" : pathData['waypoints'][0]['anchor']['y']
     }
 
 def getCurveFromPath(pathName : str, mul=1.0):
@@ -62,7 +62,7 @@ def getCurveFromPath(pathName : str, mul=1.0):
     return points
 
 class Item(ctk.CTkFrame):
-    def __init__(self, master, on_delete, labelIn : str, add_command=None) -> None:
+    def __init__(self, master, on_delete, labelIn : str, add_command=None, destroyable=True) -> None:
         super().__init__(master)
 
         self.label = labelIn
@@ -73,15 +73,12 @@ class Item(ctk.CTkFrame):
         header_frame = ctk.CTkFrame(self)
         header_frame.pack(fill="x")
 
-        header_label = ctk.CTkLabel(header_frame, text=self.label)
-        header_label.pack(side="left", padx=10, pady=5)
-
-        if self.label == "":
-            self.add_button = ctk.CTkButton(header_frame, text="+", width=20, command=add_command)
-            self.add_button.pack(side="right", padx=10)
-        else:
+        if destroyable:
             delete_button = ctk.CTkButton(header_frame, text="X", width=20, command=self.delete)
             delete_button.pack(side="right", padx=10)
+
+        header_label = ctk.CTkLabel(header_frame, text=self.label)
+        header_label.pack(side="left", padx=10, pady=5)
 
         self.on_delete = on_delete
 
@@ -104,8 +101,8 @@ class Path(Item):
         }
 
 class MenuGroup(Item):
-    def __init__(self, master, on_delete, labelIn: str, add_path) -> None:
-        super().__init__(master, on_delete, labelIn)
+    def __init__(self, master, on_delete, labelIn: str, add_path, destroyable=True) -> None:
+        super().__init__(master, on_delete, labelIn, destroyable=destroyable)
 
         self.items = []
 
@@ -166,13 +163,11 @@ class MenuGroup(Item):
             app.items.remove(item)
         super().delete()
 
-        app.items.remove(self)
-
         self.on_delete(self)
 
 class SequentialGroup(MenuGroup):
-    def __init__(self, master, on_delete, add_path) -> None:
-        super().__init__(master, on_delete, "Sequential", add_path)
+    def __init__(self, master, on_delete, add_path, destroyable=True) -> None:
+        super().__init__(master, on_delete, "Sequential", add_path, destroyable=destroyable)
 
     def toJSON(self) -> dict[str]:
         return {
@@ -263,24 +258,14 @@ class AutoPlannerApp(ctk.CTk):
         self.pathListFrame = ctk.CTkFrame(self.sidebar)  # Initialize pathListFrame before update_path()
         self.pathListFrame.pack(padx=20, pady=20, fill="both", expand=True)
 
-        # Add button to add new paths or groups
-        self.add_button = ctk.CTkButton(self.sidebar, text="Add", command=self.show_add_menu)
-        self.add_button.pack(padx=20, pady=10)
-
-        # Add button to add new paths or groups
+        # Add button to save project to a auto file
         self.add_button = ctk.CTkButton(self.sidebar, text="Save", command=self.save)
         self.add_button.pack(padx=20, pady=10)
 
-        # Create a dropdown menu for add button
-        self.add_menu = Menu(self, tearoff=0)
-        self.add_menu.add_command(label="Add Path", command=self.prompt_add_path)
-        self.add_menu.add_command(label="Add Conditional Group", command=self.prompt_add_conditional)
-
-        # Now call update_path after everything has been initialized
         self.update_path()
 
         self.auto_name = None
-        self.items = []
+        self.commands = SequentialGroup(self.pathListFrame, self.delete_path, self.add_path, destroyable=False)
 
     def save(self):
         if self.auto_name is None:
@@ -289,30 +274,18 @@ class AutoPlannerApp(ctk.CTk):
         if self.auto_name is None:
             return
 
-        startingPose = getStartingPos(self.items[0].path_name)
+        startingPose = getStartingPos(self.commands.items[0].path_name)
         startingPose['rot'] = float(simpledialog.askstring("Starting Rotation", "Enter robot rotation:"))
 
         with open(f"src/main/deploy/autoplanner/autos/{self.auto_name}.auto", "w") as file:
             json.dump(
                 {
                     "startingPos" : startingPose,
-                    "command" : {
-                        "type" : "sequential",
-                        "commands" : [item.toJSON() for item in self.items]
-                    }
+                    "command" : self.commands.toJSON()
                 },
                 file,
                 indent=2
             )
-
-    def show_add_menu(self):
-        # Show dropdown menu when add button is clicked
-        self.add_menu.post(self.add_button.winfo_rootx(), self.add_button.winfo_rooty() + self.add_button.winfo_height())
-
-    def prompt_add_path(self):
-        path_name = simpledialog.askstring("Add Path", "Enter path name:")
-        if path_name:
-            self.items.append(self.add_path(path_name))
 
     def add_path(self, path_name : str, master=None):
         self.paths.append(path_name)
@@ -328,18 +301,6 @@ class AutoPlannerApp(ctk.CTk):
             self.paths.remove(item.path_name)
 
         self.update_path()
-
-    def prompt_add_conditional(self):
-        condition = simpledialog.askstring("Condition Name", "Condition name:")
-
-        if condition:
-            self.items.append(self.add_conditional_group(condition))
-
-    def add_conditional_group(self, condition : str, master=None):
-        if master is None:
-            master = self.pathListFrame
-
-        return ConditionalGroup(master, self.delete_path, "Conditional Command", condition, self.add_path)
 
     def update_path(self):
         # Clear previously drawn paths
