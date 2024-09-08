@@ -6,6 +6,8 @@ import json
 
 FIELD_HEIGHT = 8.18
 
+DEPLOY_DIR = "src/main/deploy"
+
 def cubic_bezier(p0, p1, p2, p3):
     # Calculate cubic Bezier curve points.
 
@@ -21,7 +23,7 @@ def cubic_bezier(p0, p1, p2, p3):
            (t**3)[:, np.newaxis] * p3
 
 def loadPath(pathName : str) -> dict:
-    pathLocation = f"src/main/deploy/pathplanner/paths/{pathName}.path"
+    pathLocation = f"{DEPLOY_DIR}/pathplanner/paths/{pathName}.path"
 
     try:
         with open(pathLocation) as file:
@@ -323,6 +325,10 @@ class AutoPlannerApp(ctk.CTk):
         self.add_button = ctk.CTkButton(self.scrollable_frame, text="Save", command=self.save)
         self.add_button.pack(padx=20, pady=10)
 
+        # Add button to load project into the app
+        self.load_button = ctk.CTkButton(self.scrollable_frame, text="Load", command=self.prompt_load)
+        self.load_button.pack(padx=20, pady=10)
+
         self.update_path()
 
         self.auto_name = None
@@ -367,6 +373,68 @@ class AutoPlannerApp(ctk.CTk):
 
         submit_button = ctk.CTkButton(menu, text="Submit", command=get_entries)
         submit_button.pack(pady=20)
+
+    def prompt_load(self):
+        self.menu = ctk.CTkToplevel(self)
+
+        self.menu.geometry("300x300")
+        self.menu.title("Load Auto")
+
+        self.menu.transient(self)  # Make the menu a transient window
+        self.menu.grab_set()  # Ensure the menu is modal and always on top
+        self.menu.focus()  # Set focus to the new window
+
+        self.custom = False
+
+        def flip():
+            self.custom = not self.custom
+
+            for item in self.menu.winfo_children():
+                item.destroy()
+
+            initItems()
+
+        def get_entries():
+            self.load_auto(self.name_entry.get(), self.custom)
+            self.menu.destroy()
+
+        def initItems():
+            name_label = ctk.CTkLabel(self.menu, text="Auto Name:")
+            name_label.pack(pady=10)
+
+            self.name_entry = ctk.CTkEntry(self.menu)
+            self.name_entry.pack(pady=10)
+
+            custom_label = ctk.CTkButton(self.menu, text=f"Custom Auto ({self.custom})", command=flip)
+            custom_label.pack(pady=10)
+
+            submit_button = ctk.CTkButton(self.menu, text="Submit", command=get_entries)
+            submit_button.pack(pady=20)
+
+        initItems()
+
+    def load_auto(self, auto_name, custom_auto):
+        path = DEPLOY_DIR
+        if custom_auto:
+            path += "/autoplanner"
+        else:
+            path += "/pathplanner"
+
+        path += f"/autos/{auto_name}.auto"
+
+        with open(path, 'r') as file:
+            data = json.load(file)
+
+            load_item_from_json(self.command, data["command"])
+
+    def load_item_from_json(self, master, json_data):
+        command_type = json_data["type"]
+
+        match command_type:
+            case "wait": # TODO: ADD WAIT COMMAND
+                pass
+            case "named":
+                master.add_command(json_data["name"])
 
     def add_path(self, path_name : str, master=None):
         self.paths.append(path_name)
