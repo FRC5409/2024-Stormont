@@ -99,20 +99,20 @@ public final class Constants {
         public static final int DEPLOYMENT_ID = 15;
         public static final int CURRENT_LIMIT = 40;
 
-        public static final double KP = 2.4;
+        public static final double KP = 6.0;
         public static final double KI = 0.0;
         public static final double KD = 0.0;
-        public static final double KFF = 2.0;
+        public static final double KFF = 2.4;
 
-        public static final double MIN_HEIGHT = 0.70;
-        public static final double MAX_HEIGHT = 1.40;
+        public static final double MIN_HEIGHT = Units.inchesToMeters(17.55);
+        public static final double MAX_HEIGHT = Units.inchesToMeters(17.55 * 2);
 
         public static final double ELEVATOR_ANGLE = 105;
 
         public static final double TOLERANCE = 0.01;
 
-        public static final double ELEVATOR_GEARING = 15.0/1.0;
-        public static final double ELEVATOR_DRUM_RADIUS = 0.05;
+        public static final double ELEVATOR_GEARING = 10.0/1.0;
+        public static final double ELEVATOR_DRUM_RADIUS = Units.inchesToMeters(0.944);
         public static final double ELEVATOR_MASS = Units.lbsToKilograms(11.0);
     }
 }
