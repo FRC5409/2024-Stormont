@@ -17,11 +17,20 @@
         "commands": [
           {
             "type": "path",
-            "name": "MNOTE1_TO_CNOTE1"
+            "name": "MNOTE1_TO_SHOOTA"
           },
           {
-            "type": "path",
-            "name": "MNOTE1_TO_MNOTE2"
+            "type": "sequential",
+            "commands": [
+              {
+                "type": "path",
+                "name": "MNOTE1_TO_MNOTE2"
+              },
+              {
+                "type": "path",
+                "name": "MNOTE2_TO_SHOOTA"
+              }
+            ]
           }
         ]
       }

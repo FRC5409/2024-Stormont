@@ -162,7 +162,9 @@ public class CustomAutoBuilder {
                 JSONArray JSONCommands = (JSONArray) data.get("commands");
 
                 return new ConditionalCommand(getCommandFromJSON((JSONObject) JSONCommands.get(0)), getCommandFromJSON((JSONObject) JSONCommands.get(1)), NamedConditions.getCondition((String) data.get("condition")));
-          }
+            case "until":
+                return getCommandFromJSON((JSONObject) data.get("command")).until(NamedConditions.getCondition((String) data.get("condition")));
+        }
 
         return Commands.none();
     }

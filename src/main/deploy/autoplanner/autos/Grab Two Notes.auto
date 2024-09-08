@@ -12,6 +12,10 @@
         "name": "ASTART_TO_MNOTE1"
       },
       {
+        "type": "named",
+        "name": "SHOOT"
+      },
+      {
         "type": "conditional",
         "condition": "NOTE",
         "commands": [

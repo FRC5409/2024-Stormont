@@ -100,6 +100,17 @@ class Path(Item):
             "name" : self.path_name
         }
 
+class Command(Item):
+    def __init__(self, master, on_delete, command_name) -> None:
+        super().__init__(master, on_delete, command_name)
+        self.name = command_name
+
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "named",
+            "name" : self.name
+        }
+
 class MenuGroup(Item):
     def __init__(self, master, on_delete, labelIn: str, add_path, destroyable=True) -> None:
         super().__init__(master, on_delete, labelIn, destroyable=destroyable)
@@ -112,11 +123,13 @@ class MenuGroup(Item):
         # Context menu for adding paths or conditionals
         self.add_menu = Menu(self, tearoff=0)
         self.add_menu.add_command(label="Add Path", command=self.prompt_add_path)
+        self.add_menu.add_command(label="Add Named Command", command=self.prompt_add_command)
         self.add_menu.add_command(label="Add Conditional Group", command=self.prompt_add_conditional)
         self.add_menu.add_command(label="Add Sequential Group", command=self.add_sequential)
         self.add_menu.add_command(label="Add Parallel Group", command=self.add_parallel)
         self.add_menu.add_command(label="Add Deadline Group", command=self.add_deadline)
         self.add_menu.add_command(label="Add Race Group", command=self.add_race)
+        self.add_menu.add_command(label="Add Run Until", command=self.prompt_add_until)
 
         self.add_path = add_path
         self.on_delete = on_delete
@@ -135,6 +148,16 @@ class MenuGroup(Item):
         if condition:
             self.add_conditional_to_group(condition)
 
+    def prompt_add_command(self):
+        command_name = simpledialog.askstring("Add Command", "Enter Command name:")
+        if command_name:
+            self.add_command_to_group(command_name)
+
+    def prompt_add_until(self):
+        condition = simpledialog.askstring("Add Condition", "Enter condition name:")
+        if condition:
+            self.add_until_to_group(condition)
+
     def add_path_to_group(self, path_name):
         path_item = self.add_path(path_name, master=self)
         self.items.append(path_item)
@@ -143,6 +166,12 @@ class MenuGroup(Item):
         conditional_group = ConditionalGroup(self, self.on_delete, "Conditional Group", condition_name, self.add_path)
         conditional_group.pack(fill="x")
         self.items.append(conditional_group)
+
+    def add_command_to_group(self, command_name):
+        self.items.append(Command(self, self.on_delete, command_name))
+
+    def add_until_to_group(self, condition_name):
+        self.items.append(RunUntil(self, self.on_delete, condition_name, self.add_path))
 
     def add_sequential(self):
         self.items.append(SequentialGroup(self, self.on_delete, self.add_path))
@@ -223,6 +252,26 @@ class ConditionalGroup(MenuGroup):
             "type" : "conditional",
             "condition" : self.condition_name,
             "commands" : [item.toJSON() for item in self.items]
+        }
+
+class RunUntil(MenuGroup):
+    def __init__(self, master, on_delete, condition_name: str, add_path) -> None:
+        super().__init__(master, on_delete, condition_name, add_path)
+        
+        # Add header label for the condition
+        self.condition_label = ctk.CTkLabel(self, text=f"Condition: {condition_name}")
+        self.condition_label.pack(pady=5)
+
+        self.condition_name = condition_name
+
+        self.add_path = add_path
+        self.on_delete = on_delete
+
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "until",
+            "condition" : self.condition_name,
+            "command" : self.items[0]
         }
 
 

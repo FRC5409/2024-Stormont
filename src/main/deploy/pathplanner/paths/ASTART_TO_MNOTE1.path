@@ -16,24 +16,42 @@
     },
     {
       "anchor": {
-        "x": 7.977067382706194,
-        "y": 7.432345150404587
+        "x": 8.20009161385844,
+        "y": 7.425788070949362
       },
       "prevControl": {
-        "x": 2.0393266011773004,
-        "y": 7.802529478930139
+        "x": 2.2623508323295467,
+        "y": 7.7959723994749135
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "NOTEM1"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.15,
+      "rotationDegrees": 45.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Shooting",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.25,
+      "constraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0
+      }
+    }
+  ],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.9,
+      "name": "Shoot",
+      "waypointRelativePos": 0.05,
       "command": {
         "type": "sequential",
         "data": {
@@ -41,7 +59,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Intake"
+                "name": "SHOOT"
               }
             }
           ]

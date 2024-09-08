@@ -5,8 +5,10 @@
 package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,8 +19,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AutoCreator.CustomAutoBuilder;
 import frc.robot.AutoCreator.NamedConditions;
 import frc.robot.Constants.kController;
+import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
+import frc.robot.commands.ShootCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drive;
 
 /**
@@ -38,6 +43,7 @@ public class RobotContainer {
 
     // Subsystems
     public final Drive sys_drivetrain;
+    public final Deployment sys_deployment;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -65,6 +71,7 @@ public class RobotContainer {
 
         // Subsystems
         sys_drivetrain = TunerConstants.DriveTrain;
+        sys_deployment = Deployment.getInstance();
 
         // Commands
         cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
@@ -78,7 +85,7 @@ public class RobotContainer {
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
-        NamedConditions.registerCondition("NOTE", () -> true);
+        registerCommands();
 
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
@@ -92,6 +99,12 @@ public class RobotContainer {
 
         // Configure the trigger bindings
         configureBindings();
+    }
+
+    private void registerCommands() {
+        NamedCommands.registerCommand("SHOOT", new ShootCommand());
+
+        NamedConditions.registerCondition("NOTE", () -> DriverStation.getAlliance().get() == Alliance.Red);
     }
 
     /**
@@ -109,6 +122,12 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
+
+        m_primaryController.x()
+            .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MAX_HEIGHT), sys_deployment));
+
+        m_primaryController.y()
+            .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment));
 
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));

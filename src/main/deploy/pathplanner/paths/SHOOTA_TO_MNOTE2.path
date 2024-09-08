@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.20009161385844,
-        "y": 7.425788070949362
+        "x": 5.393494547672856,
+        "y": 6.221290163378048
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.463961855884639,
-        "y": 6.399626018625257
+        "x": 6.393494547672856,
+        "y": 6.221290163378048
       },
       "isLocked": false,
-      "linkedName": "NOTEM1"
+      "linkedName": "SHOOT_POS_A"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 5.775826408795675
       },
       "prevControl": {
-        "x": 8.226278166842048,
-        "y": 6.391523640190138
+        "x": 7.2849159984034255,
+        "y": 5.775826408795675
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,25 +30,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.55,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.56,
     "maxAcceleration": 5.0,
@@ -57,8 +39,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0,
-    "rotateFast": true
+    "rotation": 0,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": null,

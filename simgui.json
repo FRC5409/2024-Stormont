@@ -4,6 +4,9 @@
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Drive team/Choose auto": "String Chooser",
       "/Shuffleboard/Drive team/Field": "Field2d",
+      "/Shuffleboard/Simulation/Deployment": "Mechanism2d",
+      "/Shuffleboard/Simulation/Elevator": "Mechanism2d",
+      "/Shuffleboard/Simulation/Elevator Mech": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d"
     },
     "windows": {
