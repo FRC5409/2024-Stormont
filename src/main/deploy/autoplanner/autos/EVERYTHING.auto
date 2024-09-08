@@ -9,7 +9,7 @@
     "commands": [
       {
         "type": "path",
-        "name": "ASTART_TO_MNOTE1"
+        "pathName": "ASTART_TO_MNOTE1"
       },
       {
         "type": "conditional",
@@ -17,18 +17,18 @@
         "commands": [
           {
             "type": "path",
-            "name": "MNOTE1_TO_SHOOTA"
+            "pathName": "MNOTE1_TO_SHOOTA"
           },
           {
             "type": "sequential",
             "commands": [
               {
                 "type": "path",
-                "name": "MNOTE1_TO_MNOTE2"
+                "pathName": "MNOTE1_TO_MNOTE2"
               },
               {
                 "type": "path",
-                "name": "MNOTE2_TO_SHOOTA"
+                "pathName": "MNOTE2_TO_SHOOTA"
               }
             ]
           }

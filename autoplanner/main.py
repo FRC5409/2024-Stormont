@@ -1,6 +1,5 @@
 import tkinter as tk
 import customtkinter as ctk
-from tkinter import PhotoImage, Tk, Frame, Canvas, Label, Menu, simpledialog, Toplevel, Label, Entry, Button, StringVar
 import numpy as np
 import json
 
@@ -100,7 +99,19 @@ class Path(Item):
     def toJSON(self) -> dict[str]:
         return {
             "type" : "path",
-            "name" : self.path_name
+            "pathName" : self.path_name
+        }
+    
+class WaitCommand(Item):
+    def __init__(self, master, on_delete, wait_time : str) -> None:
+        super().__init__(master, on_delete, f"Wait {wait_time} (s)")
+        
+        self.wait_time = wait_time
+
+    def toJSON(self) -> dict[str]:
+        return {
+            "type" : "wait",
+            "waitTime" : self.wait_time
         }
 
 class Command(Item):
@@ -124,8 +135,9 @@ class MenuGroup(Item):
         self.add_button.pack(pady=5)
 
         # Context menu for adding paths or conditionals
-        self.add_menu = Menu(self, tearoff=0)
+        self.add_menu = tk.Menu(self, tearoff=0)
         self.add_menu.add_command(label="Add Path", command=self.prompt_add_path)
+        self.add_menu.add_command(label="Add Wait Command", command=self.prompt_wait_command)
         self.add_menu.add_command(label="Add Named Command", command=self.prompt_add_command)
         self.add_menu.add_command(label="Add Conditional Group", command=self.prompt_add_conditional)
         self.add_menu.add_command(label="Add Sequential Group", command=self.add_sequential)
@@ -142,51 +154,75 @@ class MenuGroup(Item):
         self.add_menu.post(self.add_button.winfo_rootx(), self.add_button.winfo_rooty() + self.add_button.winfo_height())
 
     def prompt_add_path(self):
-        path_name = simpledialog.askstring("Add Path", "Enter path name:")
+        path_name = tk.simpledialog.askstring("Add Path", "Enter path name:")
         if path_name:
             self.add_path_to_group(path_name)
 
+    def prompt_wait_command(self):
+        wait_time = tk.simpledialog.askfloat("Add wait", "Enter wait time (s):")
+        if wait_time:
+            self.add_wait_to_group(wait_time)
+
     def prompt_add_conditional(self):
-        condition = simpledialog.askstring("Add Condition", "Enter condition name:")
+        condition = tk.simpledialog.askstring("Add Condition", "Enter condition name:")
         if condition:
             self.add_conditional_to_group(condition)
 
     def prompt_add_command(self):
-        command_name = simpledialog.askstring("Add Command", "Enter Command name:")
+        command_name = tk.simpledialog.askstring("Add Command", "Enter Command name:")
         if command_name:
             self.add_command_to_group(command_name)
 
     def prompt_add_until(self):
-        condition = simpledialog.askstring("Add Condition", "Enter condition name:")
+        condition = tk.simpledialog.askstring("Add Condition", "Enter condition name:")
         if condition:
             self.add_until_to_group(condition)
 
     def add_path_to_group(self, path_name):
         path_item = self.add_path(path_name, master=self)
         self.items.append(path_item)
+        return path_item
+    
+    def add_wait_to_group(self, wait_time):
+        wait_item = WaitCommand(self, self.on_delete, wait_time)
+        self.items.append(wait_item)
+        return wait_item
 
     def add_conditional_to_group(self, condition_name):
         conditional_group = ConditionalGroup(self, self.on_delete, "Conditional Group", condition_name, self.add_path)
         conditional_group.pack(fill="x")
         self.items.append(conditional_group)
+        return conditional_group
 
     def add_command_to_group(self, command_name):
-        self.items.append(Command(self, self.on_delete, command_name))
+        command = Command(self, self.on_delete, command_name)
+        self.items.append(command)
+        return command
 
     def add_until_to_group(self, condition_name):
-        self.items.append(RunUntil(self, self.on_delete, condition_name, self.add_path))
+        runUntil = RunUntil(self, self.on_delete, condition_name, self.add_path)
+        self.items.append(runUntil)
+        return runUntil
 
     def add_sequential(self):
-        self.items.append(SequentialGroup(self, self.on_delete, self.add_path))
+        sequential = SequentialGroup(self, self.on_delete, self.add_path)
+        self.items.append(sequential)
+        return sequential
 
     def add_parallel(self):
-        self.items.append(ParallelGroup(self, self.on_delete, self.add_path))
+        parallel = ParallelGroup(self, self.on_delete, self.add_path)
+        self.items.append(parallel)
+        return parallel
 
     def add_deadline(self):
-        self.items.append(DeadlineGroup(self, self.on_delete, self.add_path))
+        deadline = DeadlineGroup(self, self.on_delete, self.add_path)
+        self.items.append(deadline)
+        return deadline
 
     def add_race(self):
-        self.items.append(RaceGroup(self, self.on_delete, self.add_path))
+        race = RaceGroup(self, self.on_delete, self.add_path)
+        self.items.append(race)
+        return race
 
     def delete(self) -> dict[str]:
         # Delete Items
@@ -413,6 +449,42 @@ class AutoPlannerApp(ctk.CTk):
 
         initItems()
 
+    def load_item_from_json(self, master : MenuGroup, json_data : list[dict], custom_auto : bool):
+        for command in json_data:
+            # print(command, end='\n\n')
+            command_type = command["type"]
+
+            if custom_auto:
+                command_data = command.copy()
+            else:
+                command_data = command["data"]
+
+            child = None
+
+            match command_type:
+                case "wait":
+                    master.add_wait_to_group(command_data["waitTime"])
+                case "named":
+                    master.add_command_to_group(command_data["name"])
+                case "path":
+                    master.add_path_to_group(command_data["pathName"])
+                case "sequential":
+                    child = master.add_sequential()
+                case "parallel":
+                    child = master.add_parallel()
+                case "race":
+                    child = master.add_race()
+                case "deadline":
+                    child = master.add_deadline()
+                case "conditional":
+                    child = master.add_conditional_to_group(command_data["condition"])
+                case "until":
+                    master.add_until_to_group(command_data("condition"))
+
+            if child is not None:
+                for sub_command in command_data["commands"]:
+                    self.load_item_from_json(child, [sub_command], custom_auto)
+
     def load_auto(self, auto_name, custom_auto):
         path = DEPLOY_DIR
         if custom_auto:
@@ -423,18 +495,12 @@ class AutoPlannerApp(ctk.CTk):
         path += f"/autos/{auto_name}.auto"
 
         with open(path, 'r') as file:
-            data = json.load(file)
+            data = json.load(file)["command"]
 
-            load_item_from_json(self.command, data["command"])
+            if not custom_auto:
+                data = data["data"]
 
-    def load_item_from_json(self, master, json_data):
-        command_type = json_data["type"]
-
-        match command_type:
-            case "wait": # TODO: ADD WAIT COMMAND
-                pass
-            case "named":
-                master.add_command(json_data["name"])
+            self.load_item_from_json(self.commands, data["commands"], custom_auto)
 
     def add_path(self, path_name : str, master=None):
         self.paths.append(path_name)
