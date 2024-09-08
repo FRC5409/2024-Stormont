@@ -64,7 +64,7 @@ public class Deployment extends SubsystemBase {
             String name = "Deployment";
 
             deploymentMechanism = new Mechanism2d(0.20, 0.80);
-            deploymentRoot = deploymentMechanism.getRoot(name, -0.25, 0);
+            deploymentRoot = deploymentMechanism.getRoot(name, -0.1, 0.1);
             deploymentLigament = deploymentRoot.append(new MechanismLigament2d(name, kDeployment.MIN_HEIGHT, 105));
 
             sim_elevator = new ElevatorSim(

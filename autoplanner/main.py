@@ -1,3 +1,4 @@
+import tkinter as tk
 import customtkinter as ctk
 from tkinter import PhotoImage, Tk, Frame, Canvas, Label, Menu, simpledialog, Toplevel, Label, Entry, Button, StringVar
 import numpy as np
@@ -280,7 +281,7 @@ class AutoPlannerApp(ctk.CTk):
         super().__init__()
 
         # Load image
-        self.image = PhotoImage(file="autoplanner/field24.png")
+        self.image = tk.PhotoImage(file="autoplanner/field24.png")
         self.image = self.image.subsample(3)
 
         self.screenWidth = self.image.width() + 250
@@ -290,7 +291,7 @@ class AutoPlannerApp(ctk.CTk):
         self.geometry(f"{self.screenWidth}x{self.screenHeight}")
 
         # Create and place canvas for background image
-        self.canvas = Canvas(self, width=self.screenWidth, height=self.screenHeight, bg='gray')
+        self.canvas = tk.Canvas(self, width=self.screenWidth, height=self.screenHeight, bg='gray')
         self.canvas.pack(fill="both", expand=True)
         self.canvas.create_image(0, 0, anchor="nw", image=self.image)
 
@@ -298,17 +299,28 @@ class AutoPlannerApp(ctk.CTk):
 
         self.paths = []
         self.pathPoints = []
-        
+
         # Create sidebar
         self.sidebar = ctk.CTkFrame(self, width=250, corner_radius=0)
         self.sidebar.place(relx=1.0, rely=0.0, anchor="ne", relheight=1.0)
 
-        # Create a frame to hold the list of paths and groups
-        self.pathListFrame = ctk.CTkFrame(self.sidebar)  # Initialize pathListFrame before update_path()
+        self.sidebar_canvas = tk.Canvas(self.sidebar, width=250)
+        self.sidebar_canvas.pack(side="left", fill="both", expand=True)
+
+        self.sidebar_scrollbar = ctk.CTkScrollbar(self.sidebar, command=self.sidebar_canvas.yview)
+        self.sidebar_scrollbar.pack(side="right", fill="y")
+        self.sidebar_canvas.configure(yscrollcommand=self.sidebar_scrollbar.set)
+
+        self.scrollable_frame = ctk.CTkFrame(self.sidebar_canvas)
+        self.sidebar_canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
+        self.scrollable_frame.bind("<Configure>", lambda e: self.sidebar_canvas.configure(scrollregion=self.sidebar_canvas.bbox("all")))
+
+        self.pathListFrame = ctk.CTkFrame(self.scrollable_frame)
         self.pathListFrame.pack(padx=20, pady=20, fill="both", expand=True)
 
         # Add button to save project to a auto file
-        self.add_button = ctk.CTkButton(self.sidebar, text="Save", command=self.save)
+        self.add_button = ctk.CTkButton(self.scrollable_frame, text="Save", command=self.save)
         self.add_button.pack(padx=20, pady=10)
 
         self.update_path()
