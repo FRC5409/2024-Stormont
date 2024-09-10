@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.393494547672856,
-        "y": 6.174513545608288
+        "x": 4.867257597763059,
+        "y": 4.619191004763776
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.65646322745637,
-        "y": 6.314843398917567
+        "x": 7.533524810639364,
+        "y": 3.730435267138341
       },
       "isLocked": false,
-      "linkedName": "SHOOTA"
+      "linkedName": "SHOOTB"
     },
     {
       "anchor": {
-        "x": 8.176703304973561,
-        "y": 5.765218140122891
+        "x": 8.20009161385844,
+        "y": 0.8068966565283563
       },
       "prevControl": {
-        "x": 7.176703304973561,
-        "y": 5.765218140122891
+        "x": 7.334724185117885,
+        "y": 2.15172441740895
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "MNOTE2"
+      "linkedName": "MNOTE5"
     }
   ],
   "rotationTargets": [],

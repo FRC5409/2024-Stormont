@@ -4,51 +4,39 @@
     {
       "anchor": {
         "x": 8.20009161385844,
-        "y": 7.425788070949362
+        "y": 2.479160741797268
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.463961855884639,
-        "y": 6.399626018625257
+        "x": 6.504439219704649,
+        "y": 3.601799568271502
       },
       "isLocked": false,
-      "linkedName": "NOTEM1"
+      "linkedName": "MNOTE4"
     },
     {
       "anchor": {
-        "x": 8.284915998403426,
-        "y": 5.775826408795675
+        "x": 4.867257597763059,
+        "y": 4.619191004763776
       },
       "prevControl": {
-        "x": 8.226278166842048,
-        "y": 6.391523640190138
+        "x": 6.177002895316332,
+        "y": 3.8356826571203007
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "NOTEM2"
+      "linkedName": "SHOOTB"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
-  "eventMarkers": [
+  "rotationTargets": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.55,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
+      "waypointRelativePos": 0.4,
+      "rotationDegrees": -45.0,
+      "rotateFast": false
     }
   ],
+  "constraintZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.56,
     "maxAcceleration": 5.0,
@@ -57,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0,
+    "rotation": -6.0,
     "rotateFast": true
   },
   "reversed": false,

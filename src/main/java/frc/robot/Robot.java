@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -25,6 +27,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  public static boolean[] notes = {true, true, true, true, true};
+  public static boolean hasNote = true;
+  private final ShuffleboardTab sb_noteTab = Shuffleboard.getTab("Notes");
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -45,6 +51,11 @@ public class Robot extends TimedRobot {
         .onTrue(
             Commands.runOnce(() -> m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Coast))
                 .ignoringDisable(true));
+
+    for (int i = 0; i < notes.length; i++) {
+      final int innerI = i; // ???
+      sb_noteTab.addBoolean("Note " + (i + 1), () -> notes[innerI]);
+    }
   }
 
   /**

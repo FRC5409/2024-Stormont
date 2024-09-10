@@ -137,6 +137,10 @@ public class CustomAutoBuilder {
         return commands;
     }
 
+    public static Command buildPathCommand(String pathName) {
+        return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
+    }
+
     public static Command getCommandFromJSON(JSONObject data) {
         String type = (String) data.get("type");
 
@@ -146,7 +150,7 @@ public class CustomAutoBuilder {
             case "named":
                 return NamedCommands.getCommand((String) data.get("name"));
             case "path":
-                return AutoBuilder.followPath(PathPlannerPath.fromPathFile((String) data.get("name")));
+                return buildPathCommand((String) data.get("pathName"));
             case "sequential":
                 return new SequentialCommandGroup(getCommandsFromJSONArray((JSONArray) data.get("commands")));
             case "parallel":
@@ -167,5 +171,58 @@ public class CustomAutoBuilder {
         }
 
         return Commands.none();
+    }
+
+    /**
+     * Builds a auto command that will follow different paths based of conditions
+     * @param condtions The NamedConditions that the condtion will follow
+     * @param pathNames The Path Names associated with the condtions
+     * @param otherwise If None of the condtions are true, follow this path
+     * @return New Command 
+     */
+    public static Command buildCaseCommand(String[] condtions, String[] pathNames, String otherwise) {
+        return buildCaseCommand(condtions, pathNames, buildPathCommand(otherwise));
+    }
+
+    /**
+     * Builds a auto command that will follow different paths based of conditions
+     * @param condtions The NamedConditions that the condtion will follow
+     * @param pathNames The Path Names associated with the condtions
+     * @param otherwise If None of the conditions are true, run this command
+     * @return New Command 
+     */
+    public static Command buildCaseCommand(String[] condtions, String[] pathNames, Command otherwise) {
+        Command[] commands = new Command[pathNames.length];
+        for (int i = 0; i < pathNames.length; i++) {
+            commands[i] = buildPathCommand(pathNames[i]);
+        }
+        return buildCaseCommand(condtions, commands, otherwise, 0);
+    }
+
+    /**
+     * Builds a auto command that will follow different paths based of conditions
+     * @param condtions NamedCondtions to follow
+     * @param pathCommands The commands to run when the following conditon is true
+     * @param otherwise If none of the conditions are true
+     * @return New Command
+     */
+    public static Command buildCaseCommand(String[] condtions, Command[] pathCommands, Command otherwise) {
+        return buildCaseCommand(condtions, pathCommands, otherwise, 0);
+    }
+
+    private static Command buildCaseCommand(String[] condtions, Command[] pathCommands, Command otherwise, int i) {
+        if (condtions.length != pathCommands.length) {
+            throw new IllegalArgumentException("<condtions> and <pathNames> are not the same length!");
+        }
+
+        if (i == condtions.length) {
+            return otherwise;
+        }
+
+        return new ConditionalCommand(
+            pathCommands[i],
+            buildCaseCommand(condtions, pathCommands, otherwise, i + 1),
+            NamedConditions.getCondition(condtions[i])
+        );
     }
 }

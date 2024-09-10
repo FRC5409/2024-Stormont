@@ -1,0 +1,54 @@
+{
+  "startingPos": {
+    "x": 1.3940937283583965,
+    "y": 7.262069908755202,
+    "rot": 0.0
+  },
+  "command": {
+    "type": "sequential",
+    "commands": [
+      {
+        "type": "path",
+        "pathName": "ASTART_TO_MNOTE1"
+      },
+      {
+        "type": "conditional",
+        "condition": "NOTE",
+        "commands": [
+          {
+            "type": "path",
+            "pathName": "MNOTE1_TO_SHOOTA"
+          },
+          {
+            "type": "path",
+            "pathName": "DOWN_NOTES"
+          }
+        ]
+      },
+      {
+        "type": "named",
+        "name": "GRABBED_NOTE1"
+      },
+      {
+        "type": "named",
+        "name": "PICK_PATH"
+      },
+      {
+        "type": "named",
+        "name": "PICK_PATH"
+      },
+      {
+        "type": "named",
+        "name": "PICK_PATH"
+      },
+      {
+        "type": "named",
+        "name": "PICK_PATH"
+      },
+      {
+        "type": "path",
+        "pathName": "SHOOTB_TO_MIDLINE"
+      }
+    ]
+  }
+}

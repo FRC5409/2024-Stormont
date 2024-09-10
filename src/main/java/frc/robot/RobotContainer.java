@@ -8,12 +8,13 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AutoCreator.CustomAutoBuilder;
@@ -97,14 +98,56 @@ public class RobotContainer {
             .withPosition(0, 1)
             .withSize(3, 1);
 
+        sb_driveteamTab.add("Note", Commands.runOnce(() -> {Robot.hasNote = true;}));
+
         // Configure the trigger bindings
         configureBindings();
     }
 
     private void registerCommands() {
-        NamedCommands.registerCommand("SHOOT", new ShootCommand());
+        NamedCommands.registerCommand("SHOOT", new ShootCommand().alongWith(Commands.runOnce(() -> {Robot.hasNote = false;})));
+        NamedConditions.registerCondition("NOTE", () -> Robot.hasNote);
 
-        NamedConditions.registerCondition("NOTE", () -> DriverStation.getAlliance().get() == Alliance.Red);
+        String[] condtions = new String[Robot.notes.length - 1];
+
+        Command[] commands = new Command[Robot.notes.length - 1];
+
+        for (int i = 1; i < Robot.notes.length; i++) {
+            int noteNum = i + 1;
+
+            String shootingPos = noteNum < 3 ? "A" : "B";
+
+            condtions[i - 1] = "" + noteNum + "_PRESENT";
+            String grabbedNoteCommand = "GRABBED_NOTE" + noteNum;
+
+            final int innerI = i; // ???
+            NamedConditions.registerCondition(condtions[i - 1], () -> Robot.notes[innerI]);
+            NamedCommands.registerCommand(grabbedNoteCommand, Commands.runOnce(() -> {Robot.notes[innerI] = false;}));
+
+            String notePaths = "SHOOT" + shootingPos + "_TO_MNOTE" + noteNum;
+            String returnPaths = "MNOTE" + noteNum + "_TO_SHOOT" + shootingPos;
+
+            commands[i - 1] = new SequentialCommandGroup(
+                CustomAutoBuilder.buildPathCommand(notePaths),
+
+                new ConditionalCommand(
+                    Commands.none(), 
+                    CustomAutoBuilder.buildPathCommand("DOWN_NOTES")
+                        .alongWith(Commands.idle().until(NamedConditions.getCondition("NOTE"))), // Will not stop the path until a note is grabbed
+                    NamedConditions.getCondition("NOTE")
+                ),
+
+                NamedCommands.getCommand(grabbedNoteCommand),
+                CustomAutoBuilder.buildPathCommand(returnPaths),
+                NamedCommands.getCommand("SHOOT")
+            );
+        }
+
+
+        NamedCommands.registerCommand(
+            "PICK_PATH",
+            CustomAutoBuilder.buildCaseCommand(condtions, commands, CustomAutoBuilder.buildPathCommand("SHOOTB_TO_MIDLINE"))
+        );
     }
 
     /**
@@ -128,6 +171,9 @@ public class RobotContainer {
 
         m_primaryController.y()
             .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment));
+
+        m_primaryController.leftBumper()
+            .onTrue(Commands.runOnce(() -> {Robot.hasNote = true;}).ignoringDisable(true));
 
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
