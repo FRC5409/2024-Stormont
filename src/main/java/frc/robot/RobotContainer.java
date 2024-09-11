@@ -135,11 +135,7 @@ public class RobotContainer {
             newCondtions[i - 1] = condtions[i];
         }
         newCondtions[Robot.notes.length - 1] = "ALWAYS_TRUE"; // Should be a condtion that never gets checked
-
-        for (int i = 0; i < newCondtions.length; i++) {
-            System.out.println(newCondtions[i]);
-        }
-
+        
         NamedCommands.registerCommand("RETURN_PATH", CustomAutoBuilder.buildCaseCommand(newCondtions, returnPaths, Commands.none()));
 
         for (int i = 0; i < Robot.notes.length; i++) {
@@ -160,11 +156,11 @@ public class RobotContainer {
                     ).andThen(
                         Commands.runOnce(() -> {
                             int closestNote = 0;
-                            double distance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[3].getY());
+                            double distance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[3].getY() - 0.87 / 2);
                         
                             // Find the closest note
                             for (int j = 4; j < kAuto.NOTES.length; j++) {
-                                double newDistance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[j].getY());
+                                double newDistance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[j].getY() - 0.87 / 2);
                                 if (newDistance < distance) {
                                     closestNote = j - 3;
                                     distance = newDistance;
