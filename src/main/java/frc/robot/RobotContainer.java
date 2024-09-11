@@ -14,11 +14,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AutoCreator.CustomAutoBuilder;
 import frc.robot.AutoCreator.NamedConditions;
+import frc.robot.Constants.kAuto;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
@@ -108,37 +110,78 @@ public class RobotContainer {
         NamedCommands.registerCommand("SHOOT", new ShootCommand().alongWith(Commands.runOnce(() -> {Robot.hasNote = false;})));
         NamedConditions.registerCondition("NOTE", () -> Robot.hasNote);
 
-        String[] condtions = new String[Robot.notes.length - 1];
+        String[] condtions = new String[Robot.notes.length];
+        String[] returnPaths = new String[Robot.notes.length];
 
-        Command[] commands = new Command[Robot.notes.length - 1];
+        Command[] commands = new Command[Robot.notes.length];
 
-        for (int i = 1; i < Robot.notes.length; i++) {
+        for (int i = 0; i < Robot.notes.length; i++) {
             int noteNum = i + 1;
 
             String shootingPos = noteNum < 3 ? "A" : "B";
 
-            condtions[i - 1] = "" + noteNum + "_PRESENT";
+            condtions[i] = "" + noteNum + "_PRESENT";
             String grabbedNoteCommand = "GRABBED_NOTE" + noteNum;
 
             final int innerI = i; // ???
-            NamedConditions.registerCondition(condtions[i - 1], () -> Robot.notes[innerI]);
+            NamedConditions.registerCondition(condtions[i], () -> Robot.notes[innerI]);
             NamedCommands.registerCommand(grabbedNoteCommand, Commands.runOnce(() -> {Robot.notes[innerI] = false;}));
 
-            String notePaths = "SHOOT" + shootingPos + "_TO_MNOTE" + noteNum;
-            String returnPaths = "MNOTE" + noteNum + "_TO_SHOOT" + shootingPos;
+            returnPaths[innerI] = "MNOTE" + noteNum + "_TO_SHOOT" + shootingPos;
+        }
 
-            commands[i - 1] = new SequentialCommandGroup(
-                CustomAutoBuilder.buildPathCommand(notePaths),
+        String[] newCondtions = new String[Robot.notes.length];
+        for (int i = 1; i < Robot.notes.length; i++) {
+            newCondtions[i - 1] = condtions[i];
+        }
+        newCondtions[Robot.notes.length - 1] = "ALWAYS_TRUE"; // Should be a condtion that never gets checked
+
+        for (int i = 0; i < newCondtions.length; i++) {
+            System.out.println(newCondtions[i]);
+        }
+
+        NamedCommands.registerCommand("RETURN_PATH", CustomAutoBuilder.buildCaseCommand(newCondtions, returnPaths, Commands.none()));
+
+        for (int i = 0; i < Robot.notes.length; i++) {
+            int noteNum = i + 1;
+
+            String shootingPos = noteNum < 3 ? "A" : "B";
+
+            String notePaths = "SHOOT" + shootingPos + "_TO_MNOTE" + noteNum;
+
+            commands[i] = new SequentialCommandGroup(
+                CustomAutoBuilder.buildPathCommand(notePaths).until(NamedConditions.getCondition("NOTE")),
 
                 new ConditionalCommand(
                     Commands.none(), 
-                    CustomAutoBuilder.buildPathCommand("DOWN_NOTES")
-                        .alongWith(Commands.idle().until(NamedConditions.getCondition("NOTE"))), // Will not stop the path until a note is grabbed
+                    new ParallelDeadlineGroup(
+                        Commands.idle().until(NamedConditions.getCondition("NOTE")),
+                        CustomAutoBuilder.buildPathCommand("DOWN_NOTES")
+                    ).andThen(
+                        Commands.runOnce(() -> {
+                            int closestNote = 0;
+                            double distance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[3].getY());
+                        
+                            // Find the closest note
+                            for (int j = 4; j < kAuto.NOTES.length; j++) {
+                                double newDistance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[j].getY());
+                                if (newDistance < distance) {
+                                    closestNote = j - 3;
+                                    distance = newDistance;
+                                }
+                            }
+                        
+                            final int finalClosestNote = closestNote;
+                            for (int j = 0; j < finalClosestNote; j++) {
+                                Robot.notes[j] = false;
+                            }
+                        })
+                    ),
                     NamedConditions.getCondition("NOTE")
                 ),
 
-                NamedCommands.getCommand(grabbedNoteCommand),
-                CustomAutoBuilder.buildPathCommand(returnPaths),
+                NamedCommands.getCommand("GRABBED_NOTE" + noteNum),
+                NamedCommands.getCommand("RETURN_PATH"),
                 NamedCommands.getCommand("SHOOT")
             );
         }

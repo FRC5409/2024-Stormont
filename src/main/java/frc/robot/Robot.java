@@ -98,6 +98,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    for (int i = 0; i < notes.length; i++) {
+      notes[i] = true;
+    }
+
     m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Brake);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();

@@ -212,7 +212,7 @@ public class CustomAutoBuilder {
 
     private static Command buildCaseCommand(String[] condtions, Command[] pathCommands, Command otherwise, int i) {
         if (condtions.length != pathCommands.length) {
-            throw new IllegalArgumentException("<condtions> and <pathNames> are not the same length!");
+            throw new IllegalArgumentException("Condtions and paths are not the same length!");
         }
 
         if (i == condtions.length) {

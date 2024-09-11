@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.42287972895034,
-        "y": 4.7829091669579356
+        "x": 5.393494547672856,
+        "y": 6.174513545608288
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.720930872061174,
-        "y": 3.940930047102261
+        "x": 6.48105091081977,
+        "y": 6.6188914144210065
       },
       "isLocked": false,
-      "linkedName": "SHOOTB"
+      "linkedName": "SHOOTA"
     },
     {
       "anchor": {
         "x": 8.20009161385844,
-        "y": 2.479160741797268
+        "y": 7.425788070949362
       },
       "prevControl": {
-        "x": 7.264559258463246,
-        "y": 3.0755626183617046
+        "x": 7.556913119524244,
+        "y": 7.098351746561043
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "MNOTE4"
+      "linkedName": "MNOTE1"
     }
   ],
   "rotationTargets": [],
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -45.0,
+    "rotation": 30.0,
     "rotateFast": true
   },
   "reversed": false,

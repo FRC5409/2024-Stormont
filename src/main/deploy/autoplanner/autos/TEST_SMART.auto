@@ -1,7 +1,7 @@
 {
   "startingPos": {
-    "x": 1.3940937283583965,
-    "y": 7.262069908755202,
+    "x": 1.34,
+    "y": 5.54,
     "rot": 0.0
   },
   "command": {
@@ -9,25 +9,15 @@
     "commands": [
       {
         "type": "path",
-        "pathName": "ASTART_TO_MNOTE1"
-      },
-      {
-        "type": "conditional",
-        "condition": "NOTE",
-        "commands": [
-          {
-            "type": "path",
-            "pathName": "MNOTE1_TO_SHOOTA"
-          },
-          {
-            "type": "path",
-            "pathName": "DOWN_NOTES"
-          }
-        ]
+        "pathName": "BSTART_TO_SHOOTA"
       },
       {
         "type": "named",
-        "name": "GRABBED_NOTE1"
+        "name": "SHOOT"
+      },
+      {
+        "type": "named",
+        "name": "PICK_PATH"
       },
       {
         "type": "named",
