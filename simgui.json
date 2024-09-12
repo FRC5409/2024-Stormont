@@ -4,6 +4,7 @@
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Drive team/Choose auto": "String Chooser",
       "/Shuffleboard/Drive team/Field": "Field2d",
+      "/Shuffleboard/Drive team/Note": "Command",
       "/Shuffleboard/Simulation/Deployment": "Mechanism2d",
       "/Shuffleboard/Simulation/Elevator": "Mechanism2d",
       "/Shuffleboard/Simulation/Elevator Mech": "Mechanism2d",
@@ -28,7 +29,28 @@
       }
     }
   },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        ".metadata": {
+          "Notes": {
+            "Note 1": {
+              "open": true
+            },
+            "open": true
+          }
+        },
+        "open": true
+      }
+    }
+  },
   "NetworkTables Info": {
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "open": true
+    },
     "visible": true
   }
 }

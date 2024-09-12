@@ -4,10 +4,18 @@
 
 package frc.robot;
 
+import java.util.Optional;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -25,9 +33,9 @@ import frc.robot.Constants.kController;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
 import frc.robot.commands.ShootCommand;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drive;
+import frc.robot.utils.NoteVisualizer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -73,7 +81,7 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
 
         // Subsystems
-        sys_drivetrain = TunerConstants.DriveTrain;
+        sys_drivetrain = Drive.getInstance();
         sys_deployment = Deployment.getInstance();
 
         // Commands
@@ -88,11 +96,30 @@ public class RobotContainer {
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
-        registerCommands();
-
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
+
+        NoteVisualizer.configureNoteVisualizer(
+            sys_drivetrain::getRobotPose,
+            sys_deployment::getShooterAngle,
+            new Translation2d(0.87, 0.87),
+            new Transform3d(
+                new Translation3d(-0.3, 0, 0.35),
+                new Rotation3d(0, Units.degreesToRadians(75), 0)
+            ),
+            () -> {
+                Optional<Alliance> alliance = DriverStation.getAlliance();
+
+                if (alliance.isPresent()) {
+                  return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            }
+        );
+        NoteVisualizer.createNotes();
+
+        registerCommands();
         sc_autoChooser = CustomAutoBuilder.buildChooser();
 
         // Autonomous
@@ -107,7 +134,12 @@ public class RobotContainer {
     }
 
     private void registerCommands() {
-        NamedCommands.registerCommand("SHOOT", new ShootCommand().alongWith(Commands.runOnce(() -> {Robot.hasNote = false;})));
+        Command shootCommand = new ShootCommand().alongWith(Commands.runOnce(() -> {Robot.hasNote = false;}));
+
+        if (RobotBase.isSimulation())
+            shootCommand = shootCommand.alongWith(NoteVisualizer.generateNoteVisualizationCommand());
+
+        NamedCommands.registerCommand("SHOOT", shootCommand);
         NamedConditions.registerCondition("NOTE", () -> Robot.hasNote);
 
         String[] condtions = new String[Robot.notes.length];

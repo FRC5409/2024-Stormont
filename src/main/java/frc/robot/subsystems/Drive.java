@@ -35,11 +35,14 @@ import frc.robot.AutoCreator.CustomAutoBuilder;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kDrive.kPID;
+import frc.robot.generated.TunerConstants;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
 
 public class Drive extends SwerveDrivetrain implements Subsystem {
+    private static Drive instance = null;
+
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -93,6 +96,13 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
         }
 
         fieldMap = new Field2d();
+    }
+
+    // Get subsystem
+    public static Drive getInstance() {
+        if (instance == null) instance = TunerConstants.DriveTrain;
+
+        return instance;
     }
 
     private void startSimThread() {

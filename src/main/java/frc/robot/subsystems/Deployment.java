@@ -7,8 +7,15 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -33,6 +40,8 @@ public class Deployment extends SubsystemBase {
 
     private double setpoint = kDeployment.MIN_HEIGHT;
 
+    private double m_shooterAngle;
+
     // Simulation
     private final Mechanism2d deploymentMechanism;
     private final MechanismRoot2d deploymentRoot;
@@ -56,6 +65,8 @@ public class Deployment extends SubsystemBase {
 
         deploymentEncoder = deploymentMotor.getEncoder();
         deploymentEncoder.setPositionConversionFactor((2 * Math.PI * kDeployment.ELEVATOR_DRUM_RADIUS) / kDeployment.ELEVATOR_GEARING);
+
+        m_shooterAngle = 0.0;
 
         resetEncoder();
 
@@ -125,6 +136,10 @@ public class Deployment extends SubsystemBase {
         }
     }
 
+    public double getShooterAngle() {
+        return m_shooterAngle;
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -136,6 +151,15 @@ public class Deployment extends SubsystemBase {
 
             deploymentLigament.setLength(deploymentEncoder.getPosition());
         }
+
+        Pose2d robotPose = Drive.getInstance().getRobotPose().plus(new Transform2d(new Translation2d(-0.3, 0), new Rotation2d()));
+
+        Translation3d goal = DriverStation.getAlliance().get() == Alliance.Blue ? kDeployment.blueSpeaker : kDeployment.redSpeaker;
+
+        double z = goal.getZ() - 1.3;
+        double d = Math.hypot(Math.abs(robotPose.getX() - goal.getX()), Math.abs(robotPose.getY() - goal.getY()));
+
+        m_shooterAngle = Math.atan(z / d);
     }
 
     @Override

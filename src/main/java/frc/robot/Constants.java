@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -114,5 +115,9 @@ public final class Constants {
         public static final double ELEVATOR_GEARING = 10.0/1.0;
         public static final double ELEVATOR_DRUM_RADIUS = Units.inchesToMeters(0.944);
         public static final double ELEVATOR_MASS = Units.lbsToKilograms(11.0);
+
+        public static final Translation3d blueSpeaker = new Translation3d(0.225, 5.55, 2.1);
+        public static final Translation3d redSpeaker = new Translation3d(16.317, 5.55, 2.1);
+
     }
 }
