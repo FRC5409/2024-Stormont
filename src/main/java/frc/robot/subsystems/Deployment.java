@@ -156,7 +156,7 @@ public class Deployment extends SubsystemBase {
 
         Translation3d goal = DriverStation.getAlliance().get() == Alliance.Blue ? kDeployment.blueSpeaker : kDeployment.redSpeaker;
 
-        double z = goal.getZ() - 1.3;
+        double z = goal.getZ() - 0.9;
         double d = Math.hypot(Math.abs(robotPose.getX() - goal.getX()), Math.abs(robotPose.getY() - goal.getY()));
 
         m_shooterAngle = Math.atan(z / d);

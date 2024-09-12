@@ -22,7 +22,7 @@ public class NoteVisualizer {
     private static Supplier<Pose2d> m_robotPose;
     private static Supplier<Double> m_shooterAngle;
     private static Translation2d m_robotSize;
-    private static Transform3d m_noteOffset;
+    private static Supplier<Transform3d> m_noteOffset;
     private static Supplier<Boolean> m_blueAlliance;
 
     private static boolean isConfigured = false;
@@ -45,7 +45,7 @@ public class NoteVisualizer {
         new Pose2d(new Translation2d(8.29, 0.80), Rotation2d.fromDegrees(0.0))
     };
 
-    public static void configureNoteVisualizer(Supplier<Pose2d> robotPose, Supplier<Double> shooterAngle, Translation2d robotSize, Transform3d noteOffset, Supplier<Boolean> blueAllianceSupplier) {
+    public static void configureNoteVisualizer(Supplier<Pose2d> robotPose, Supplier<Double> shooterAngle, Translation2d robotSize, Supplier<Transform3d> noteOffset, Supplier<Boolean> blueAllianceSupplier) {
         m_robotPose = robotPose;
         m_shooterAngle = shooterAngle;
         m_robotSize = robotSize;
@@ -89,7 +89,7 @@ public class NoteVisualizer {
                 Pose2d robotPose = m_robotPose.get();
                 Pose3d notePose = new Pose3d(robotPose.getX(), robotPose.getY(), 0.0, new Rotation3d(0.0, 0.0, robotPose.getRotation().getRadians()));
 
-                notePose = notePose.plus(m_noteOffset);
+                notePose = notePose.plus(m_noteOffset.get());
 
                 note.setPose(notePose);
             } else {

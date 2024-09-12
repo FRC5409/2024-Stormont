@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -38,6 +39,8 @@ public class CustomAutoBuilder {
     public static Consumer<Pose2d> m_resetPose;
     public static BooleanSupplier m_shouldFlipPath;
 
+    private static HashMap<String, Pose2d> m_startingPos;
+
     public static void configureHolonomic(
       Supplier<Pose2d> poseSupplier,
       Consumer<Pose2d> resetPose,
@@ -49,6 +52,8 @@ public class CustomAutoBuilder {
         AutoBuilder.configureHolonomic(poseSupplier, resetPose, robotRelativeSpeedsSupplier, robotRelativeOutput, config, shouldFlipPath, driveSubsystem);
         m_resetPose = resetPose;
         m_shouldFlipPath = shouldFlipPath;
+
+        m_startingPos =  new HashMap<>();
       }
 
     public static SendableChooser<Command> buildChooser() {
@@ -56,6 +61,8 @@ public class CustomAutoBuilder {
 
         for (String name : AutoBuilder.getAllAutoNames()) {
             sc_chooser.addOption(name, AutoBuilder.buildAuto(name));
+
+            m_startingPos.put(name, AutoBuilder.getStartingPoseFromJson((JSONObject) loadJSON(name, "pathplanner/autos/").get("startingPose")));
         }
 
         for (String name : getCustomAutoNames()) {
@@ -64,7 +71,23 @@ public class CustomAutoBuilder {
 
         sc_chooser.setDefaultOption("None", Commands.none());
 
+        sc_chooser.onChange(cmd -> resetPosition(cmd));
+
         return sc_chooser;
+    }
+
+    private static void resetPosition(Command autoCommand) {
+        String autoName = autoCommand.getName();
+
+        Pose2d startingPose = m_startingPos.get(autoName);
+
+        if (startingPose == null) 
+            return;
+
+        if (m_shouldFlipPath.getAsBoolean())
+            m_resetPose.accept(GeometryUtil.flipFieldPose(startingPose));
+        else
+            m_resetPose.accept(startingPose);
     }
 
     /**
@@ -85,15 +108,19 @@ public class CustomAutoBuilder {
             .collect(Collectors.toList());
     }
 
+    public static JSONObject loadJSON(String autoName) {
+        return loadJSON(autoName, "autoplanner/autos/");
+    }
+
     /**
      * TAKEN FROM PATH PLANNER
      */
-    public static JSONObject loadJSON(String autoName) {
+    public static JSONObject loadJSON(String autoName, String fp) {
         try (BufferedReader br =
         new BufferedReader(
             new FileReader(
                 new File(
-                    Filesystem.getDeployDirectory(), "autoplanner/autos/" + autoName + ".auto")))) {
+                    Filesystem.getDeployDirectory(), fp + autoName + ".auto")))) {
             StringBuilder fileContentBuilder = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
@@ -114,17 +141,16 @@ public class CustomAutoBuilder {
 
         JSONObject startingPos = (JSONObject) JSONAuto.get("startingPos");
 
-        Pose2d startingPose = new Pose2d((double) startingPos.get("x"), (double) startingPos.get("y"), Rotation2d.fromDegrees((double) startingPos.get("rot")));
+        Pose2d pose = 
+            new Pose2d(
+                (double) startingPos.get("x"),
+                (double) startingPos.get("y"),
+                Rotation2d.fromDegrees((double) startingPos.get("rot"))
+            );
 
-        Command resetCommand = Commands.runOnce(() -> {
-            if (m_shouldFlipPath.getAsBoolean()) {
-                m_resetPose.accept(GeometryUtil.flipFieldPose(startingPose));
-            } else {
-                m_resetPose.accept(startingPose);
-            }
-        });
+        m_startingPos.put(autoName, pose);
 
-        return resetCommand.andThen(getCommandFromJSON((JSONObject) JSONAuto.get("command")));
+        return getCommandFromJSON((JSONObject) JSONAuto.get("command")).withName(autoName);
     }
 
     public static Command[] getCommandsFromJSONArray(JSONArray arr) {
