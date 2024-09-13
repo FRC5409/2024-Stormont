@@ -3,13 +3,10 @@ package frc.robot.AutoCreator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -60,12 +57,6 @@ public class CustomAutoBuilder {
         SendableChooser<Command> sc_chooser = new SendableChooser<>();
 
         for (String name : AutoBuilder.getAllAutoNames()) {
-            sc_chooser.addOption(name, AutoBuilder.buildAuto(name));
-
-            m_startingPos.put(name, AutoBuilder.getStartingPoseFromJson((JSONObject) loadJSON(name, "pathplanner/autos/").get("startingPose")));
-        }
-
-        for (String name : getCustomAutoNames()) {
             sc_chooser.addOption(name, buildAuto(name));
         }
 
@@ -93,34 +84,12 @@ public class CustomAutoBuilder {
     /**
      * TAKEN FROM PATH PLANNER
      */
-    public static List<String> getCustomAutoNames() {
-        File[] autoFiles = new File(Filesystem.getDeployDirectory(), "autoplanner/autos").listFiles();
-
-        if (autoFiles == null) {
-          return new ArrayList<>();
-        }
-
-        return Stream.of(autoFiles)
-            .filter(file -> !file.isDirectory())
-            .map(File::getName)
-            .filter(name -> name.endsWith(".auto"))
-            .map(name -> name.substring(0, name.lastIndexOf(".")))
-            .collect(Collectors.toList());
-    }
-
     public static JSONObject loadJSON(String autoName) {
-        return loadJSON(autoName, "autoplanner/autos/");
-    }
-
-    /**
-     * TAKEN FROM PATH PLANNER
-     */
-    public static JSONObject loadJSON(String autoName, String fp) {
         try (BufferedReader br =
         new BufferedReader(
             new FileReader(
                 new File(
-                    Filesystem.getDeployDirectory(), fp + autoName + ".auto")))) {
+                    Filesystem.getDeployDirectory(), "pathplanner/autos/" + autoName + ".auto")))) {
             StringBuilder fileContentBuilder = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
@@ -139,13 +108,17 @@ public class CustomAutoBuilder {
     public static Command buildAuto(String autoName) {
         JSONObject JSONAuto = (JSONObject) loadJSON(autoName);
 
-        JSONObject startingPos = (JSONObject) JSONAuto.get("startingPos");
+        JSONObject startingPose = (JSONObject) JSONAuto.get("startingPose");
+
+        JSONObject position = (JSONObject) startingPose.get("position");
+
+        System.out.println(startingPose.get("rotation"));
 
         Pose2d pose = 
             new Pose2d(
-                (double) startingPos.get("x"),
-                (double) startingPos.get("y"),
-                Rotation2d.fromDegrees((double) startingPos.get("rot"))
+                (double) position.get("x"),
+                (double) position.get("y"),
+                Rotation2d.fromDegrees(((Long) startingPose.get("rotation")).doubleValue())
             );
 
         m_startingPos.put(autoName, pose);
@@ -167,8 +140,9 @@ public class CustomAutoBuilder {
         return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
     }
 
-    public static Command getCommandFromJSON(JSONObject data) {
-        String type = (String) data.get("type");
+    public static Command getCommandFromJSON(JSONObject jsonData) {
+        String type = (String) jsonData.get("type");
+        JSONObject data = (JSONObject) jsonData.get("data");
 
         switch (type) {
             case "wait":

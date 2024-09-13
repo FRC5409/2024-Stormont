@@ -142,12 +142,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("SHOOT", shootCommand);
         NamedConditions.registerCondition("NOTE", () -> Robot.hasNote);
 
-        String[] condtions = new String[Robot.notes.length];
-        String[] returnPaths = new String[Robot.notes.length];
+        int len = Robot.notes.length;
 
-        Command[] commands = new Command[Robot.notes.length];
+        String[] condtions = new String[len];
+        String[] returnPaths = new String[len];
 
-        for (int i = 0; i < Robot.notes.length; i++) {
+        Command[] commands = new Command[len];
+
+        for (int i = 0; i < len; i++) {
             int noteNum = i + 1;
 
             String shootingPos = noteNum < 3 ? "A" : "B";
@@ -162,16 +164,16 @@ public class RobotContainer {
             returnPaths[innerI] = "MNOTE" + noteNum + "_TO_SHOOT" + shootingPos;
         }
 
-        String[] newCondtions = new String[Robot.notes.length];
-        for (int i = 1; i < Robot.notes.length; i++) {
+        String[] newCondtions = new String[len];
+        for (int i = 1; i < len; i++) {
             newCondtions[i - 1] = condtions[i];
         }
-        newCondtions[Robot.notes.length - 1] = "ALWAYS_TRUE"; // Should be a condtion that never gets checked
+        newCondtions[len - 1] = "ALWAYS_TRUE"; // Should be a condtion that never gets checked
         
         NamedCommands.registerCommand("RETURN_PATH", CustomAutoBuilder.buildCaseCommand(newCondtions, returnPaths, Commands.none()));
 
-        for (int i = 0; i < Robot.notes.length; i++) {
-            int noteNum = i + 1;
+        for (int i = 0; i < len; i++) {
+            final int noteNum = i + 1;
 
             String shootingPos = noteNum < 3 ? "A" : "B";
 
