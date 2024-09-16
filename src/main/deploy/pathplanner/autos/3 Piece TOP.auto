@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.34,
-      "y": 5.54
+      "x": 1.8755223835233994,
+      "y": 4.967338139804485
     },
     "rotation": 0
   },
@@ -14,49 +14,49 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BSTART_TO_SHOOTA"
-          }
-        },
-        {
-          "type": "named",
-          "data" : {
-            "name": "SHOOT"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
+            "pathName": "GRID1_TO_ENTRY"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SHOOTB_TO_MIDLINE"
+            "pathName": "ENTRY_TO_CONE1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CONE1_TO_ENTRY"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ENTRY_TO_GRID3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GRID3_TO_ENTRY"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ENTRY_TO_CONE2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CONE2_TO_ENTRY"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ENTRY_TO_GRID1"
           }
         }
       ]

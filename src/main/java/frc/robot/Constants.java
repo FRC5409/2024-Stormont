@@ -39,6 +39,8 @@ public final class Constants {
         public static final double MAX_ROTATION_SPEED = 10.0;
         public static final double MAX_ROTATION_ACCELERATION = Math.toRadians(720.0);
 
+        public static final Translation2d ROBOT_DIMENSIONS = new Translation2d(0.87, 0.87);
+
         public static class kPID {
             public static final double TRANSLATION_P = 5.0;
             public static final double TRANSLATION_I = 0.0;

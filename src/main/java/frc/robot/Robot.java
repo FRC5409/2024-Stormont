@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.utils.NoteVisualizer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -155,7 +154,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    if (NoteVisualizer.updateNotes())
-      hasNote = true;
   }
 }

@@ -3,50 +3,60 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.42287972895034,
-        "y": 4.7829091669579356
+        "x": 3.3714334095334855,
+        "y": 4.56766725499263
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.445968447492449,
-        "y": 3.5199404871744226
+        "x": 4.547607727694088,
+        "y": 4.556248086855149
       },
       "isLocked": false,
-      "linkedName": "SHOOTB"
+      "linkedName": "ENTRY"
     },
     {
       "anchor": {
-        "x": 8.20009161385844,
-        "y": 0.8068966565283563
+        "x": 6.408932134103584,
+        "y": 4.56766725499263
       },
       "prevControl": {
-        "x": 7.018982015172007,
-        "y": 2.865067838397785
+        "x": 4.981536116918387,
+        "y": 4.556248086855149
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "MNOTE5"
+      "linkedName": "CONE1"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "PICKUP",
+      "waypointRelativePos": 0.7,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 4.56,
+    "maxVelocity": 3.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -50.0,
-    "rotateFast": true
+    "rotation": 0
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
+  "idealStartingState": {
     "rotation": 0,
-    "velocity": 0
+    "velocity": 3.0
   },
   "useDefaultConstraints": true
 }

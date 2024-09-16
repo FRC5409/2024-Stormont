@@ -4,38 +4,20 @@
 
 package frc.robot;
 
-import java.util.Optional;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AutoCreator.CustomAutoBuilder;
-import frc.robot.AutoCreator.NamedConditions;
-import frc.robot.Constants.kAuto;
 import frc.robot.Constants.kController;
-import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
-import frc.robot.commands.ShootCommand;
-import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drive;
-import frc.robot.utils.NoteVisualizer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -50,11 +32,9 @@ public class RobotContainer {
 
     // Joysticks
     private final CommandXboxController m_primaryController;
-    // private final CommandXboxController m_secondaryController;
 
     // Subsystems
     public final Drive sys_drivetrain;
-    public final Deployment sys_deployment;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -82,7 +62,6 @@ public class RobotContainer {
 
         // Subsystems
         sys_drivetrain = Drive.getInstance();
-        sys_deployment = Deployment.getInstance();
 
         // Commands
         cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
@@ -100,25 +79,6 @@ public class RobotContainer {
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
 
-        NoteVisualizer.configureNoteVisualizer(
-            sys_drivetrain::getRobotPose,
-            sys_deployment::getShooterAngle,
-            new Translation2d(0.87, 0.87),
-            () -> new Transform3d(
-                new Translation3d(-0.3, 0, 0.35),
-                new Rotation3d(0, Units.degreesToRadians(75), 0)
-            ),
-            () -> {
-                Optional<Alliance> alliance = DriverStation.getAlliance();
-
-                if (alliance.isPresent()) {
-                  return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            }
-        );
-        NoteVisualizer.createNotes();
-
         registerCommands();
         sc_autoChooser = CustomAutoBuilder.buildChooser();
 
@@ -134,93 +94,7 @@ public class RobotContainer {
     }
 
     private void registerCommands() {
-        Command shootCommand = new ShootCommand().alongWith(Commands.runOnce(() -> {Robot.hasNote = false;}));
 
-        if (RobotBase.isSimulation())
-            shootCommand = shootCommand.alongWith(NoteVisualizer.generateNoteVisualizationCommand());
-
-        NamedCommands.registerCommand("SHOOT", shootCommand);
-        NamedConditions.registerCondition("NOTE", () -> Robot.hasNote);
-
-        int len = Robot.notes.length;
-
-        String[] condtions = new String[len];
-        String[] returnPaths = new String[len];
-
-        Command[] commands = new Command[len];
-
-        for (int i = 0; i < len; i++) {
-            int noteNum = i + 1;
-
-            String shootingPos = noteNum < 3 ? "A" : "B";
-
-            condtions[i] = "" + noteNum + "_PRESENT";
-            String grabbedNoteCommand = "GRABBED_NOTE" + noteNum;
-
-            final int innerI = i; // ???
-            NamedConditions.registerCondition(condtions[i], () -> Robot.notes[innerI]);
-            NamedCommands.registerCommand(grabbedNoteCommand, Commands.runOnce(() -> {Robot.notes[innerI] = false;}));
-
-            returnPaths[innerI] = "MNOTE" + noteNum + "_TO_SHOOT" + shootingPos;
-        }
-
-        String[] newCondtions = new String[len];
-        for (int i = 1; i < len; i++) {
-            newCondtions[i - 1] = condtions[i];
-        }
-        newCondtions[len - 1] = "ALWAYS_TRUE"; // Should be a condtion that never gets checked
-        
-        NamedCommands.registerCommand("RETURN_PATH", CustomAutoBuilder.buildCaseCommand(newCondtions, returnPaths, Commands.none()));
-
-        for (int i = 0; i < len; i++) {
-            final int noteNum = i + 1;
-
-            String shootingPos = noteNum < 3 ? "A" : "B";
-
-            String notePaths = "SHOOT" + shootingPos + "_TO_MNOTE" + noteNum;
-
-            commands[i] = new SequentialCommandGroup(
-                CustomAutoBuilder.buildPathCommand(notePaths).until(NamedConditions.getCondition("NOTE")),
-
-                new ConditionalCommand(
-                    Commands.none(), 
-                    new ParallelDeadlineGroup(
-                        Commands.idle().until(NamedConditions.getCondition("NOTE")),
-                        CustomAutoBuilder.buildPathCommand("DOWN_NOTES")
-                    ).andThen(
-                        Commands.runOnce(() -> {
-                            int closestNote = 0;
-                            double distance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[3].getY() - 0.87 / 2);
-                        
-                            // Find the closest note
-                            for (int j = 4; j < kAuto.NOTES.length; j++) {
-                                double newDistance = Math.abs(sys_drivetrain.getRobotPose().getY() - kAuto.NOTES[j].getY() - 0.87 / 2);
-                                if (newDistance < distance) {
-                                    closestNote = j - 3;
-                                    distance = newDistance;
-                                }
-                            }
-                        
-                            final int finalClosestNote = closestNote;
-                            for (int j = 0; j < finalClosestNote; j++) {
-                                Robot.notes[j] = false;
-                            }
-                        })
-                    ),
-                    NamedConditions.getCondition("NOTE")
-                ),
-
-                NamedCommands.getCommand("GRABBED_NOTE" + noteNum),
-                NamedCommands.getCommand("RETURN_PATH"),
-                NamedCommands.getCommand("SHOOT")
-            );
-        }
-
-
-        NamedCommands.registerCommand(
-            "PICK_PATH",
-            CustomAutoBuilder.buildCaseCommand(condtions, commands, CustomAutoBuilder.buildPathCommand("SHOOTB_TO_MIDLINE"))
-        );
     }
 
     /**
@@ -238,12 +112,6 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-
-        m_primaryController.x()
-            .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MAX_HEIGHT), sys_deployment));
-
-        m_primaryController.y()
-            .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment));
 
         m_primaryController.leftBumper()
             .onTrue(Commands.runOnce(() -> {Robot.hasNote = true;}).ignoringDisable(true));

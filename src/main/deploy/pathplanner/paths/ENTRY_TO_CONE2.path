@@ -3,50 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.42287972895034,
-        "y": 4.7829091669579356
+        "x": 3.3714334095334855,
+        "y": 4.56766725499263
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.720930872061174,
-        "y": 3.940930047102261
+        "x": 6.180548771353953,
+        "y": 4.5905055912675925
       },
       "isLocked": false,
-      "linkedName": "SHOOTB"
+      "linkedName": "ENTRY"
     },
     {
       "anchor": {
-        "x": 8.20009161385844,
-        "y": 2.479160741797268
+        "x": 6.68,
+        "y": 3.848259662331291
       },
       "prevControl": {
-        "x": 7.264559258463246,
-        "y": 3.0755626183617046
+        "x": 5.712362877717208,
+        "y": 4.419218069205369
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "MNOTE4"
+      "linkedName": "CONE2"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3,
+      "rotationDegrees": 0
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.56,
+    "maxVelocity": 3.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -45.0,
-    "rotateFast": true
+    "rotation": -45.0
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
+  "idealStartingState": {
     "rotation": 0,
-    "velocity": 0
+    "velocity": 3.0
   },
   "useDefaultConstraints": true
 }
