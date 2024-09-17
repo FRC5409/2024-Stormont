@@ -1,0 +1,59 @@
+{
+  "name": "Stormont",
+  "rotations": [
+    {
+      "axis": "y",
+      "degrees": 180
+    },
+    {
+      "axis": "z",
+      "degrees": 90
+    }
+  ],
+  "position": [0, -0.15, 0.25],
+  "cameras": [
+    {
+      "name": "FRONT_CAM",
+      "rotations": [
+        {
+          "axis": "y",
+          "degrees": -30.0
+        }
+      ],
+      "position": [0.418846, 0.0, 0.2234184],
+      "resolution": [1600, 1200],
+      "fov": 90
+    },
+    {
+      "name": "BACK_CAM",
+      "rotations": [
+        {
+          "axis": "y",
+          "degrees": -42.0
+        },
+        {
+          "axis": "z",
+          "degrees": 180.0
+        }
+      ],
+      "position": [0.1003965253, 0.0, 0.6490857384],
+      "resolution": [1600, 1200],
+      "fov": 90
+    }
+  ],
+  "components": [
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [0.238, 0.0, -0.298]
+    }
+  ]
+}

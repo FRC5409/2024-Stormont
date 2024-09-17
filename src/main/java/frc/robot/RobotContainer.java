@@ -35,6 +35,7 @@ import frc.robot.Constants.kDrive;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Vision;
 import frc.robot.utils.NoteVisualizer;
 
 /**
@@ -55,6 +56,7 @@ public class RobotContainer {
     // Subsystems
     public final Drive sys_drivetrain;
     public final Deployment sys_deployment;
+    public final Vision sys_vision;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -83,6 +85,7 @@ public class RobotContainer {
         // Subsystems
         sys_drivetrain = Drive.getInstance();
         sys_deployment = Deployment.getInstance();
+        sys_vision = Vision.getInstance();
 
         // Commands
         cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {

@@ -36,6 +36,7 @@ import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kDrive.kPID;
 import frc.robot.generated.TunerConstants;
+import frc.robot.utils.LimelightHelpers.PoseEstimate;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
@@ -55,6 +56,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 			m_pigeon2.getRotation2d(), m_modulePositions, new Pose2d(),
 			VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
 			VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(1)));
+
+    private final Vision sys_vision = Vision.getInstance();
 
     public final Field2d fieldMap;
 
@@ -161,6 +164,12 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 
     public void updateRobotPose() {
         m_poseEstimator.update(m_pigeon2.getRotation2d(), m_modulePositions);
+
+        PoseEstimate poseEstimate = sys_vision.getVisionMeasurement();
+        if (poseEstimate == null)
+            return;
+        
+        m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
     }
 
     public void addRotation(Rotation2d adder) {

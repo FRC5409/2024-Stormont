@@ -5,7 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -119,5 +121,19 @@ public final class Constants {
         public static final Translation3d blueSpeaker = new Translation3d(0.225, 5.55, 2.1);
         public static final Translation3d redSpeaker = new Translation3d(16.317, 5.55, 2.1);
 
+    }
+
+    public static final class kVision {
+        public static final String name = "limelight";
+        public static final Pose3d limelightPoseOffset = new Pose3d(
+            0,
+            0,
+            0,
+            new Rotation3d(
+                0,
+                0,
+                0
+            )
+        );
     }
 }

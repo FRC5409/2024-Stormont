@@ -8,11 +8,16 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -51,6 +56,7 @@ public class Deployment extends SubsystemBase {
     private final PIDController sim_controller;
 
     private final ShuffleboardTab simulationTab;
+    private final StructPublisher<Pose3d> publisher;
 
     private Deployment() {
         deploymentMotor = new CANSparkMax(kDeployment.DEPLOYMENT_ID, MotorType.kBrushless);
@@ -93,6 +99,8 @@ public class Deployment extends SubsystemBase {
             
             simulationTab = Shuffleboard.getTab("Simulation");
             simulationTab.add(name, deploymentMechanism);
+            publisher = NetworkTableInstance.getDefault()
+                .getStructTopic("Pose: " + name, Pose3d.struct).publish();
         } else {
             sim_elevator = null;
             deploymentMechanism = null;
@@ -100,6 +108,7 @@ public class Deployment extends SubsystemBase {
             deploymentLigament = null;
             simulationTab = null;
             sim_controller = null;
+            publisher = null;
         }
 
     }
@@ -150,11 +159,17 @@ public class Deployment extends SubsystemBase {
             deploymentEncoder.setPosition(sim_elevator.getPositionMeters());
 
             deploymentLigament.setLength(deploymentEncoder.getPosition());
+
+            publisher.accept(new Pose3d(-0.26, -0.30, deploymentLigament.getLength() - 0.11, new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(90), Units.degreesToRadians(-90))));
         }
 
         Pose2d robotPose = Drive.getInstance().getRobotPose().plus(new Transform2d(new Translation2d(-0.3, 0), new Rotation2d()));
 
-        Translation3d goal = DriverStation.getAlliance().get() == Alliance.Blue ? kDeployment.blueSpeaker : kDeployment.redSpeaker;
+        Translation3d goal;
+        if (DriverStation.getAlliance().isEmpty())
+            goal = kDeployment.blueSpeaker;
+        else
+            goal = DriverStation.getAlliance().get() == Alliance.Blue ? kDeployment.blueSpeaker : kDeployment.redSpeaker;
 
         double z = goal.getZ() - 0.9;
         double d = Math.hypot(Math.abs(robotPose.getX() - goal.getX()), Math.abs(robotPose.getY() - goal.getY()));
