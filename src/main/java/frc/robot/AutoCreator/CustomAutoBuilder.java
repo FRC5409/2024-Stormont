@@ -112,8 +112,6 @@ public class CustomAutoBuilder {
 
         JSONObject position = (JSONObject) startingPose.get("position");
 
-        System.out.println(startingPose.get("rotation"));
-
         Pose2d pose = 
             new Pose2d(
                 (double) position.get("x"),

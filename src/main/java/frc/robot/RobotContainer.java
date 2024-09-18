@@ -222,7 +222,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "PICK_PATH",
-            CustomAutoBuilder.buildCaseCommand(condtions, commands, CustomAutoBuilder.buildPathCommand("SHOOTB_TO_MIDLINE"))
+            CustomAutoBuilder.buildCaseCommand(condtions, commands, CustomAutoBuilder.buildPathCommand("SHOOTB_TO_MIDLINE")).repeatedly()
         );
     }
 

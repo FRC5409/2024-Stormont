@@ -28,36 +28,6 @@
           "data": {
             "name": "PICK_PATH"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SHOOTB_TO_MIDLINE"
-          }
         }
       ]
     }

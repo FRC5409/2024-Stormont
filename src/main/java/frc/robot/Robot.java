@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -32,6 +33,9 @@ public class Robot extends TimedRobot {
   public static boolean[] notes = {true, true, true, true, true};
   public static boolean hasNote = true;
   private final ShuffleboardTab sb_noteTab = Shuffleboard.getTab("Notes");
+  private final GenericEntry sb_goalNotes = sb_noteTab.add("Notes", "12345").withPosition(5, 0).getEntry();
+  private Long currentChange = 0l;
+  private Long lastChange = 0l;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -55,7 +59,7 @@ public class Robot extends TimedRobot {
 
     for (int i = 0; i < notes.length; i++) {
       final int innerI = i; // ???
-      sb_noteTab.addBoolean("Note " + (i + 1), () -> notes[innerI]);
+      sb_noteTab.addBoolean("Note " + (i + 1), () -> notes[innerI]).withPosition(i, 0);
     }
   }
 
@@ -81,6 +85,21 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     m_robotContainer.sys_drivetrain.periodic();
+
+    lastChange = currentChange;
+    currentChange = sb_goalNotes.getLastChange();
+
+    if (!lastChange.equals(currentChange)) {
+      for (int i = 0; i < notes.length; i++)
+        notes[i] = false;
+
+      for (char chr : sb_goalNotes.getString("12345").toCharArray()) {
+        if (chr - '1' >= notes.length)
+          continue;
+
+        notes[chr - '1'] = true;
+      }
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -99,9 +118,15 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    for (int i = 0; i < notes.length; i++) {
-      notes[i] = true;
-    }
+    for (int i = 0; i < notes.length; i++)
+        notes[i] = false;
+
+      for (char chr : sb_goalNotes.getString("12345").toCharArray()) {
+        if (chr - '1' >= notes.length)
+          continue;
+
+        notes[chr - '1'] = true;
+      }
 
     m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Brake);
 
