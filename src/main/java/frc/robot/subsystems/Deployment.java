@@ -160,7 +160,9 @@ public class Deployment extends SubsystemBase {
 
             deploymentLigament.setLength(deploymentEncoder.getPosition());
 
-            publisher.accept(new Pose3d(-0.26, -0.30, deploymentLigament.getLength() - 0.11, new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(90), Units.degreesToRadians(-90))));
+            double length = deploymentLigament.getLength();
+
+            publisher.accept(new Pose3d(-(length - kDeployment.MIN_HEIGHT) * Math.sin(Units.degreesToRadians(15)), 0, length * Math.cos(Units.degreesToRadians(15)), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0))));
         }
 
         Pose2d robotPose = Drive.getInstance().getRobotPose().plus(new Transform2d(new Translation2d(-0.3, 0), new Rotation2d()));

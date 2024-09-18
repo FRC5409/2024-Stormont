@@ -108,7 +108,7 @@ public class RobotContainer {
             sys_deployment::getShooterAngle,
             new Translation2d(0.87, 0.87),
             () -> new Transform3d(
-                new Translation3d(-0.3, 0, 0.35),
+                new Translation3d(-0.26, 0, 0.35),
                 new Rotation3d(0, Units.degreesToRadians(75), 0)
             ),
             () -> {
