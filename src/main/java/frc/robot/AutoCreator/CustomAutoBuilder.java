@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class CustomAutoBuilder {
 
@@ -37,6 +39,8 @@ public class CustomAutoBuilder {
     public static BooleanSupplier m_shouldFlipPath;
 
     private static HashMap<String, Pose2d> m_startingPos;
+
+    private static SendableChooser<Command> sc_chooser;
 
     public static void configureHolonomic(
       Supplier<Pose2d> poseSupplier,
@@ -54,7 +58,10 @@ public class CustomAutoBuilder {
       }
 
     public static SendableChooser<Command> buildChooser() {
-        SendableChooser<Command> sc_chooser = new SendableChooser<>();
+        if (sc_chooser != null)
+            throw new IllegalStateException("This method can only be run once.");
+            
+        sc_chooser = new SendableChooser<>();
 
         for (String name : AutoBuilder.getAllAutoNames()) {
             sc_chooser.addOption(name, buildAuto(name));
@@ -64,7 +71,20 @@ public class CustomAutoBuilder {
 
         sc_chooser.onChange(cmd -> resetPosition(cmd));
 
+        new Trigger(
+            () -> {
+                return DriverStation.isDisabled() || DriverStation.waitForDsConnection(0);
+            }
+        ).onTrue(
+            Commands.runOnce(() -> resetPosition())
+            .ignoringDisable(true)
+        );
+
         return sc_chooser;
+    }
+
+    public static void resetPosition() {
+        resetPosition(sc_chooser.getSelected());
     }
 
     private static void resetPosition(Command autoCommand) {
