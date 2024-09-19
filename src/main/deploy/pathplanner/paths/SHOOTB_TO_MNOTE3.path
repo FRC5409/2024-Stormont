@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.978202269794852,
-        "y": 3.6485761860412613
+        "x": 5.966508115352413,
+        "y": 3.8356826571203007
       },
       "isLocked": false,
       "linkedName": "SHOOTAC"
@@ -30,9 +30,16 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.35,
-      "rotationDegrees": -30.0,
-      "rotateFast": true
+      "waypointRelativePos": 0.1,
+      "rotationDegrees": -30.0
+    },
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 0
+    },
+    {
+      "waypointRelativePos": 0.25,
+      "rotationDegrees": -30.0
     }
   ],
   "constraintZones": [],
@@ -45,12 +52,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
-    "rotateFast": true
+    "rotation": 0
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
+  "idealStartingState": {
     "rotation": 0,
     "velocity": 0
   },

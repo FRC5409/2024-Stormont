@@ -8,31 +8,30 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.551515427817179,
-        "y": 5.68335905902581
+        "x": 3.124828585839508,
+        "y": 5.671664904583371
       },
       "isLocked": false,
       "linkedName": "BSTART"
     },
     {
       "anchor": {
-        "x": 4.42287972895034,
-        "y": 4.7829091669579356
+        "x": 4.0954434045620225,
+        "y": 5.55472336015897
       },
       "prevControl": {
-        "x": 3.826477852385904,
-        "y": 5.309146116867734
+        "x": 3.7329246168463843,
+        "y": 5.531335051274091
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SHOOTB"
+      "linkedName": "SHOOTAC"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.35,
-      "rotationDegrees": 0,
-      "rotateFast": true
+      "rotationDegrees": 0
     }
   ],
   "constraintZones": [
@@ -87,14 +86,13 @@
   },
   "goalEndState": {
     "velocity": 3.0,
-    "rotation": -45.0,
-    "rotateFast": true
+    "rotation": -45.0
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": {
+  "idealStartingState": {
     "rotation": 0,
-    "velocity": 0
+    "velocity": 0.0
   },
   "useDefaultConstraints": true
 }
