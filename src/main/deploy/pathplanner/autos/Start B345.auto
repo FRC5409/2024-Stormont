@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3949707899415804,
-      "y": 7.329728945172176
+      "x": 1.34,
+      "y": 5.54
     },
     "rotation": 0
   },
@@ -14,7 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ASTART_TO_MNOTE1"
+            "pathName": "BSTART_TO_SHOOTB"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SHOOT"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PICK_PATH"
           }
         }
       ]

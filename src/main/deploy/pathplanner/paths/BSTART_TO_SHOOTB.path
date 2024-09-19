@@ -8,38 +8,38 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.22245927489006,
-        "y": 5.364587683363401
+        "x": 4.469656346720101,
+        "y": 5.74182983123801
       },
       "isLocked": false,
       "linkedName": "BSTART"
     },
     {
       "anchor": {
-        "x": 5.393494547672856,
-        "y": 6.174513545608288
+        "x": 4.42287972895034,
+        "y": 4.7829091669579356
       },
       "prevControl": {
-        "x": 4.393494547672856,
-        "y": 6.174513545608288
+        "x": 3.557512300209785,
+        "y": 5.005098101364294
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SHOOTA"
+      "linkedName": "SHOOTB"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.35,
+      "waypointRelativePos": 0.3,
       "rotationDegrees": 0,
-      "rotateFast": false
+      "rotateFast": true
     }
   ],
   "constraintZones": [
     {
-      "name": "SLOW_SHOOT",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.2,
+      "name": "Shooting",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 0.45,
       "constraints": {
         "maxVelocity": 1.5,
         "maxAcceleration": 5.0,
@@ -50,7 +50,7 @@
   ],
   "eventMarkers": [
     {
-      "name": "SHOOT",
+      "name": "Shoot",
       "waypointRelativePos": 0.05,
       "command": {
         "type": "sequential",
@@ -75,11 +75,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 5.0,
+    "rotation": -5.0,
     "rotateFast": true
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
   "useDefaultConstraints": true
 }

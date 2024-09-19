@@ -19,7 +19,7 @@
         },
         {
           "type": "named",
-          "data" : {
+          "data": {
             "name": "SHOOT"
           }
         },
