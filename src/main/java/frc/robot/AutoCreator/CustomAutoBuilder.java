@@ -51,7 +51,7 @@ public class CustomAutoBuilder {
         m_shouldFlipPath = shouldFlipPath;
 
         m_startingPos =  new HashMap<>();
-      }
+    }
 
     public static SendableChooser<Command> buildChooser() {
         SendableChooser<Command> sc_chooser = new SendableChooser<>();

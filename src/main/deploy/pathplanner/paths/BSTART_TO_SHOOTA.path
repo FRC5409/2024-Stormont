@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.22245927489006,
-        "y": 5.364587683363401
+        "x": 5.101140686611857,
+        "y": 5.449475970177011
       },
       "isLocked": false,
       "linkedName": "BSTART"
@@ -20,8 +20,8 @@
         "y": 6.174513545608288
       },
       "prevControl": {
-        "x": 4.393494547672856,
-        "y": 6.174513545608288
+        "x": 4.53982127337474,
+        "y": 5.98740707452925
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,8 +38,8 @@
   "constraintZones": [
     {
       "name": "SLOW_SHOOT",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.2,
+      "minWaypointRelativePos": 0.05,
+      "maxWaypointRelativePos": 0.25,
       "constraints": {
         "maxVelocity": 1.5,
         "maxAcceleration": 5.0,
@@ -61,6 +61,18 @@
               "data": {
                 "name": "SHOOT"
               }
+            },
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 0.25
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "SHOOT"
+              }
             }
           ]
         }
@@ -74,7 +86,7 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 4.56,
     "rotation": 5.0,
     "rotateFast": true
   },

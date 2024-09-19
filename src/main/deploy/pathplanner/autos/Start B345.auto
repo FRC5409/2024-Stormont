@@ -20,12 +20,6 @@
         {
           "type": "named",
           "data": {
-            "name": "SHOOT"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "PICK_PATH"
           }
         }

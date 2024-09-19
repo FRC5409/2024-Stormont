@@ -118,8 +118,8 @@ public final class Constants {
         public static final double ELEVATOR_DRUM_RADIUS = Units.inchesToMeters(0.944);
         public static final double ELEVATOR_MASS = Units.lbsToKilograms(11.0);
 
-        public static final Translation3d blueSpeaker = new Translation3d(0.225, 5.55, 2.1);
-        public static final Translation3d redSpeaker = new Translation3d(16.317, 5.55, 2.1);
+        public static final Translation3d blueSpeaker = new Translation3d(0.025, 5.55, 2.1);
+        public static final Translation3d redSpeaker = new Translation3d(16.117, 5.55, 2.1);
 
     }
 
