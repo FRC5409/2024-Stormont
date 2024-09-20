@@ -66,8 +66,8 @@ public class Note {
     }
 
     public void update() {
-        if (Math.abs(speed.getX()) + Math.abs(speed.getY()) >= 0.01)
-            speed = speed.plus(new Transform3d(new Translation3d(0, 0, -9.8 / 2500.0), new Rotation3d()));
+        // if (Math.abs(speed.getX()) + Math.abs(speed.getY()) >= 0.01)
+        //     speed = speed.plus(new Transform3d(new Translation3d(0, 0, -9.8 / 2500.0), new Rotation3d()));
             
         notePose = notePose.plus(speed);
         setPose(notePose);

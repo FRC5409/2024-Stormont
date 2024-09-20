@@ -165,7 +165,7 @@ public class Deployment extends SubsystemBase {
             publisher.accept(new Pose3d(-(length - kDeployment.MIN_HEIGHT) * Math.sin(Units.degreesToRadians(15)), 0, length * Math.cos(Units.degreesToRadians(15)), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0))));
         }
 
-        Pose2d robotPose = Drive.getInstance().getRobotPose().plus(new Transform2d(new Translation2d(-0.3, 0), new Rotation2d()));
+        Pose2d robotPose = Drive.getInstance().getRobotPose().plus(new Transform2d(new Translation2d(-0.26, 0), new Rotation2d()));
 
         Translation3d goal;
         if (DriverStation.getAlliance().isEmpty())
@@ -173,7 +173,7 @@ public class Deployment extends SubsystemBase {
         else
             goal = DriverStation.getAlliance().get() == Alliance.Blue ? kDeployment.blueSpeaker : kDeployment.redSpeaker;
 
-        double z = goal.getZ() - 0.9;
+        double z = goal.getZ() - 0.35;
         double d = Math.hypot(Math.abs(robotPose.getX() - goal.getX()), Math.abs(robotPose.getY() - goal.getY()));
 
         m_shooterAngle = Math.atan(z / d);

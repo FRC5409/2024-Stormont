@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 public class NoteVisualizer {
 
-    private static final double shotSpeed = 5.0 / 20.0; // 5 meters per sec
+    private static final double shotSpeed = 7.0 / 20.0;
 
     private static Supplier<Pose2d> m_robotPose;
     private static Supplier<Double> m_shooterAngle;
@@ -151,7 +151,7 @@ public class NoteVisualizer {
             double shooterAngle = m_shooterAngle.get();
             Rotation2d robotRotation = m_robotPose.get().getRotation();
 
-            note.setAngle(new Rotation3d(0.0, shooterAngle, m_robotPose.get().getRotation().getRadians()));
+            note.setAngle(new Rotation3d(0.0, 0.0, 0.0));
 
             note.setSpeed(
                 new Transform3d(

@@ -20,7 +20,7 @@ public class Vision extends SubsystemBase {
 
     private static Vision instance = null;
 
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
 
     private ShuffleboardTab sb_vision;
 

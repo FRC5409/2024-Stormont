@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -137,10 +136,7 @@ public class RobotContainer {
     }
 
     private void registerCommands() {
-        Command shootCommand = new ShootCommand().alongWith(Commands.runOnce(() -> {Robot.hasNote = false;}));
-
-        if (RobotBase.isSimulation())
-            shootCommand = shootCommand.alongWith(NoteVisualizer.generateNoteVisualizationCommand());
+        Command shootCommand = new ShootCommand();
 
         NamedCommands.registerCommand("SHOOT", shootCommand);
         NamedConditions.registerCondition("NOTE", () -> Robot.hasNote);
@@ -247,6 +243,9 @@ public class RobotContainer {
 
         m_primaryController.y()
             .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment));
+
+        m_primaryController.b()
+            .onTrue(new ShootCommand());
 
         m_primaryController.leftBumper()
             .onTrue(Commands.runOnce(() -> {Robot.hasNote = true;}).ignoringDisable(true));
