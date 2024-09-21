@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 // http://github.com/FRC5409
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.kAuto;
 import frc.robot.Constants.kDeployment;
 
 public class Deployment extends SubsystemBase {
@@ -169,9 +170,9 @@ public class Deployment extends SubsystemBase {
 
         Translation3d goal;
         if (DriverStation.getAlliance().isEmpty())
-            goal = kDeployment.blueSpeaker;
+            goal = kAuto.BLUE_SPEAKER;
         else
-            goal = DriverStation.getAlliance().get() == Alliance.Blue ? kDeployment.blueSpeaker : kDeployment.redSpeaker;
+            goal = DriverStation.getAlliance().get() == Alliance.Blue ? kAuto.BLUE_SPEAKER : kAuto.RED_SPEAKER;
 
         double z = goal.getZ() - 0.35;
         double d = Math.hypot(Math.abs(robotPose.getX() - goal.getX()), Math.abs(robotPose.getY() - goal.getY()));

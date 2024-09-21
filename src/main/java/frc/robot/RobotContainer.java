@@ -252,11 +252,11 @@ public class RobotContainer {
                         return m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED / 2.0;
                     }, 
                     () -> {
-                        Translation3d speaker = kDeployment.blueSpeaker;
+                        Translation3d speaker = kAuto.BLUE_SPEAKER;
 
                         if (DriverStation.getAlliance().isPresent())
                             if (DriverStation.getAlliance().get() == Alliance.Red)
-                                speaker = kDeployment.redSpeaker;
+                                speaker = kAuto.RED_SPEAKER;
 
                         return new Pose2d(speaker.toTranslation2d(), new Rotation2d());
                     }
@@ -264,7 +264,12 @@ public class RobotContainer {
             );
 
         m_primaryController.leftBumper()
-            .onTrue(Commands.runOnce(() -> {Robot.hasNote = true;}).ignoringDisable(true));
+            .whileTrue(sys_drivetrain.driveTo(() -> {
+                if (DriverStation.getAlliance().isPresent())
+                    return DriverStation.getAlliance().get() == Alliance.Blue ? kAuto.BLUE_AMP : kAuto.RED_AMP;
+
+                return kAuto.BLUE_AMP;
+            }));
 
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));

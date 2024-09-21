@@ -68,6 +68,12 @@ public final class Constants {
             new Pose2d(new Translation2d(8.29, 2.46), Rotation2d.fromDegrees(0.0)),
             new Pose2d(new Translation2d(8.29, 0.80), Rotation2d.fromDegrees(0.0))
         };
+
+        public static final Translation3d BLUE_SPEAKER = new Translation3d(0.025, 5.55, 2.1);
+        public static final Translation3d RED_SPEAKER = new Translation3d(16.117, 5.55, 2.1);
+
+        public static final Pose2d BLUE_AMP = new Pose2d(1.80, 7.66, Rotation2d.fromDegrees(-90));
+        public static final Pose2d RED_AMP = new Pose2d(14.69, 7.66, Rotation2d.fromDegrees(90));
     }
 
     public static final class kIntake {
@@ -117,10 +123,6 @@ public final class Constants {
         public static final double ELEVATOR_GEARING = 10.0/1.0;
         public static final double ELEVATOR_DRUM_RADIUS = Units.inchesToMeters(0.944);
         public static final double ELEVATOR_MASS = Units.lbsToKilograms(11.0);
-
-        public static final Translation3d blueSpeaker = new Translation3d(0.025, 5.55, 2.1);
-        public static final Translation3d redSpeaker = new Translation3d(16.117, 5.55, 2.1);
-
     }
 
     public static final class kVision {

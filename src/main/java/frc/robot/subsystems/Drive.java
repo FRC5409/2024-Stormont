@@ -16,6 +16,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -57,6 +58,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 			VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
 			VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(1)));
 
+    private final PIDController autoAlignController;
+
     private final Vision sys_vision = Vision.getInstance();
 
     public final Field2d fieldMap;
@@ -73,6 +76,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
         m_alignDrive.HeadingController.setI(kDrive.kPID.ROTATION_I);
         m_alignDrive.HeadingController.setD(kDrive.kPID.ROTATION_D);
         m_alignDrive.HeadingController.setTolerance(Math.toRadians(0.1));
+
+        autoAlignController = new PIDController(kDrive.kPID.ROTATION_P, kDrive.kPID.ROTATION_I, kDrive.kPID.ROTATION_D);
 
         CustomAutoBuilder.configureHolonomic(
             this::getRobotPose, 
@@ -130,6 +135,35 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 
     public Command applyRequest(Supplier<SwerveRequest> request) {
         return run(() -> this.setControl(request.get()));
+    }
+
+    public Command driveTo(Supplier<Pose2d> pose) {
+        return this.applyRequest(() -> {
+            Pose2d setpoint = pose.get();
+            Pose2d robot = getRobotPose();
+    
+            double xSpeed = autoAlignController.calculate(robot.getX(), setpoint.getX());
+            double ySpeed = autoAlignController.calculate(robot.getY(), setpoint.getY());
+    
+            double currentAngle = robot.getRotation().getDegrees();
+            double targetAngle = setpoint.getRotation().getDegrees();
+    
+            double angleDifference = targetAngle - currentAngle;
+
+            if (angleDifference > 180)
+                angleDifference -= 360;
+
+            if (DriverStation.getAlliance().isPresent())
+                if (DriverStation.getAlliance().get() == Alliance.Red) {
+                    xSpeed *= -1;
+                    ySpeed *= -1;
+                }
+    
+            return this.m_alignDrive
+                .withVelocityX(xSpeed)
+                .withVelocityY(ySpeed)
+                .withTargetDirection(Rotation2d.fromDegrees(Math.round(currentAngle + angleDifference)));
+        });
     }
 
     public Command autoAlignSpeed(DoubleSupplier xSpeeds, DoubleSupplier ySpeeds, Supplier<Rotation2d> targetAngle) {
