@@ -4,10 +4,11 @@
 
 package frc.robot;
 
-import java.util.Optional;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -109,15 +110,7 @@ public class RobotContainer {
             () -> new Transform3d(
                 new Translation3d(-0.26, 0, 0.35),
                 new Rotation3d(0, Units.degreesToRadians(75), 0)
-            ),
-            () -> {
-                Optional<Alliance> alliance = DriverStation.getAlliance();
-
-                if (alliance.isPresent()) {
-                  return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            }
+            )
         );
         NoteVisualizer.createNotes();
 
@@ -244,14 +237,37 @@ public class RobotContainer {
         m_primaryController.y()
             .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment));
 
-        m_primaryController.b()
+        m_primaryController.a()
             .onTrue(new ShootCommand());
+
+        
+
+        m_primaryController.b()
+            .whileTrue(
+                sys_drivetrain.pointTowards(
+                    () -> {
+                        return m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED / 2.0;
+                    }, 
+                    () -> {
+                        return m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED / 2.0;
+                    }, 
+                    () -> {
+                        Translation3d speaker = kDeployment.blueSpeaker;
+
+                        if (DriverStation.getAlliance().isPresent())
+                            if (DriverStation.getAlliance().get() == Alliance.Red)
+                                speaker = kDeployment.redSpeaker;
+
+                        return new Pose2d(speaker.toTranslation2d(), new Rotation2d());
+                    }
+                )
+            );
 
         m_primaryController.leftBumper()
             .onTrue(Commands.runOnce(() -> {Robot.hasNote = true;}).ignoringDisable(true));
 
         m_primaryController.rightBumper()
-                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain));
+                .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));
 
     }
 

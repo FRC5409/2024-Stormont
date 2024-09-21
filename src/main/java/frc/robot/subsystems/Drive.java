@@ -69,6 +69,11 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 			driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
 		}
 
+        m_alignDrive.HeadingController.setP(kDrive.kPID.ROTATION_P);
+        m_alignDrive.HeadingController.setI(kDrive.kPID.ROTATION_I);
+        m_alignDrive.HeadingController.setD(kDrive.kPID.ROTATION_D);
+        m_alignDrive.HeadingController.setTolerance(Math.toRadians(0.1));
+
         CustomAutoBuilder.configureHolonomic(
             this::getRobotPose, 
             this::resetOdometry, 
@@ -143,6 +148,22 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
             .withDeadband(kController.kJoystickDeadband)
             .withRotationalDeadband(kController.kTriggerDeadband)
         );
+    }
+
+    public Command pointTowards(DoubleSupplier xSpeeds, DoubleSupplier ySpeeds, Supplier<Pose2d> trackingPose) {
+        return this.applyRequest(() -> {
+            Pose2d robotPose = this.getRobotPose();
+            Pose2d track = trackingPose.get();
+
+            Rotation2d angle = Rotation2d.fromRadians(
+                Math.atan2(robotPose.getY() - track.getY(), robotPose.getX() - track.getX()) + (DriverStation.getAlliance().get() == Alliance.Red ? Math.PI : 0.0)
+            );
+
+            return this.m_alignDrive
+                .withVelocityX(-ySpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...??
+                .withVelocityY(-xSpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...??
+                .withTargetDirection(angle);
+        });
     }
 
     public ChassisSpeeds getChassisSpeeds() {

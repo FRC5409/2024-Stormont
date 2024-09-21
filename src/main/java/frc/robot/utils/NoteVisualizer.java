@@ -2,9 +2,7 @@ package frc.robot.utils;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
-
 import com.pathplanner.lib.util.GeometryUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,7 +21,6 @@ public class NoteVisualizer {
     private static Supplier<Double> m_shooterAngle;
     private static Translation2d m_robotSize;
     private static Supplier<Transform3d> m_noteOffset;
-    private static Supplier<Boolean> m_blueAlliance;
 
     private static boolean isConfigured = false;
 
@@ -45,12 +42,11 @@ public class NoteVisualizer {
         new Pose2d(new Translation2d(8.29, 0.80), Rotation2d.fromDegrees(0.0))
     };
 
-    public static void configureNoteVisualizer(Supplier<Pose2d> robotPose, Supplier<Double> shooterAngle, Translation2d robotSize, Supplier<Transform3d> noteOffset, Supplier<Boolean> blueAllianceSupplier) {
+    public static void configureNoteVisualizer(Supplier<Pose2d> robotPose, Supplier<Double> shooterAngle, Translation2d robotSize, Supplier<Transform3d> noteOffset) {
         m_robotPose = robotPose;
         m_shooterAngle = shooterAngle;
         m_robotSize = robotSize;
         m_noteOffset = noteOffset;
-        m_blueAlliance = blueAllianceSupplier;
 
         notes = new ArrayList<>();
 
@@ -156,8 +152,8 @@ public class NoteVisualizer {
             note.setSpeed(
                 new Transform3d(
                     new Translation3d(
-                        shotSpeed * Math.cos(robotRotation.getRadians()) * Math.cos(shooterAngle) * (m_blueAlliance.get() ? 1 : -1),
-                        shotSpeed * Math.sin(robotRotation.getRadians()) * Math.cos(shooterAngle) * (m_blueAlliance.get() ? 1 : -1),
+                        shotSpeed * Math.cos(robotRotation.getRadians()) * Math.cos(shooterAngle) * -1,
+                        shotSpeed * Math.sin(robotRotation.getRadians()) * Math.cos(shooterAngle) * -1,
                         shotSpeed * Math.sin(shooterAngle)
                     ),
                     new Rotation3d()
