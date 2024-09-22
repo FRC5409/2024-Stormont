@@ -15,11 +15,11 @@ import frc.robot.utils.NoteVisualizer;
 /**
  * @author 
  */
-public class ShootCommand extends SequentialCommandGroup {
+public class AmpCommand extends SequentialCommandGroup {
 
     private final Deployment sys_deployment;
 
-    public ShootCommand() {
+    public AmpCommand() {
         sys_deployment = Deployment.getInstance();
 
         // Use addRequirements() here to declare subsystem dependencies.
@@ -27,14 +27,13 @@ public class ShootCommand extends SequentialCommandGroup {
 
         Command command = new SequentialCommandGroup(
             Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MAX_HEIGHT), sys_deployment),
-            Commands.waitUntil(() -> sys_deployment.atSetpoint()),
-            Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment)
-        ).alongWith(
-            Commands.runOnce(() -> {Robot.hasNote = false;})
+            Commands.waitUntil(() -> sys_deployment.atSetpoint())
         );
 
         if (Robot.isSimulation())
-            command = command.alongWith(NoteVisualizer.generateNoteShootingVisualizationCommand());
+            command = command.andThen(NoteVisualizer.generateNoteAmpingVisualizationCommand());
+
+        command = command.andThen(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment));
 
         addCommands(command);
     }

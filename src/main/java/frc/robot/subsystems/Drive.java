@@ -150,6 +150,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
     
             double angleDifference = targetAngle - currentAngle;
 
+            if (angleDifference < -180)
+                angleDifference += 360;
             if (angleDifference > 180)
                 angleDifference -= 360;
 

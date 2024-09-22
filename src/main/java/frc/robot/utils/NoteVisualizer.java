@@ -132,7 +132,7 @@ public class NoteVisualizer {
         return distance <= (radius1 + radius2);
     }
 
-    public static Command generateNoteVisualizationCommand() {
+    public static Command generateNoteShootingVisualizationCommand() {
         if (!isConfigured) {
             throw new IllegalArgumentException("Note Visualizer is not configured!");
         }
@@ -155,6 +155,36 @@ public class NoteVisualizer {
                         shotSpeed * Math.cos(robotRotation.getRadians()) * Math.cos(shooterAngle) * -1,
                         shotSpeed * Math.sin(robotRotation.getRadians()) * Math.cos(shooterAngle) * -1,
                         shotSpeed * Math.sin(shooterAngle)
+                    ),
+                    new Rotation3d()
+                )
+            );
+        });
+    }
+
+    public static Command generateNoteAmpingVisualizationCommand() {
+        if (!isConfigured) {
+            throw new IllegalArgumentException("Note Visualizer is not configured!");
+        }
+
+        return Commands.runOnce(() -> {
+            if (carryingNote == -1) 
+                return;
+
+            Note note = notes.get(carryingNote);
+            carryingNote = -1;
+
+            double shooterAngle = 75;
+            Rotation2d robotRotation = m_robotPose.get().getRotation();
+
+            note.setAngle(new Rotation3d(0.0, 0.0, 0.0));
+
+            note.setSpeed(
+                new Transform3d(
+                    new Translation3d(
+                        -0.05 * Math.cos(robotRotation.getRadians()) * Math.cos(shooterAngle),
+                        -0.05 * Math.sin(robotRotation.getRadians()) * Math.cos(shooterAngle),
+                        0.05 * Math.sin(shooterAngle)
                     ),
                     new Rotation3d()
                 )

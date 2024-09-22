@@ -8,6 +8,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -32,6 +33,7 @@ import frc.robot.Constants.kAuto;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
+import frc.robot.commands.AmpCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Deployment;
 import frc.robot.subsystems.Drive;
@@ -107,10 +109,10 @@ public class RobotContainer {
             sys_drivetrain::getRobotPose,
             sys_deployment::getShooterAngle,
             new Translation2d(0.87, 0.87),
-            () -> new Transform3d(
-                new Translation3d(-0.26, 0, 0.35),
-                new Rotation3d(0, Units.degreesToRadians(75), 0)
-            )
+            () -> {
+                Pose3d pose = sys_deployment.getDeploymentPose();
+                return new Transform3d(pose.getTranslation().plus(new Translation3d(-0.26, 0, 0)), new Rotation3d(0, Units.degreesToRadians(75), 0));
+            }
         );
         NoteVisualizer.createNotes();
 
@@ -238,9 +240,13 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MIN_HEIGHT), sys_deployment));
 
         m_primaryController.a()
-            .onTrue(new ShootCommand());
-
-        
+            .onTrue(
+                new ConditionalCommand(
+                    new ShootCommand(),
+                    new AmpCommand(),
+                    () -> sys_deployment.getExtension() < kDeployment.MIN_HEIGHT * 1.5
+                )
+            );
 
         m_primaryController.b()
             .whileTrue(
@@ -269,7 +275,8 @@ public class RobotContainer {
                     return DriverStation.getAlliance().get() == Alliance.Blue ? kAuto.BLUE_AMP : kAuto.RED_AMP;
 
                 return kAuto.BLUE_AMP;
-            }));
+            }))
+            .onTrue(Commands.runOnce(() -> sys_deployment.extendTo(kDeployment.MAX_HEIGHT), sys_deployment));
 
         m_primaryController.rightBumper()
                 .onTrue(Commands.runOnce(sys_drivetrain::seedFieldRelative, sys_drivetrain).ignoringDisable(true));

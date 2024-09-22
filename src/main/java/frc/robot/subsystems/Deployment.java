@@ -125,6 +125,10 @@ public class Deployment extends SubsystemBase {
         deploymentEncoder.setPosition(kDeployment.MIN_HEIGHT);
     }
 
+    public double getExtension() {
+        return deploymentEncoder.getPosition();
+    }
+
     /**
      * Extends the deployment to a specified height
      * @param height in meters
@@ -150,6 +154,11 @@ public class Deployment extends SubsystemBase {
         return m_shooterAngle;
     }
 
+    public Pose3d getDeploymentPose() {
+        double length = deploymentLigament.getLength();
+        return new Pose3d(-(length - kDeployment.MIN_HEIGHT) * Math.sin(Units.degreesToRadians(15)), 0, length * Math.cos(Units.degreesToRadians(15)), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0)));
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -161,9 +170,7 @@ public class Deployment extends SubsystemBase {
 
             deploymentLigament.setLength(deploymentEncoder.getPosition());
 
-            double length = deploymentLigament.getLength();
-
-            publisher.accept(new Pose3d(-(length - kDeployment.MIN_HEIGHT) * Math.sin(Units.degreesToRadians(15)), 0, length * Math.cos(Units.degreesToRadians(15)), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(0))));
+            publisher.accept(getDeploymentPose());
         }
 
         Pose2d robotPose = Drive.getInstance().getRobotPose().plus(new Transform2d(new Translation2d(-0.26, 0), new Rotation2d()));
