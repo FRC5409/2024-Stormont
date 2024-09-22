@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.kDeployment;
 
 public class NoteVisualizer {
 
@@ -27,6 +28,8 @@ public class NoteVisualizer {
     private static int carryingNote = -1;
 
     private static ArrayList<Note> notes;
+
+    private static final Transform3d AMP_NOTE_OFFSET = new Transform3d(new Translation3d(-0.05, 0.0, 0.15), new Rotation3d());
 
     private static final Pose2d[] NOTE_FIELD_LOCATIONS = {
         // Blue Close notes
@@ -85,6 +88,9 @@ public class NoteVisualizer {
                 Pose2d robotPose = m_robotPose.get();
                 Pose3d notePose = new Pose3d(robotPose.getX(), robotPose.getY(), 0.0, new Rotation3d(0.0, 0.0, robotPose.getRotation().getRadians()));
 
+                if (m_noteOffset.get().getZ() >= kDeployment.MIN_HEIGHT * 1.5)
+                    notePose = notePose.plus(AMP_NOTE_OFFSET); // Stupid fix for the amp...
+
                 notePose = notePose.plus(m_noteOffset.get());
 
                 note.setPose(notePose);
@@ -106,7 +112,7 @@ public class NoteVisualizer {
 
     private static boolean attachTouchingNotes() {
         for (int i = 0; i < notes.size(); i++) {
-            if (Math.abs(notes.get(i).getSpeed().getZ()) >= 0.01)
+            if (Math.abs(notes.get(i).getSpeed().getX()) >= 0.001)
                 continue;
 
             Pose2d notePose = notes.get(i).getPose().toPose2d();
@@ -147,14 +153,14 @@ public class NoteVisualizer {
             double shooterAngle = m_shooterAngle.get();
             Rotation2d robotRotation = m_robotPose.get().getRotation();
 
-            note.setAngle(new Rotation3d(0.0, 0.0, 0.0));
+            note.setAngle(new Rotation3d(0.0, shooterAngle, robotRotation.getRadians()));
 
             note.setSpeed(
                 new Transform3d(
                     new Translation3d(
-                        shotSpeed * Math.cos(robotRotation.getRadians()) * Math.cos(shooterAngle) * -1,
-                        shotSpeed * Math.sin(robotRotation.getRadians()) * Math.cos(shooterAngle) * -1,
-                        shotSpeed * Math.sin(shooterAngle)
+                        -shotSpeed,
+                        0.0,
+                        0.0
                     ),
                     new Rotation3d()
                 )
@@ -174,17 +180,17 @@ public class NoteVisualizer {
             Note note = notes.get(carryingNote);
             carryingNote = -1;
 
-            double shooterAngle = 75;
+            double shooterAngle = Math.toRadians(-75);
             Rotation2d robotRotation = m_robotPose.get().getRotation();
 
-            note.setAngle(new Rotation3d(0.0, 0.0, 0.0));
+            note.setAngle(new Rotation3d(0.0, shooterAngle, robotRotation.getRadians()));
 
             note.setSpeed(
                 new Transform3d(
                     new Translation3d(
-                        -0.05 * Math.cos(robotRotation.getRadians()) * Math.cos(shooterAngle),
-                        -0.05 * Math.sin(robotRotation.getRadians()) * Math.cos(shooterAngle),
-                        0.05 * Math.sin(shooterAngle)
+                        -0.08,
+                        0.0,
+                        0.01
                     ),
                     new Rotation3d()
                 )
