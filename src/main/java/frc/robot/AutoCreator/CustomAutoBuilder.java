@@ -173,54 +173,62 @@ public class CustomAutoBuilder {
 
     /**
      * Builds a auto command that will follow different paths based of conditions
-     * @param condtions The NamedConditions that the condtion will follow
-     * @param pathNames The Path Names associated with the condtions
-     * @param otherwise If None of the condtions are true, follow this path
+     * @param conditions The NamedConditions that the condtion will follow
+     * @param pathNames The Path Names associated with the conditions
+     * @param otherwise If None of the conditions are true, follow this path
      * @return New Command 
      */
-    public static Command buildCaseCommand(String[] condtions, String[] pathNames, String otherwise) {
-        return buildCaseCommand(condtions, pathNames, buildPathCommand(otherwise));
+    public static Command buildCaseCommand(String[] conditions, String[] pathNames, String otherwise) {
+        return buildCaseCommand(conditions, pathNames, buildPathCommand(otherwise));
     }
 
     /**
      * Builds a auto command that will follow different paths based of conditions
-     * @param condtions The NamedConditions that the condtion will follow
-     * @param pathNames The Path Names associated with the condtions
+     * @param conditions The NamedConditions that the condtion will follow
+     * @param pathNames The Path Names associated with the conditions
      * @param otherwise If None of the conditions are true, run this command
      * @return New Command 
      */
-    public static Command buildCaseCommand(String[] condtions, String[] pathNames, Command otherwise) {
+    public static Command buildCaseCommand(String[] conditions, String[] pathNames, Command otherwise) {
         Command[] commands = new Command[pathNames.length];
         for (int i = 0; i < pathNames.length; i++) {
             commands[i] = buildPathCommand(pathNames[i]);
         }
-        return buildCaseCommand(condtions, commands, otherwise, 0);
+        return buildCaseCommand(conditions, commands, otherwise);
     }
 
     /**
      * Builds a auto command that will follow different paths based of conditions
-     * @param condtions NamedCondtions to follow
+     * @param conditions NamedConditions to follow
      * @param pathCommands The commands to run when the following conditon is true
      * @param otherwise If none of the conditions are true
      * @return New Command
      */
-    public static Command buildCaseCommand(String[] condtions, Command[] pathCommands, Command otherwise) {
-        return buildCaseCommand(condtions, pathCommands, otherwise, 0);
+    public static Command buildCaseCommand(String[] conditions, Command[] pathCommands, Command otherwise) {
+        BooleanSupplier[] suppliers = new BooleanSupplier[conditions.length];
+        for (int i = 0; i < conditions.length; i++)
+            suppliers[i] = NamedConditions.getCondition(conditions[i]);
+            
+        return buildCaseCommand(suppliers, pathCommands, otherwise);
     }
 
-    private static Command buildCaseCommand(String[] condtions, Command[] pathCommands, Command otherwise, int i) {
-        if (condtions.length != pathCommands.length) {
-            throw new IllegalArgumentException("Condtions and paths are not the same length!");
+    public static Command buildCaseCommand(BooleanSupplier[] conditions, Command[] pathCommands, Command otherwise) {
+        return buildCaseCommand(conditions, pathCommands, otherwise, 0);
+    }
+
+    private static Command buildCaseCommand(BooleanSupplier[] conditions, Command[] pathCommands, Command otherwise, int i) {
+        if (conditions.length != pathCommands.length) {
+            throw new IllegalArgumentException("Conditions and paths are not the same length!");
         }
 
-        if (i == condtions.length) {
+        if (i == conditions.length) {
             return otherwise;
         }
 
         return new ConditionalCommand(
             pathCommands[i],
-            buildCaseCommand(condtions, pathCommands, otherwise, i + 1),
-            NamedConditions.getCondition(condtions[i])
+            buildCaseCommand(conditions, pathCommands, otherwise, i + 1),
+            conditions[i]
         );
     }
 }

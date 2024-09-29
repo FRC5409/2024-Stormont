@@ -248,6 +248,9 @@ public class RobotContainer {
                 )
             );
 
+        m_primaryController.start()
+            .whileTrue(sys_drivetrain.driveTo(sys_drivetrain::getClosestStage));
+
         m_primaryController.b()
             .whileTrue(
                 sys_drivetrain.pointTowards(

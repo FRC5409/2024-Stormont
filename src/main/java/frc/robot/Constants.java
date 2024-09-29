@@ -4,10 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.util.GeometryUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -71,6 +73,18 @@ public final class Constants {
 
         public static final Translation3d BLUE_SPEAKER = new Translation3d(0.025, 5.55, 2.1);
         public static final Translation3d RED_SPEAKER = new Translation3d(16.117, 5.55, 2.1);
+
+        public static final Pose2d[] BLUE_STAGES = {
+            new Pose2d(4.43, 4.92, Rotation2d.fromDegrees(120)), // LEFT
+            new Pose2d(4.43, 3.26, Rotation2d.fromDegrees(-120)), // RIGHT
+            new Pose2d(5.80, 4.10, Rotation2d.fromDegrees(0)) // CENTER
+        };
+
+        public static final Pose2d[] RED_STAGES = {
+            GeometryUtil.flipFieldPose(BLUE_STAGES[0]).plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180))), // LEFT
+            GeometryUtil.flipFieldPose(BLUE_STAGES[1]).plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180))), // RIGHT
+            GeometryUtil.flipFieldPose(BLUE_STAGES[2]).plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180)))  // CENTER
+        };
 
         public static final Pose2d BLUE_AMP = new Pose2d(1.80, 7.66, Rotation2d.fromDegrees(-90));
         public static final Pose2d RED_AMP = new Pose2d(14.69, 7.66, Rotation2d.fromDegrees(90));

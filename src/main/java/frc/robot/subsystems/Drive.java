@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.AutoCreator.CustomAutoBuilder;
+import frc.robot.Constants.kAuto;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kDrive.kPID;
@@ -116,6 +117,27 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
         if (instance == null) instance = TunerConstants.DriveTrain;
 
         return instance;
+    }
+
+    public Pose2d getClosestStage() {
+        Translation2d robot = getRobotPose().getTranslation();
+
+        Pose2d[] stages = kAuto.BLUE_STAGES;
+        if (DriverStation.getAlliance().isPresent())
+            stages = DriverStation.getAlliance().get() == Alliance.Blue ? kAuto.BLUE_STAGES : kAuto.RED_STAGES;
+
+        double min = robot.getDistance(stages[0].getTranslation());
+        int id = 0;
+
+        for (int i = 1; i < stages.length; i++) {
+            double dist = robot.getDistance(stages[i].getTranslation());
+            if (dist < min) {
+                id = i;
+                min = dist;
+            }
+        }
+
+        return stages[id];
     }
 
     private void startSimThread() {
