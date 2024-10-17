@@ -5,16 +5,11 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.utils.NoteVisualizer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,13 +24,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-
-  public static boolean[] notes = {true, true, true, true, true};
-  public static boolean hasNote = true;
-  private final ShuffleboardTab sb_noteTab = Shuffleboard.getTab("Notes");
-  private final GenericEntry sb_goalNotes = sb_noteTab.add("Notes", "12345").withPosition(5, 0).getEntry();
-  private Long currentChange = 0l;
-  private Long lastChange = 0l;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -57,10 +45,6 @@ public class Robot extends TimedRobot {
             Commands.runOnce(() -> m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Coast))
                 .ignoringDisable(true));
 
-    for (int i = 0; i < notes.length; i++) {
-      final int innerI = i; // ???
-      sb_noteTab.addBoolean("Note " + (i + 1), () -> notes[innerI]).withPosition(i, 0);
-    }
   }
 
   /**
@@ -85,21 +69,6 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     m_robotContainer.sys_drivetrain.periodic();
-
-    lastChange = currentChange;
-    currentChange = sb_goalNotes.getLastChange();
-
-    if (!lastChange.equals(currentChange)) {
-      for (int i = 0; i < notes.length; i++)
-        notes[i] = false;
-
-      for (char chr : sb_goalNotes.getString("12345").toCharArray()) {
-        if (chr - '1' >= notes.length)
-          continue;
-
-        notes[chr - '1'] = true;
-      }
-    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -117,17 +86,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-
-    for (int i = 0; i < notes.length; i++)
-        notes[i] = false;
-
-      for (char chr : sb_goalNotes.getString("12345").toCharArray()) {
-        if (chr - '1' >= notes.length)
-          continue;
-
-        notes[chr - '1'] = true;
-      }
-
     m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Brake);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -180,7 +138,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    if (NoteVisualizer.updateNotes())
-      hasNote = true;
   }
 }

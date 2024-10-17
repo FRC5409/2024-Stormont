@@ -32,13 +32,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.AutoCreator.CustomAutoBuilder;
 import frc.robot.Constants.kAuto;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kDrive.kPID;
 import frc.robot.generated.TunerConstants;
-import frc.robot.utils.LimelightHelpers.PoseEstimate;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
@@ -61,8 +59,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 
     private final PIDController autoAlignController;
 
-    private final Vision sys_vision = Vision.getInstance();
-
     public final Field2d fieldMap;
 
     public Drive(SwerveDrivetrainConstants driveConstants, SwerveModuleConstants... moduleConstants) {
@@ -80,7 +76,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 
         autoAlignController = new PIDController(kDrive.kPID.ROTATION_P, kDrive.kPID.ROTATION_I, kDrive.kPID.ROTATION_D);
 
-        CustomAutoBuilder.configureHolonomic(
+        AutoBuilder.configureHolonomic(
             this::getRobotPose, 
             this::resetOdometry, 
             this::getChassisSpeeds, 
@@ -241,16 +237,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
         this.seedFieldRelative(getRobotPose());
     }
 
-    public void updateRobotPose() {
-        m_poseEstimator.update(m_pigeon2.getRotation2d(), m_modulePositions);
-
-        PoseEstimate poseEstimate = sys_vision.getVisionMeasurement();
-        if (poseEstimate == null)
-            return;
-        
-        m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
-    }
-
     public void addRotation(Rotation2d adder) {
         m_poseEstimator.resetPosition(getRobotPose().getRotation().plus(adder), m_modulePositions, getRobotPose());
     }
@@ -285,7 +271,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        updateRobotPose();
         fieldMap.setRobotPose(getRobotPose()); 
     }
 
