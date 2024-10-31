@@ -23,15 +23,13 @@ public class VisionIOLimelight implements VisionIO {
 
     public VisionIOLimelight(String name, Transform3d offset, int port) {
         String limelightPath;
-        // TODO: Might need to move this to robotinit (for some reason???)
         if (name == null || name.equals(""))
             limelightPath = "limelight.local";
         else
             limelightPath = "limelight-" + name + ".local";
             
-        for (int i = port; i < port + 10; port++) {
-            // PortForwarder.remove(port);
-            PortForwarder.add(port, limelightPath, port);
+        for (int i = port; i < port + 10; i++) {
+            PortForwarder.add(i, limelightPath, i);
         }
 
         this.name = name;
@@ -61,5 +59,10 @@ public class VisionIOLimelight implements VisionIO {
     @Override
     public PoseEstimate getEstimatedPose() {
         return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

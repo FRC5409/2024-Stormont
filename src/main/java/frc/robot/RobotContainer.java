@@ -80,8 +80,7 @@ public class RobotContainer {
             }
             case SIM -> {
                 sys_deployment = Deployment.createInstance(new DeploymentIOSim());
-                // sys_vision = Vision.createInstance(new VisionIO() {});
-                sys_vision = Vision.createInstance(new VisionIOLimelight(kVision.LIMELIGHT_OFFSET));
+                sys_vision = Vision.createInstance(new VisionIO() {});
             }
             case DEMO -> {
                 // TODO: Finish this
