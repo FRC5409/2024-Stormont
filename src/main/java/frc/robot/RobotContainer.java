@@ -5,10 +5,12 @@
 package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -55,6 +57,7 @@ public class RobotContainer {
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
+    private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -110,6 +113,9 @@ public class RobotContainer {
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
 
+        sb_autoChooser = AutoBuilder.buildAutoChooser();
+        sb_driveteamTab.add("Choose auto", sb_autoChooser);
+
         // Configure the trigger bindings
         configureBindings();
     }
@@ -138,6 +144,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return null;
+        return sb_autoChooser.getSelected();
     }
 }

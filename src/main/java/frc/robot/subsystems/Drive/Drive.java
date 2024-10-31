@@ -282,22 +282,26 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         fieldMap.getObject("Auto").setTrajectory(trajSupplier.get());
     }
 
-    public void addPoseMeasurement(PoseEstimate poseEstimate) {
-        if (poseEstimate == null) return;
+    public void updateRobotPose() {
+        m_poseEstimator.update(m_pigeon2.getRotation2d(), m_modulePositions);
 
+        PoseEstimate poseEstimate = sys_vision.getEstimatedPose();
+        if (poseEstimate == null)
+            return;
+        
         m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        fieldMap.setRobotPose(getOdometryPose());
         updateInputs(gyroIO, modulesIO);
         
         sys_vision.update();
 
-        // Add vision measurement
-        addPoseMeasurement(sys_vision.getEstimatedPose());
+        updateRobotPose();
+
+        fieldMap.setRobotPose(getEstimatedPose());
 
         Logger.processInputs("Drive/Gyro", gyroIO);
         

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.34,
-      "y": 5.54
+      "x": 1.3940937283583965,
+      "y": 7.308846526524962
     },
     "rotation": 0
   },
@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BSTART_TO_SHOOTA"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PICK_PATH"
+            "pathName": "Auto Test"
           }
         }
       ]

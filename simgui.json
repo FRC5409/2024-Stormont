@@ -30,6 +30,17 @@
     }
   },
   "NetworkTables": {
+    "retained": {
+      "Shuffleboard": {
+        "Drive team": {
+          "Choose auto": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      }
+    },
     "transitory": {
       "Shuffleboard": {
         ".metadata": {
@@ -48,9 +59,11 @@
     "Server": {
       "Publishers": {
         "open": true
-      },
-      "open": true
+      }
     },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
