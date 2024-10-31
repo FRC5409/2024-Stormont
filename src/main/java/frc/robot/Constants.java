@@ -4,15 +4,12 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.util.GeometryUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -28,6 +25,29 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
+    public static enum kMode {
+        REAL,
+        DEMO,
+        REPLAY,
+        SIM
+    }
+
+    public static final kMode REAL_MODE = kMode.REAL;
+    public static final kMode SIM_MODE = kMode.SIM;
+
+    /**
+     * Gets the mode of the robot
+     * WARNING: If the robot is booting and REAL_MODE was not set correctly for a comp match
+     * it will return the set REAL_MODE until it connects to a FMS1
+     * @return the given robot mode
+     */
+    public static kMode getMode() {
+        if (RobotBase.isReal())
+            return DriverStation.isFMSAttached() ? kMode.REAL : REAL_MODE;
+        else 
+            return SIM_MODE;
+    }
+
     public static class kController {
         public static final int kDriverControllerPort = 0;
 
@@ -35,7 +55,22 @@ public final class Constants {
         public static final double kTriggerDeadband = 0.05;
     }
 
+    public static class kVision {
+        public static final Transform3d LIMELIGHT_OFFSET = 
+            new Transform3d(
+		    	new Translation3d(0.1003965253, 0, 0.6490857384),
+		    	new Rotation3d(0, Math.toRadians(145), 0)
+            );
+    }
+
     public static class kDrive {
+        public static final String[] MODULE_NAMES = new String[] {
+            "Front Left",
+            "Front Right",
+            "Back Left",
+            "Back Right"
+        };
+
         public static final int CURRENT_LIMIT = 100;
 
         public static final double MAX_CHASSIS_SPEED = 4.56;
@@ -54,102 +89,31 @@ public final class Constants {
         }
     }
 
-    public static class kAuto {
-        public static final Pose2d FAR_SHOOTING_POSE = new Pose2d(new Translation2d(4.03, 5.44), Rotation2d.fromDegrees(0.0));
-        public static final Pose2d CLOSE_SHOOTING_POSE = new Pose2d(new Translation2d(1.92, 5.54), Rotation2d.fromDegrees(0.0));
-        public static final Pose2d[] NOTES = {
-            // Close notes
-            new Pose2d(new Translation2d(2.89, 7.00), Rotation2d.fromDegrees(0.0)),
-            new Pose2d(new Translation2d(2.89, 5.54), Rotation2d.fromDegrees(0.0)),
-            new Pose2d(new Translation2d(2.89, 4.10), Rotation2d.fromDegrees(0.0)),
-
-            // Mid notes
-            new Pose2d(new Translation2d(8.29, 7.44), Rotation2d.fromDegrees(0.0)),
-            new Pose2d(new Translation2d(8.29, 5.78), Rotation2d.fromDegrees(0.0)),
-            new Pose2d(new Translation2d(8.29, 4.12), Rotation2d.fromDegrees(0.0)),
-            new Pose2d(new Translation2d(8.29, 2.46), Rotation2d.fromDegrees(0.0)),
-            new Pose2d(new Translation2d(8.29, 0.80), Rotation2d.fromDegrees(0.0))
-        };
-
-        public static final Translation3d BLUE_SPEAKER = new Translation3d(0.025, 5.55, 2.1);
-        public static final Translation3d RED_SPEAKER = new Translation3d(16.117, 5.55, 2.1);
-
-        public static final Pose2d[] BLUE_STAGES = {
-            new Pose2d(4.43, 4.92, Rotation2d.fromDegrees(120)), // LEFT
-            new Pose2d(4.43, 3.26, Rotation2d.fromDegrees(-120)), // RIGHT
-            new Pose2d(5.80, 4.10, Rotation2d.fromDegrees(0)) // CENTER
-        };
-
-        public static final Pose2d[] RED_STAGES = {
-            GeometryUtil.flipFieldPose(BLUE_STAGES[0]).plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180))), // LEFT
-            GeometryUtil.flipFieldPose(BLUE_STAGES[1]).plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180))), // RIGHT
-            GeometryUtil.flipFieldPose(BLUE_STAGES[2]).plus(new Transform2d(0, 0, Rotation2d.fromDegrees(180)))  // CENTER
-        };
-
-        public static final Pose2d BLUE_AMP = new Pose2d(1.80, 7.66, Rotation2d.fromDegrees(-90));
-        public static final Pose2d RED_AMP = new Pose2d(14.69, 7.66, Rotation2d.fromDegrees(90));
-    }
-
-    public static final class kIntake {
-        public static final int INTAKE_MOTOR_ID = 20;
-        
-        public static final int IR_CHANNEL = 2;
-
-		public static final int CURRENT_LIMIT = 40;
-
-		public static final double VOLTAGE = 7;
-	}
-
-    public static final class kIndexer {
-        public static final int CANID = 22;
-
-		public static final int CURRENT_LIMIT = 30;
-
-		public static final double VOLTAGE = 8;
-	}
-
-    public static final class kCartridge {
-        public static final int CANID = 16;
-
-        public static final int IR_CHANNEL = 1;
-        
-		public static final int CURRENT_LIMIT = 30;
-
-		public static final double VOLTAGE = 7;
-	}
-
     public static final class kDeployment {
         public static final int DEPLOYMENT_ID = 15;
         public static final int CURRENT_LIMIT = 40;
 
-        public static final double KP = 6.0;
-        public static final double KI = 0.0;
-        public static final double KD = 0.0;
-        public static final double KFF = 2.4;
+        public static final class kRealGains {
+            public static final double KP = 0.1;
+            public static final double KI = 0.0;
+            public static final double KD = 0.0;
+            public static final double KFF = 0.0;
+        }
+        public static final class kSimulationGains {
+            public static final double KP = 7.0;
+            public static final double KI = 0.0;
+            public static final double KD = 0.0;
+            public static final double KFF = 0.0;
+        }
 
-        public static final double MIN_HEIGHT = Units.inchesToMeters(17.55);
-        public static final double MAX_HEIGHT = Units.inchesToMeters(17.55 * 2);
+        public static final double LENGTH = Units.inchesToMeters(17.55);
 
         public static final double ELEVATOR_ANGLE = 105;
 
         public static final double TOLERANCE = 0.01;
 
-        public static final double ELEVATOR_GEARING = 10.0/1.0;
+        public static final double ELEVATOR_GEARING = 15.0/1.0;
         public static final double ELEVATOR_DRUM_RADIUS = Units.inchesToMeters(0.944);
         public static final double ELEVATOR_MASS = Units.lbsToKilograms(11.0);
-    }
-
-    public static final class kVision {
-        public static final String name = "limelight";
-        public static final Pose3d limelightPoseOffset = new Pose3d(
-            0,
-            0,
-            0,
-            new Rotation3d(
-                0,
-                0,
-                0
-            )
-        );
     }
 }

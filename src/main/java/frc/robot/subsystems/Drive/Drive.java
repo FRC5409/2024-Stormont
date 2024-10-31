@@ -1,13 +1,21 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Drive;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
@@ -32,17 +40,23 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Constants.kAuto;
+import frc.robot.Constants;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kMode;
 import frc.robot.Constants.kDrive.kPID;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Vision.Vision;
+import frc.robot.subsystems.Vision.LimelightHelpers.PoseEstimate;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
 
-public class Drive extends SwerveDrivetrain implements Subsystem {
+public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
     private static Drive instance = null;
+
+    private final GyroIOInputsAutoLogged gyroIO;
+    private final ModuleIOInputsAutoLogged[] modulesIO;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -57,6 +71,13 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 			VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
 			VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(1)));
 
+    private final Pigeon2 m_pigeon;
+    private final StatusSignal<Double> pigeonYaw;
+    private final StatusSignal<Double> pigeonPitch;
+    private final StatusSignal<Double> pigeonRoll;
+
+    private final Vision sys_vision;
+
     private final PIDController autoAlignController;
 
     public final Field2d fieldMap;
@@ -64,10 +85,22 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
     public Drive(SwerveDrivetrainConstants driveConstants, SwerveModuleConstants... moduleConstants) {
         super(driveConstants, moduleConstants);
 
+        gyroIO = new GyroIOInputsAutoLogged();
+        modulesIO = new ModuleIOInputsAutoLogged[ModuleCount];
+        for (int i = 0; i < modulesIO.length; i++)
+            modulesIO[i] = new ModuleIOInputsAutoLogged();
+
+        m_pigeon = getPigeon2();
+        pigeonYaw   = m_pigeon.getYaw();
+        pigeonPitch = m_pigeon.getPitch();
+        pigeonRoll  = m_pigeon.getRoll();
+
         double driveBaseRadius = 0;
 		for (Translation2d moduleLocation : m_moduleLocations) {
 			driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
 		}
+
+        sys_vision = Vision.getInstance();
 
         m_alignDrive.HeadingController.setP(kDrive.kPID.ROTATION_P);
         m_alignDrive.HeadingController.setI(kDrive.kPID.ROTATION_I);
@@ -77,7 +110,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
         autoAlignController = new PIDController(kDrive.kPID.ROTATION_P, kDrive.kPID.ROTATION_I, kDrive.kPID.ROTATION_D);
 
         AutoBuilder.configureHolonomic(
-            this::getRobotPose, 
+            this::getEstimatedPose, 
             this::resetOdometry, 
             this::getChassisSpeeds, 
             this::driveFromChassisSpeeds,
@@ -101,7 +134,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 
         updateFieldRelative();
 
-        if (Utils.isSimulation()) {
+        if (Constants.getMode() == kMode.SIM) {
             startSimThread();
         }
 
@@ -113,27 +146,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
         if (instance == null) instance = TunerConstants.DriveTrain;
 
         return instance;
-    }
-
-    public Pose2d getClosestStage() {
-        Translation2d robot = getRobotPose().getTranslation();
-
-        Pose2d[] stages = kAuto.BLUE_STAGES;
-        if (DriverStation.getAlliance().isPresent())
-            stages = DriverStation.getAlliance().get() == Alliance.Blue ? kAuto.BLUE_STAGES : kAuto.RED_STAGES;
-
-        double min = robot.getDistance(stages[0].getTranslation());
-        int id = 0;
-
-        for (int i = 1; i < stages.length; i++) {
-            double dist = robot.getDistance(stages[i].getTranslation());
-            if (dist < min) {
-                id = i;
-                min = dist;
-            }
-        }
-
-        return stages[id];
     }
 
     private void startSimThread() {
@@ -158,7 +170,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
     public Command driveTo(Supplier<Pose2d> pose) {
         return this.applyRequest(() -> {
             Pose2d setpoint = pose.get();
-            Pose2d robot = getRobotPose();
+            Pose2d robot = getEstimatedPose();
     
             double xSpeed = autoAlignController.calculate(robot.getX(), setpoint.getX());
             double ySpeed = autoAlignController.calculate(robot.getY(), setpoint.getY());
@@ -206,7 +218,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
 
     public Command pointTowards(DoubleSupplier xSpeeds, DoubleSupplier ySpeeds, Supplier<Pose2d> trackingPose) {
         return this.applyRequest(() -> {
-            Pose2d robotPose = this.getRobotPose();
+            Pose2d robotPose = this.getEstimatedPose();
             Pose2d track = trackingPose.get();
 
             Rotation2d angle = Rotation2d.fromRadians(
@@ -234,14 +246,16 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
     }
 
     public void updateFieldRelative() {
-        this.seedFieldRelative(getRobotPose());
+        this.seedFieldRelative(getEstimatedPose());
     }
 
-    public void addRotation(Rotation2d adder) {
-        m_poseEstimator.resetPosition(getRobotPose().getRotation().plus(adder), m_modulePositions, getRobotPose());
+    @AutoLogOutput(key = "Drive/OdometryPose")
+    public Pose2d getOdometryPose() {
+        return m_odometry.getEstimatedPosition();
     }
 
-    public Pose2d getRobotPose() {
+    @AutoLogOutput(key = "Drive/EstimatedPose")
+    public Pose2d getEstimatedPose() {
         return m_poseEstimator.getEstimatedPosition();
     }
 
@@ -268,16 +282,69 @@ public class Drive extends SwerveDrivetrain implements Subsystem {
         fieldMap.getObject("Auto").setTrajectory(trajSupplier.get());
     }
 
+    public void addPoseMeasurement(PoseEstimate poseEstimate) {
+        if (poseEstimate == null) return;
+
+        m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        fieldMap.setRobotPose(getRobotPose()); 
+        fieldMap.setRobotPose(getOdometryPose());
+        updateInputs(gyroIO, modulesIO);
+        
+        sys_vision.update();
+
+        // Add vision measurement
+        addPoseMeasurement(sys_vision.getEstimatedPose());
+
+        Logger.processInputs("Drive/Gyro", gyroIO);
+        
+        for (int i = 0; i < modulesIO.length; i++)
+            Logger.processInputs("Drive/Module[" + kDrive.MODULE_NAMES[i] + "]", modulesIO[i]); // TODO: Validate modules names
     }
 
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
         
+    }
+
+    @Override
+    public void updateInputs(GyroIOInputs gyroInputs, ModuleIOInputs... moduleInputs) {
+        if (ModuleCount != moduleInputs.length) throw new IllegalArgumentException("Module count and ModuleInputs do not match in length!");
+
+        gyroInputs.isConnected = BaseStatusSignal.isAllGood(pigeonYaw, pigeonPitch, pigeonRoll);
+
+        gyroInputs.yaw = Rotation2d.fromDegrees(pigeonYaw.getValueAsDouble());
+        gyroInputs.pitch = Rotation2d.fromDegrees(pigeonPitch.getValueAsDouble());
+        gyroInputs.roll = Rotation2d.fromDegrees(pigeonRoll.getValueAsDouble());
+
+        for (int i = 0; i < ModuleCount; i++) {
+            SwerveModule module = getModule(0);
+            TalonFX drive = module.getDriveMotor();
+            TalonFX steer = module.getSteerMotor();
+            CANcoder encoder = module.getCANcoder();
+
+            moduleInputs[i].driveMotorConnected = BaseStatusSignal.isAllGood(drive.getVelocity(), drive.getStatorCurrent()); 
+            moduleInputs[i].steerMotorConnected = BaseStatusSignal.isAllGood(steer.getPosition(), steer.getStatorCurrent()); // TODO: Validate steer position
+            moduleInputs[i].encoderConnected = BaseStatusSignal.isAllGood(encoder.getAbsolutePosition());
+
+            moduleInputs[i].driveVolts = drive.get() * RobotController.getBatteryVoltage();
+            moduleInputs[i].steerVolts = steer.get() * RobotController.getBatteryVoltage();
+
+            moduleInputs[i].driveCurrent = drive.getStatorCurrent().getValueAsDouble();
+            moduleInputs[i].steerCurrent = steer.getStatorCurrent().getValueAsDouble();
+
+            moduleInputs[i].driveVelocity = drive.getVelocity().getValueAsDouble();
+            moduleInputs[i].steerPosition = Rotation2d.fromRotations(steer.getPosition().getValueAsDouble());
+
+            moduleInputs[i].driveTemp = drive.getDeviceTemp().getValueAsDouble();
+            moduleInputs[i].steerTemp = steer.getDeviceTemp().getValueAsDouble();
+
+            moduleInputs[i].absEncoderPosition = Rotation2d.fromRotations(encoder.getAbsolutePosition().getValueAsDouble());
+        }
     }
 
 }

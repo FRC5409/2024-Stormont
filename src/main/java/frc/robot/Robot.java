@@ -4,12 +4,21 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.rlog.RLOGServer;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Drive.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -32,6 +41,36 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    // String LOG_DIRECTORY = "gameLogs";
+    // // Check if the log directory exists
+    // var directory = new File(LOG_DIRECTORY);
+    // System.out.println(directory);
+    // if (!directory.exists()) {
+    //   System.out.println(directory.mkdir());
+    // }
+
+    switch (Constants.getMode()) {
+      case REAL:
+      case DEMO:
+        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+        new PowerDistribution(1, ModuleType.kRev);
+        break;
+      case REPLAY:
+        setUseTiming(false);
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.setReplaySource(new WPILOGReader(logPath));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        break;
+      case SIM:
+        Logger.addDataReceiver(new RLOGServer());
+        break;
+      default:
+        break;
+    }
+
+    Logger.start();
+
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
@@ -42,7 +81,7 @@ public class Robot extends TimedRobot {
         .negate()
         .debounce(5)
         .onTrue(
-            Commands.runOnce(() -> m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Coast))
+            Commands.runOnce(() -> Drive.getInstance().configNeutralMode(NeutralModeValue.Coast))
                 .ignoringDisable(true));
 
   }
@@ -68,7 +107,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    m_robotContainer.sys_drivetrain.periodic();
+    Drive.getInstance().periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -86,7 +125,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Brake);
+    Drive.getInstance().configNeutralMode(NeutralModeValue.Brake);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -111,7 +150,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.sys_drivetrain.configNeutralMode(NeutralModeValue.Brake);
+    Drive.getInstance().configNeutralMode(NeutralModeValue.Brake);
   }
 
   /** This function is called periodically during operator control. */

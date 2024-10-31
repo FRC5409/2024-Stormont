@@ -50,14 +50,14 @@
         },
         {
           "axis": "y",
-          "degrees": 190
+          "degrees": 180
         },
         {
           "axis": "z",
           "degrees": 180
         }
       ],
-      "zeroedPosition": [-0.2, 0.0, -0.325]
+      "zeroedPosition": [-0.1, 0.0, 0.15]
     }
   ]
 }
