@@ -7,9 +7,6 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.kDeployment;
 
@@ -26,6 +23,8 @@ public class DeploymentIOSparkMax implements DeploymentIO {
         deploymentMotor.restoreFactoryDefaults();
         deploymentMotor.setSmartCurrentLimit(kDeployment.CURRENT_LIMIT);
         deploymentMotor.setIdleMode(IdleMode.kBrake);
+
+        deploymentMotor.setInverted(true);
 
         deploymentController.setP(kDeployment.kRealGains.KP);
         deploymentController.setI(kDeployment.kRealGains.KI);
@@ -51,8 +50,6 @@ public class DeploymentIOSparkMax implements DeploymentIO {
         inputs.appliedCurrent = deploymentMotor.getOutputCurrent();
         inputs.motorTemp = deploymentMotor.getMotorTemperature();
         inputs.position = deploymentEncoder.getPosition();
-
-        inputs.deploymentPose = new Pose3d(0, 0, inputs.position, new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-15), Units.degreesToRadians(0)));
     }
 
     @Override
@@ -63,5 +60,10 @@ public class DeploymentIOSparkMax implements DeploymentIO {
     @Override
     public double getPosition() {
         return deploymentEncoder.getPosition();
+    }
+
+    @Override
+    public void stop() {
+        deploymentMotor.stopMotor();
     }
 }

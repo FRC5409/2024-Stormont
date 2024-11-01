@@ -33,7 +33,7 @@ public final class Constants {
     }
 
     public static final kMode REAL_MODE = kMode.REAL;
-    public static final kMode SIM_MODE = kMode.SIM;
+    public static final kMode SIM_MODE = kMode.REPLAY;
 
     /**
      * Gets the mode of the robot
@@ -94,7 +94,7 @@ public final class Constants {
         public static final int CURRENT_LIMIT = 40;
 
         public static final class kRealGains {
-            public static final double KP = 0.1;
+            public static final double KP = 3.0;
             public static final double KI = 0.0;
             public static final double KD = 0.0;
             public static final double KFF = 0.0;
@@ -111,6 +111,9 @@ public final class Constants {
         public static final double ELEVATOR_ANGLE = 105;
 
         public static final double TOLERANCE = 0.01;
+
+        public static final double EXTENSION_SETPOINT = 0.35;
+        public static final double STOW_SETPOINT = 0.01;
 
         public static final double ELEVATOR_GEARING = 15.0/1.0;
         public static final double ELEVATOR_DRUM_RADIUS = Units.inchesToMeters(0.944);

@@ -1,7 +1,10 @@
 package frc.robot.subsystems.Deployment;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -48,11 +51,20 @@ public class Deployment extends SubsystemBase {
     }
 
     public Command deploy() {
-        return Commands.runOnce(() -> io.setPosition(kDeployment.LENGTH * 0.9), this);
+        return Commands.runOnce(() -> io.setPosition(kDeployment.EXTENSION_SETPOINT), this);
     }
 
     public Command retract() {
-        return Commands.runOnce(() -> io.setPosition(kDeployment.LENGTH * 0.05), this);
+        return Commands.runOnce(() -> io.setPosition(kDeployment.STOW_SETPOINT), this);
+    }
+
+    public Command stop() {
+        return Commands.runOnce(io::stop, this);
+    }
+
+    @AutoLogOutput(key = "Deployment/Pose")
+    public Pose3d getDeploymentPose() {
+        return new Pose3d(0, 0, inputs.position, new Rotation3d()).rotateBy(new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-15), Units.degreesToRadians(0)));
     }
 
     @Override
@@ -60,7 +72,7 @@ public class Deployment extends SubsystemBase {
         // This method will be called once per scheduler run
         io.updateInputs(inputs);
 
-        sb_publisher.accept(inputs.deploymentPose);
+        sb_publisher.accept(getDeploymentPose());
         
         Logger.processInputs("Deployment", inputs);
     }

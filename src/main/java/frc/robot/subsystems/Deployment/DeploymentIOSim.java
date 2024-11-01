@@ -2,10 +2,7 @@ package frc.robot.subsystems.Deployment;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -55,7 +52,6 @@ public class DeploymentIOSim implements DeploymentIO {
         inputs.appliedVoltage = MathUtil.clamp(sim_controller.calculate(sim_elevator.getPositionMeters()) * RoboRioSim.getVInVoltage(), -12, 12);
         inputs.appliedCurrent = sim_elevator.getCurrentDrawAmps();
         inputs.motorTemp = 0.0;
-        inputs.deploymentPose = new Pose3d(0, 0, inputs.position, new Rotation3d()).rotateBy(new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-15), Units.degreesToRadians(0)));
     }
 
     public void updateSim() {
@@ -68,5 +64,10 @@ public class DeploymentIOSim implements DeploymentIO {
     @Override
     public double getPosition() {
         return sim_elevator.getPositionMeters();
+    }
+
+    @Override
+    public void stop() {
+        // sim_elevator.stop
     }
 }
