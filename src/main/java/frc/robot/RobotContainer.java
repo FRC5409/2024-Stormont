@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.subsystems.Drive.Drive;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorIO;
+import frc.robot.subsystems.Elevator.ElevatorIOSparkMax;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOSparkMax;
@@ -39,6 +42,7 @@ public class RobotContainer {
     // Subsystems
     private final Drive sys_drivetrain;
     private final Intake sys_intake;
+    private final Elevator sys_Elevator;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -68,12 +72,15 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
+                sys_Elevator = new Elevator(new ElevatorIOSparkMax(0));
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
+                sys_Elevator = new Elevator(new ElevatorIO() {});
             }
             case SIM -> {
                 sys_intake = null;
+                sys_Elevator = null;
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -119,6 +126,14 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // Button Bindings here
+        m_primaryController.x()
+            .onTrue(sys_intake.startIntaking())
+            .onFalse(sys_intake.stopIntaking());
+
+        m_primaryController.y()
+            .onTrue(sys_Elevator.goUp());
+        m_primaryController.a()
+            .onTrue(sys_Elevator.goDown());
     }
 
     /**
