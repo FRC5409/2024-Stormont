@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj.RobotController;
 
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -26,7 +27,6 @@ public class IntakeIOSparkMax implements IntakeIO {
         intakeIncoder = intakeMotor.getEncoder();
     }
 
-
     @Override
     public void setVoltage(double volts) {
         intakeMotor.setVoltage(volts);
@@ -34,12 +34,10 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     @Override
     public void updateInputs (IntakeInputs inputs) {
-        inputs.motorConnected = true;
+        inputs.motorConnected = !(intakeMotor.getFault(FaultID.kMotorFault) || intakeMotor.getFault(FaultID.kCANRX) || intakeMotor.getFault(FaultID.kCANRX));
         inputs.motorVolts = intakeMotor.get()*RobotController.getBatteryVoltage();
         inputs.motorCurrent = intakeMotor.getOutputCurrent();
         inputs.motorTemp = intakeMotor.getMotorTemperature();
         inputs.motorSpeed = intakeIncoder.getVelocity();
     }
-
-    
 }
