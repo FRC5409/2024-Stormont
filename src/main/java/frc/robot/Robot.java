@@ -41,13 +41,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    // String LOG_DIRECTORY = "gameLogs";
-    // // Check if the log directory exists
-    // var directory = new File(LOG_DIRECTORY);
-    // System.out.println(directory);
-    // if (!directory.exists()) {
-    //   System.out.println(directory.mkdir());
-    // }
+    Logger.recordMetadata("RunTimeType", getRuntimeType().toString());
 
     switch (Constants.getMode()) {
       case REAL:

@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -292,6 +293,11 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
     }
 
+    @AutoLogOutput(key = "Drive/ModuleStates")
+    public SwerveModuleState[] getModuleState() {
+        return m_moduleStates;
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -300,6 +306,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         sys_vision.update();
 
         updateRobotPose();
+        getModuleState();
 
         fieldMap.setRobotPose(getEstimatedPose());
 

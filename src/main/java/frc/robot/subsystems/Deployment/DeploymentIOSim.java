@@ -68,6 +68,6 @@ public class DeploymentIOSim implements DeploymentIO {
 
     @Override
     public void stop() {
-        // sim_elevator.stop
+        sim_elevator.setInputVoltage(0.0);
     }
 }
