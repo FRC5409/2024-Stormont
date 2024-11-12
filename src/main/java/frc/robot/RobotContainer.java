@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.subsystems.Drive.Drive;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIOSparkMax;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,6 +37,7 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive sys_drivetrain;
+    private final Intake sys_intake;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -63,10 +66,10 @@ public class RobotContainer {
         // Subsystems
         switch (Constants.getMode()) {
             case REAL -> {
-                
+                sys_intake = new Intake(new IntakeIOSparkMax(0));
             }
             case REPLAY -> {
-                
+                sys_intake = new Intake(new IntakeIO() {});
             }
             case SIM -> {
                 
