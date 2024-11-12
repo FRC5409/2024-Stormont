@@ -46,8 +46,6 @@ import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kMode;
 import frc.robot.Constants.kDrive.kPID;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Vision.Vision;
-import frc.robot.subsystems.Vision.LimelightHelpers.PoseEstimate;
 
 // 5409: The Chargers
 // http://github.com/FRC5409
@@ -76,8 +74,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
     private final StatusSignal<Double> pigeonPitch;
     private final StatusSignal<Double> pigeonRoll;
 
-    private final Vision sys_vision;
-
     private final PIDController autoAlignController;
 
     public final Field2d fieldMap;
@@ -99,8 +95,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
 		for (Translation2d moduleLocation : m_moduleLocations) {
 			driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
 		}
-
-        sys_vision = Vision.getInstance();
 
         m_alignDrive.HeadingController.setP(kDrive.kPID.ROTATION_P);
         m_alignDrive.HeadingController.setI(kDrive.kPID.ROTATION_I);
@@ -284,12 +278,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
 
     public void updateRobotPose() {
         m_poseEstimator.update(m_pigeon2.getRotation2d(), m_modulePositions);
-
-        PoseEstimate poseEstimate = sys_vision.getEstimatedPose();
-        if (poseEstimate == null)
-            return;
-        
-        m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
     }
 
     @Override
@@ -297,8 +285,6 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         // This method will be called once per scheduler run
         updateInputs(gyroIO, modulesIO);
         
-        sys_vision.update();
-
         updateRobotPose();
 
         fieldMap.setRobotPose(getEstimatedPose());

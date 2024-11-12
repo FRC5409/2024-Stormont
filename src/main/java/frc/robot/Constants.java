@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -27,7 +23,6 @@ public final class Constants {
 
     public static enum kMode {
         REAL,
-        DEMO,
         REPLAY,
         SIM
     }
@@ -50,17 +45,10 @@ public final class Constants {
 
     public static class kController {
         public static final int kDriverControllerPort = 0;
+        public static final int kSecondaryController = 1;
 
         public static final double kJoystickDeadband = 0.05;
         public static final double kTriggerDeadband = 0.05;
-    }
-
-    public static class kVision {
-        public static final Transform3d LIMELIGHT_OFFSET = 
-            new Transform3d(
-		    	new Translation3d(0.1003965253, 0, 0.6490857384),
-		    	new Rotation3d(0, Math.toRadians(145), 0)
-            );
     }
 
     public static class kDrive {
@@ -87,36 +75,5 @@ public final class Constants {
             public static final double ROTATION_I = 0.0;
             public static final double ROTATION_D = 0.0;
         }
-    }
-
-    public static final class kDeployment {
-        public static final int DEPLOYMENT_ID = 15;
-        public static final int CURRENT_LIMIT = 40;
-
-        public static final class kRealGains {
-            public static final double KP = 3.0;
-            public static final double KI = 0.0;
-            public static final double KD = 0.0;
-            public static final double KFF = 0.0;
-        }
-        public static final class kSimulationGains {
-            public static final double KP = 7.0;
-            public static final double KI = 0.0;
-            public static final double KD = 0.0;
-            public static final double KFF = 0.0;
-        }
-
-        public static final double LENGTH = Units.inchesToMeters(17.55);
-
-        public static final double ELEVATOR_ANGLE = 105;
-
-        public static final double TOLERANCE = 0.01;
-
-        public static final double EXTENSION_SETPOINT = 0.35;
-        public static final double STOW_SETPOINT = 0.01;
-
-        public static final double ELEVATOR_GEARING = 15.0/1.0;
-        public static final double ELEVATOR_DRUM_RADIUS = Units.inchesToMeters(0.944);
-        public static final double ELEVATOR_MASS = Units.lbsToKilograms(11.0);
     }
 }

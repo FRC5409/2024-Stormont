@@ -51,7 +51,6 @@ public class Robot extends LoggedRobot {
 
     switch (Constants.getMode()) {
       case REAL:
-      case DEMO:
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         new PowerDistribution(1, ModuleType.kRev);
