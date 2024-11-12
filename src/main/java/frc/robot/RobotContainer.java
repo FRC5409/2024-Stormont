@@ -23,8 +23,6 @@ import frc.robot.subsystems.Deployment.DeploymentIO;
 import frc.robot.subsystems.Deployment.DeploymentIOSim;
 import frc.robot.subsystems.Deployment.DeploymentIOSparkMax;
 import frc.robot.subsystems.Drive.Drive;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIOSparkMax;
 import frc.robot.subsystems.Vision.Vision;
 import frc.robot.subsystems.Vision.VisionIO;
 import frc.robot.subsystems.Vision.VisionIOLimelight;
