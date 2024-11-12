@@ -131,9 +131,11 @@ public class RobotContainer {
             .onFalse(sys_intake.stopIntaking());
 
         m_primaryController.y()
-            .onTrue(sys_Elevator.goUp());
+            .onTrue(sys_Elevator.extend())
+            .onFalse(sys_Elevator.stop());
         m_primaryController.a()
-            .onTrue(sys_Elevator.goDown());
+            .onTrue(sys_Elevator.retract())
+            .onFalse(sys_Elevator.stop());
     }
 
     /**

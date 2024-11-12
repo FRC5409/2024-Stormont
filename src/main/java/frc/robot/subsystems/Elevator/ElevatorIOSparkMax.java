@@ -37,6 +37,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         inputs.motorCurrent = elevatorMotor.getOutputCurrent();
         inputs.motorTemp = elevatorMotor.getMotorTemperature();
 
-        inputs.motorSpeed = elevatorEncoder.getVelocity();
+        inputs.motorPosition = elevatorEncoder.getPosition();
     }
 }

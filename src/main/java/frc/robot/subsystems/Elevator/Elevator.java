@@ -23,13 +23,18 @@ public class Elevator extends SubsystemBase {
     // Get subsystem
 
     //go up
-    public Command goUp(){
-        return Commands.runOnce(()-> io.setVoltage(6),this);
+    public Command extend(){
+        return Commands.runOnce(()-> io.setVoltage(3),this);
     }
 
     //go down
-    public Command goDown(){
-        return Commands.runOnce(()-> io.setVoltage(-6), this);
+    public Command retract(){
+        return Commands.runOnce(()-> io.setVoltage(-3), this);
+    }
+
+    //stop
+    public Command stop(){
+        return Commands.runOnce(()->io.setVoltage(0), this);
     }
 
     @Override
