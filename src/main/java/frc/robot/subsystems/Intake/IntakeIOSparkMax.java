@@ -2,6 +2,7 @@ package frc.robot.subsystems.Intake;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -52,7 +53,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        inputs.moterConnected = true;
+        inputs.moterConnected = !(m_motor.getFault(FaultID.kMotorFault) || m_motor.getFault(FaultID.kCANRX) || m_motor.getFault(FaultID.kCANTX));
 
         inputs.motorVoltage = m_motor.get() * RobotController.getBatteryVoltage();
         inputs.motorCurrent = m_motor.getOutputCurrent();
