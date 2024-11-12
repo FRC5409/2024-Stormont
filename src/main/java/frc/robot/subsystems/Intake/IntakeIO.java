@@ -11,6 +11,7 @@ public interface IntakeIO {
     // Motor Temp
     @AutoLog
     public class IntakeInputs{
+        public boolean irTrigger = false;
         public boolean motorConnected = false;
         public double motorVolts = 0.0;
         public double motorCurrent = 0.0;

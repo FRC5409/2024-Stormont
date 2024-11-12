@@ -2,18 +2,22 @@ package frc.robot.subsystems.Intake;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 
 public class IntakeIOSparkMax implements IntakeIO {
 
     private CANSparkMax intakeMotor; //mot_intake, m_motor, motorIntake, motor (Acceptable names for var)
     private RelativeEncoder intakEncoder;//s_encoder, m_encodor, encoderIntake (Acceptable names for var)
+    private DigitalInput intakeIr;
 
     public IntakeIOSparkMax(int ID){
         intakeMotor = new CANSparkMax(ID, MotorType.kBrushless);
+        intakeIr = new DigitalInput(ID); 
         
         intakeMotor.restoreFactoryDefaults();
         intakeMotor.setSmartCurrentLimit(30);
@@ -31,12 +35,14 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs){
-        inputs.motorConnected = true;
+        inputs.motorConnected = (!intakeMotor.getFault(FaultID.kMotorFault) || intakeMotor.getFault(FaultID.kCANRX) || intakeMotor.getFault(FaultID.kCANTX));
 
         inputs.motorVolts = intakeMotor.get() * RobotController.getBatteryVoltage();
         inputs.motorCurrent = intakeMotor.getOutputCurrent();
         inputs.motorTemp = intakeMotor.getMotorTemperature();
 
         inputs.motorSpeed = intakEncoder.getVelocity();
+
+        inputs.irTrigger = !intakeIr.get();
     }
 }
