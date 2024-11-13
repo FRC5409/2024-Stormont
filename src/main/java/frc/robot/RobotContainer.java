@@ -119,6 +119,9 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // Button Bindings here
+        m_primaryController.x()
+        .onTrue(sys_intake.startIntaking())
+        .onFalse(sys_intake.stopIntaking());
     }
 
     /**

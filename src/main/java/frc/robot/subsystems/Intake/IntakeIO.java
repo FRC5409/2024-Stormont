@@ -16,6 +16,7 @@ public interface IntakeIO {
         public double motorCurrent = 0.0;
         public double motorSpeed = 0.0;
         public double motorTemp = 0.0;
+        public boolean IRtrigger = true;
     }
     
     public default void setVoltage(double volts) {}
