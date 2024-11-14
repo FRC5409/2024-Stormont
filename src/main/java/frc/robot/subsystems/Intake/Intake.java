@@ -2,6 +2,7 @@ package frc.robot.subsystems.Intake;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -18,6 +19,8 @@ public class Intake extends SubsystemBase {
     public Intake(IntakeIO IO) {
         this.IO = IO;
         inputs = new IntakeInputAutoLogged();
+
+        Shuffleboard.getTab("Intake").addDouble("Intake Velocity", ()->inputs.motorSpeed);
     }
 
     //intake, startIntaking, start

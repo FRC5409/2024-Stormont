@@ -28,7 +28,7 @@ public final class Constants {
     }
 
     public static final kMode REAL_MODE = kMode.REAL;
-    public static final kMode SIM_MODE = kMode.REPLAY;
+    public static final kMode SIM_MODE = kMode.SIM;
 
     /**
      * Gets the mode of the robot

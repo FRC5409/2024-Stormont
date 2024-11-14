@@ -19,6 +19,7 @@ import frc.robot.Constants.kDrive;
 import frc.robot.subsystems.Drive.Drive;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOSparkMax;
 
 /**
@@ -73,7 +74,7 @@ public class RobotContainer {
                 sys_intake = new Intake(new IntakeIO() {});
             }
             case SIM -> {
-                sys_intake = null;
+                sys_intake = new Intake(new IntakeIOSim());
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
