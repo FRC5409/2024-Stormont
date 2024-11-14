@@ -32,11 +32,11 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
-        inputs.motorConnected = !(motor.getFault(FaultID.kCANRX) || motor.getFault(FaultID.kCANTX)
+        inputs.connected = !(motor.getFault(FaultID.kCANRX) || motor.getFault(FaultID.kCANTX)
                 || motor.getFault(FaultID.kMotorFault));
-        inputs.motorVoltage = motor.get() * RobotController.getBatteryVoltage();
-        inputs.motorCurrent = motor.getOutputCurrent();
-        inputs.motorTemp = motor.getMotorTemperature();
-        inputs.motorSpeed = encoder.getVelocity();
+        inputs.voltage = motor.get() * RobotController.getBatteryVoltage();
+        inputs.current = motor.getOutputCurrent();
+        inputs.temp = motor.getMotorTemperature();
+        inputs.speed = encoder.getVelocity();
     }
 }
