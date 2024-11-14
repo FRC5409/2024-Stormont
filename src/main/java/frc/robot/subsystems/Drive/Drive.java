@@ -46,8 +46,6 @@ import frc.robot.Constants.kDrive;
 import frc.robot.Constants.kMode;
 import frc.robot.Constants.kDrive.kPID;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Drive.GyroIOInputsAutoLogged;
-import frc.robot.subsystems.Drive.ModuleIOInputsAutoLogged;
 
 // 5409: The Chargers
 // http://github.com/FRC5409

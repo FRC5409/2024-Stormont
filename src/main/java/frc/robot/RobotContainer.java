@@ -19,6 +19,7 @@ import frc.robot.Constants.kDrive;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOSparkMax;
 
 /**
@@ -70,10 +71,11 @@ public class RobotContainer {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
             }
             case REPLAY -> {
-                sys_intake = new Intake(new IntakeIO(){});
+                sys_intake = new Intake(new IntakeIO() {
+                });
             }
             case SIM -> {
-                sys_intake = null; // TODO: thursday's lesson 🗣️🔥
+                sys_intake = new Intake(new IntakeIOSim());
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -119,6 +121,7 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // Button Bindings here
+        m_primaryController.a().onTrue(sys_intake.start()).onFalse(sys_intake.stop());
     }
 
     /**
