@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.subsystems.Drive.Drive;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,6 +38,7 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive sys_drivetrain;
+    private final Intake sys_intake;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -51,7 +55,7 @@ public class RobotContainer {
     // Autonomous
 
     /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
+     * The container for the robot. Contains subsystems, IO devices, and commands.
      */
     public RobotContainer() {
 
@@ -63,13 +67,13 @@ public class RobotContainer {
         // Subsystems
         switch (Constants.getMode()) {
             case REAL -> {
-                
+                throw new IllegalArgumentException("No real robot allowed!");
             }
             case REPLAY -> {
-                
+                sys_intake = new Intake(new IntakeIO() {});
             }
             case SIM -> {
-                
+                sys_intake = new Intake(new IntakeIOSim(0));
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }

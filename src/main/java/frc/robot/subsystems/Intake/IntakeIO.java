@@ -13,7 +13,7 @@ public interface IntakeIO {
         public boolean irTripped;
     }
 
-    public void setVoltage(double volts);
+    public default void setVoltage(double volts) {}
 
-    public void updateInputs(IntakeInputs inputs);
+    public default void updateInputs(IntakeInputs inputs) {}
 }
