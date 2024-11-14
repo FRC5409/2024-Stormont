@@ -1,0 +1,19 @@
+package frc.robot.subsystems.Intake;
+
+import org.littletonrobotics.junction.AutoLog;
+
+public interface IntakeIO {
+    @AutoLog
+    public class IntakeInputs {
+        public boolean motorConnected = false;
+        public double motorVoltageUsed = 0.0;
+        public double motorSpeed = 0.0;
+        public double motorCurrent = 0.0;
+        public double motorTemp = 0.0;
+        public boolean irTripped;
+    }
+
+    public void setVoltage(double volts);
+
+    public void updateInputs(IntakeInputs inputs);
+}
