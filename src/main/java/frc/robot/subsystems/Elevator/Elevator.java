@@ -2,6 +2,7 @@ package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -18,18 +19,20 @@ public class Elevator extends SubsystemBase {
     public Elevator(ElevatorIO io) {
         this.io = io;
         inputs = new ElevatorInputsAutoLogged();
+
+        Shuffleboard.getTab("Elevator").addDouble("Elevator Position", () -> inputs.motorPosition);
     }
 
     // Get subsystem
 
     //go up
     public Command extend(){
-        return Commands.runOnce(()-> io.setVoltage(3),this);
+        return Commands.runOnce(()-> io.setVoltage(6),this);
     }
 
     //go down
     public Command retract(){
-        return Commands.runOnce(()-> io.setVoltage(-3), this);
+        return Commands.runOnce(()-> io.setVoltage(-6), this);
     }
 
     //stop

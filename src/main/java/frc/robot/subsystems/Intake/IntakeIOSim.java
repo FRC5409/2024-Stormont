@@ -16,6 +16,7 @@ public class IntakeIOSim implements IntakeIO {
     public void setVoltage(double volts){
         this.volts = volts;
         intakeSim.setInputVoltage(volts);
+        intakeSim.update(0.02);
     }
 
     @Override

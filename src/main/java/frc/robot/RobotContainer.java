@@ -19,6 +19,7 @@ import frc.robot.Constants.kDrive;
 import frc.robot.subsystems.Drive.Drive;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIO;
+import frc.robot.subsystems.Elevator.ElevatorIOSim;
 import frc.robot.subsystems.Elevator.ElevatorIOSparkMax;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
@@ -81,7 +82,7 @@ public class RobotContainer {
             }
             case SIM -> {
                 sys_intake = new Intake(new IntakeIOSim());
-                sys_elevator = null;
+                sys_elevator = new Elevator(new ElevatorIOSim());
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -131,12 +132,12 @@ public class RobotContainer {
             .onTrue(sys_intake.startIntaking())
             .onFalse(sys_intake.stopIntaking());
 
-        // m_primaryController.y()
-        //     .onTrue(sys_elevator.extend())
-        //     .onFalse(sys_elevator.stop());
-        // m_primaryController.a()
-        //     .onTrue(sys_elevator.retract())
-        //     .onFalse(sys_elevator.stop());
+         m_primaryController.y()
+             .onTrue(sys_elevator.extend())
+             .onFalse(sys_elevator.stop());
+         m_primaryController.a()
+             .onTrue(sys_elevator.retract())
+             .onFalse(sys_elevator.stop());
     }
 
     /**
