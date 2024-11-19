@@ -84,6 +84,7 @@ public class RobotContainer {
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
                 sys_elevator_Neo = new Elevator(new ElevatorIO() {});
+                sys_elevator_Falcon = new Elevator(new ElevatorIO() {});
             }
             case SIM -> {
                 sys_intake = new Intake(new IntakeIOSim());
@@ -139,11 +140,15 @@ public class RobotContainer {
             .onFalse(sys_intake.stopIntaking());
 
          m_primaryController.y()
-             .onTrue(sys_elevator.extend())
-             .onFalse(sys_elevator.stop());
+             .onTrue(sys_elevator_Neo.extend())
+             .onFalse(sys_elevator_Neo.stop())
+             .onTrue(sys_elevator_Falcon.extend())
+             .onFalse(sys_elevator_Falcon.stop());
          m_primaryController.a()
-             .onTrue(sys_elevator.retract())
-             .onFalse(sys_elevator.stop());
+             .onTrue(sys_elevator_Neo.retract())
+             .onFalse(sys_elevator_Neo.stop())
+             .onTrue(sys_elevator_Falcon.retract())
+             .onFalse(sys_elevator_Falcon.stop());
     }
 
     /**
