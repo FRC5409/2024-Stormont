@@ -6,9 +6,10 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 public class ElevatorIOSim implements ElevatorIO {
     private ElevatorSim elevatorSim;
     private double volts;
+    private DCMotor motor;
 
-    public ElevatorIOSim(){
-        elevatorSim = new ElevatorSim(DCMotor.getNEO(1), 9, 6, 0.0199, 1.066, 2.286, true, 1.066);
+    public ElevatorIOSim(DCMotor motor){
+        elevatorSim = new ElevatorSim(motor, 9, 6, 0.0199, 1.066, 2.286, true, 1.066);
     }
 
     @Override

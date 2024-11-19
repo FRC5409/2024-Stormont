@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -21,6 +23,7 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIO;
 import frc.robot.subsystems.Elevator.ElevatorIOSim;
 import frc.robot.subsystems.Elevator.ElevatorIOSparkMax;
+import frc.robot.subsystems.Elevator.ElevatorIOTalonFx;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOSim;
@@ -44,7 +47,8 @@ public class RobotContainer {
     // Subsystems
     private final Drive sys_drivetrain;
     private final Intake sys_intake;
-    private final Elevator sys_elevator;
+    private final Elevator sys_elevator_Neo;
+    private final Elevator sys_elevator_Falcon;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -74,15 +78,17 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevator = new Elevator(new ElevatorIOSparkMax(0));
+                sys_elevator_Neo = new Elevator(new ElevatorIOSparkMax(0));
+                sys_elevator_Falcon = new Elevator(new ElevatorIOTalonFx(1));
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
-                sys_elevator = new Elevator(new ElevatorIO() {});
+                sys_elevator_Neo = new Elevator(new ElevatorIO() {});
             }
             case SIM -> {
                 sys_intake = new Intake(new IntakeIOSim());
-                sys_elevator = new Elevator(new ElevatorIOSim());
+                sys_elevator_Neo = new Elevator(new ElevatorIOSim(DCMotor.getNEO(1)));
+                sys_elevator_Falcon = new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1)));
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
