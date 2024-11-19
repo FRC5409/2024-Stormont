@@ -53,11 +53,7 @@ public class RobotContainer {
 
         // Subsystems
         switch (Constants.getMode()) {
-            case REAL_NO_LOG -> {
-                sys_sparkClimber = new Climber(new ClimberIOSparkMax(kSpark.ID));
-                sys_talonClimber = new Climber(new ClimberIOTalonFX(kTalon.ID));
-            }
-            case REAL -> {
+            case REAL, REAL_NO_LOG -> {
                 sys_sparkClimber = new Climber(new ClimberIOSparkMax(kSpark.ID));
                 sys_talonClimber = new Climber(new ClimberIOTalonFX(kTalon.ID));
             }

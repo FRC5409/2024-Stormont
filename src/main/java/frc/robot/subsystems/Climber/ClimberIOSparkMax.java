@@ -25,7 +25,6 @@ public class ClimberIOSparkMax implements ClimberIO {
 
         encoder = mot.getEncoder();
 
-        // TODO: Conversion Factory
         encoder.setPositionConversionFactor(kSpark.CONVERSION_FACTOR);
         encoder.setVelocityConversionFactor(kSpark.CONVERSION_FACTOR / 50.0);
 
@@ -45,6 +44,7 @@ public class ClimberIOSparkMax implements ClimberIO {
         inputs.motorVoltage = mot.get() * RobotController.getBatteryVoltage();
         inputs.motorCurrent = mot.getOutputCurrent();
         inputs.climberPosition = encoder.getPosition();
+        inputs.motorTemp = mot.getMotorTemperature();
     }
 
     @Override

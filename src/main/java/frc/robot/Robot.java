@@ -11,13 +11,10 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.rlog.RLOGServer;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -38,16 +35,9 @@ public class Robot extends LoggedRobot {
    * for any
    * initialization code.
    */
+  @SuppressWarnings("resource")
   @Override
   public void robotInit() {
-    // String LOG_DIRECTORY = "gameLogs";
-    // // Check if the log directory exists
-    // var directory = new File(LOG_DIRECTORY);
-    // System.out.println(directory);
-    // if (!directory.exists()) {
-    //   System.out.println(directory.mkdir());
-    // }
-
     switch (Constants.getMode()) {
       case REAL:
         Logger.addDataReceiver(new WPILOGWriter());

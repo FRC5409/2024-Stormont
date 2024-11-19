@@ -10,6 +10,7 @@ public interface ClimberIO {
         public double motorVoltage = 0.0;
         public double motorCurrent = 0.0;
         public double climberPosition = 0.0;
+        public double motorTemp = 0.0;
     }
 
     public default void updateInputs(ClimberInputs inputs) {}

@@ -22,9 +22,21 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
 
     public static enum kMode {
+        /**
+         * A REAL robot that exists/should be created with logging
+         */
         REAL,
+        /**
+         * A REAL robot that exists/should be created with NO logging
+         */
         REAL_NO_LOG,
+        /**
+         * A Replay of a previous robot values
+         */
         REPLAY,
+        /**
+         * A SIMULATED robot that exists/should be created
+         */
         SIM
     }
 
@@ -50,32 +62,6 @@ public final class Constants {
 
         public static final double kJoystickDeadband = 0.05;
         public static final double kTriggerDeadband = 0.05;
-    }
-
-    public static class kDrive {
-        public static final String[] MODULE_NAMES = new String[] {
-            "Front Left",
-            "Front Right",
-            "Back Left",
-            "Back Right"
-        };
-
-        public static final int CURRENT_LIMIT = 100;
-
-        public static final double MAX_CHASSIS_SPEED = 4.56;
-        public static final double MAX_CHASSIS_ACCELERATION = 3.0;
-        public static final double MAX_ROTATION_SPEED = 10.0;
-        public static final double MAX_ROTATION_ACCELERATION = Math.toRadians(720.0);
-
-        public static class kPID {
-            public static final double TRANSLATION_P = 5.0;
-            public static final double TRANSLATION_I = 0.0;
-            public static final double TRANSLATION_D = 0.0;
-
-            public static final double ROTATION_P = 7.0;
-            public static final double ROTATION_I = 0.0;
-            public static final double ROTATION_D = 0.0;
-        }
     }
 
     public static class kClimber {

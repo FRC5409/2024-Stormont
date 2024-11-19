@@ -17,6 +17,7 @@ public class ClimberIOTalonFX implements ClimberIO {
     private final StatusSignal<Double> motorVoltage;
     private final StatusSignal<Double> motorCurrent;
     private final StatusSignal<Double> motorPosition;
+    private final StatusSignal<Double> motorTemp;
     
     public ClimberIOTalonFX(int ID) {
         mot = new TalonFX(ID);
@@ -28,6 +29,7 @@ public class ClimberIOTalonFX implements ClimberIO {
         FeedbackConfigs encoderConfig = new FeedbackConfigs();
         encoderConfig.SensorToMechanismRatio = kTalon.CONVERSION_FACTOR;
 
+        // TODO: Other Gain values present kA, kG, kV, kS
         SlotConfigs PIDConfig = new SlotConfigs();
         PIDConfig.kP = kTalon.kP;
         PIDConfig.kI = kTalon.kI;
@@ -40,19 +42,25 @@ public class ClimberIOTalonFX implements ClimberIO {
         mot.setInverted(false);
         mot.setNeutralMode(NeutralModeValue.Brake);
 
+        // Set status singals (100hz recommended by phoenix)
         motorVoltage = mot.getMotorVoltage();
-        motorVoltage.setUpdateFrequency(50);
+        motorVoltage.setUpdateFrequency(100);
 
         motorCurrent = mot.getSupplyCurrent();
-        motorCurrent.setUpdateFrequency(50);
+        motorCurrent.setUpdateFrequency(100);
 
         motorPosition = mot.getPosition();
-        motorPosition.setUpdateFrequency(50);
+        motorPosition.setUpdateFrequency(100);
 
+        motorTemp = mot.getDeviceTemp();
+        motorTemp.setUpdateFrequency(100);
+
+        // TODO: Maybe enable FOC
         PIDControl = new PositionVoltage(0)
             // .withEnableFOC(true)
             .withUpdateFreqHz(50);
         
+        // Optimize CAN bus. Removes all of the other status signals from updating, saving network data
         mot.optimizeBusUtilization();
     }
 
@@ -62,6 +70,7 @@ public class ClimberIOTalonFX implements ClimberIO {
         inputs.motorVoltage = motorVoltage.getValueAsDouble();
         inputs.motorCurrent = motorCurrent.getValueAsDouble();
         inputs.climberPosition = motorPosition.getValueAsDouble();
+        inputs.motorTemp = motorTemp.getValueAsDouble();
     }
 
     @Override
