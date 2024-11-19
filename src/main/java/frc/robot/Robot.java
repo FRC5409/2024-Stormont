@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.Drive.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -64,6 +63,7 @@ public class Robot extends LoggedRobot {
       case SIM:
         Logger.addDataReceiver(new RLOGServer());
         break;
+      case REAL_NO_LOG:
       default:
         break;
     }
@@ -74,14 +74,6 @@ public class Robot extends LoggedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-
-    // Coast mode after 3 seconds
-    new Trigger(this::isEnabled)
-        .negate()
-        .debounce(5)
-        .onTrue(
-            Commands.runOnce(() -> Drive.getInstance().configNeutralMode(NeutralModeValue.Coast))
-                .ignoringDisable(true));
 
   }
 
@@ -105,8 +97,6 @@ public class Robot extends LoggedRobot {
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    Drive.getInstance().periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -124,8 +114,6 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
-    Drive.getInstance().configNeutralMode(NeutralModeValue.Brake);
-
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -148,8 +136,6 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    Drive.getInstance().configNeutralMode(NeutralModeValue.Brake);
   }
 
   /** This function is called periodically during operator control. */

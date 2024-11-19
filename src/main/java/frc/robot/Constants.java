@@ -23,6 +23,7 @@ public final class Constants {
 
     public static enum kMode {
         REAL,
+        REAL_NO_LOG,
         REPLAY,
         SIM
     }
@@ -74,6 +75,33 @@ public final class Constants {
             public static final double ROTATION_P = 7.0;
             public static final double ROTATION_I = 0.0;
             public static final double ROTATION_D = 0.0;
+        }
+    }
+
+    public static class kClimber {
+        public static class kSpark {
+            public static final int ID = 0;
+
+            public static final boolean INVERTED = false;
+            public static final int CURRENT_LIMIT = 30;
+            public static final double CONVERSION_FACTOR = 1;
+
+            public static final double kP = 0.0;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double kFF = 0.0;
+        }
+
+        public static class kTalon {
+            public static final int ID = 0;
+
+            public static final boolean INVERTED = false;
+            public static final int CURRENT_LIMIT = 30;
+            public static final double CONVERSION_FACTOR = 1;
+
+            public static final double kP = 0.0;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
         }
     }
 }

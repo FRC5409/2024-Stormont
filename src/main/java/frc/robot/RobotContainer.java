@@ -4,23 +4,17 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
-import frc.robot.Constants.kDrive;
-import frc.robot.subsystems.Drive.Drive;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIO;
-import frc.robot.subsystems.Intake.IntakeIOSim;
-import frc.robot.subsystems.Intake.IntakeIOSparkMax;
+import frc.robot.Constants.kClimber.kSpark;
+import frc.robot.Constants.kClimber.kTalon;
+import frc.robot.subsystems.Climber.Climber;
+import frc.robot.subsystems.Climber.ClimberIO;
+import frc.robot.subsystems.Climber.ClimberIOSparkMax;
+import frc.robot.subsystems.Climber.ClimberIOTalonFX;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -38,20 +32,12 @@ public class RobotContainer {
     private final CommandXboxController m_secondaryController;
 
     // Subsystems
-    private final Drive sys_drivetrain;
-    private final Intake sys_intake;
+    private final Climber sys_sparkClimber;
+    private final Climber sys_talonClimber;
 
     // Commands
-    private final Command cmd_teleopDrive;
-
-    private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.MAX_CHASSIS_SPEED * 0.1)
-            .withRotationalDeadband(kDrive.MAX_ROTATION_SPEED * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     // Shuffleboard
-    public final ShuffleboardTab sb_driveteamTab;
-    private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -67,38 +53,24 @@ public class RobotContainer {
 
         // Subsystems
         switch (Constants.getMode()) {
+            case REAL_NO_LOG -> {
+                sys_sparkClimber = new Climber(new ClimberIOSparkMax(kSpark.ID));
+                sys_talonClimber = new Climber(new ClimberIOTalonFX(kTalon.ID));
+            }
             case REAL -> {
-                sys_intake = new Intake(new IntakeIOSparkMax(0));
+                sys_sparkClimber = new Climber(new ClimberIOSparkMax(kSpark.ID));
+                sys_talonClimber = new Climber(new ClimberIOTalonFX(kTalon.ID));
             }
             case REPLAY -> {
-                sys_intake = new Intake(new IntakeIO() {});
+                sys_sparkClimber = new Climber(new ClimberIO() {});
+                sys_talonClimber = new Climber(new ClimberIO() {});
             }
             case SIM -> {
-                sys_intake = new Intake(new IntakeIOSim());
+                sys_sparkClimber = null;
+                sys_talonClimber = null;
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
-
-        sys_drivetrain = Drive.getInstance();
-
-        // Commands
-        cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-            return teleopDrive
-                    .withVelocityX(-m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED)
-                    .withVelocityY(-m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED)
-                    .withRotationalRate(
-                            (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                                    * kDrive.MAX_ROTATION_SPEED);
-        }).ignoringDisable(true);
-
-        sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
-
-        // Shuffleboard
-        sb_driveteamTab = Shuffleboard.getTab("Drive team");
-        sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
-
-        sb_autoChooser = AutoBuilder.buildAutoChooser();
-        sb_driveteamTab.add("Choose auto", sb_autoChooser);
 
         // Configure the trigger bindings
         configureBindings();
@@ -120,9 +92,23 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // Button Bindings here
-        m_primaryController.x()
-            .onTrue(sys_intake.startIntaking())
-            .onFalse(sys_intake.stopIntaking());
+
+        // TODO: edit these numbers for PID tuning
+        m_primaryController.povUp()
+            .onTrue(sys_sparkClimber.setPosition(0))
+            .onFalse(sys_sparkClimber.stop());
+
+        m_primaryController.povDown()
+            .onTrue(sys_sparkClimber.setPosition(0))
+            .onFalse(sys_sparkClimber.stop());
+
+        m_primaryController.y()
+            .onTrue(sys_talonClimber.setPosition(0))
+            .onFalse(sys_talonClimber.stop());
+
+        m_primaryController.a()
+            .onTrue(sys_talonClimber.setPosition(0))
+            .onFalse(sys_talonClimber.stop());
     }
 
     /**
@@ -131,6 +117,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sb_autoChooser.getSelected();
+        return null;
     }
 }
