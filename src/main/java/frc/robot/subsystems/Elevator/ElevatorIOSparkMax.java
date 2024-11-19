@@ -11,33 +11,37 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class ElevatorIOSparkMax implements ElevatorIO {
 
-    private CANSparkMax elvatorMotor;
-    private RelativeEncoder elevatorIncoder;
+    private CANSparkMax elevatorMotor;
+    private RelativeEncoder elevatorEncoder;
 
     public ElevatorIOSparkMax(int ID) {
-        elvatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
+        elevatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
         
-        elvatorMotor.restoreFactoryDefaults();
-        elvatorMotor.setSmartCurrentLimit(30);
-        elvatorMotor.setIdleMode(IdleMode.kBrake);
-        elvatorMotor.setInverted(false);
+        elevatorMotor.restoreFactoryDefaults();
+        elevatorMotor.setSmartCurrentLimit(30);
+        elevatorMotor.setIdleMode(IdleMode.kBrake);
+        elevatorMotor.setInverted(false);
 
-        elvatorMotor.burnFlash();
+        elevatorMotor.burnFlash();
 
-        elevatorIncoder = elvatorMotor.getEncoder();
+        elevatorEncoder = elevatorMotor.getEncoder();
+    }
+
+    public ElevatorIOSparkMax() {
+        //TODO Auto-generated constructor stub
     }
 
     @Override
     public void setVoltage(double volts) {
-        elvatorMotor.setVoltage(volts);
+        elevatorMotor.setVoltage(volts);
     }
 
     @Override
     public void updateInputs (ElevatorInputs inputs) {
-        inputs.motorConnected = !(elvatorMotor.getFault(FaultID.kMotorFault) || elvatorMotor.getFault(FaultID.kCANRX) || elvatorMotor.getFault(FaultID.kCANRX));
-        inputs.motorVolts = elvatorMotor.get()*RobotController.getBatteryVoltage();
-        inputs.motorCurrent = elvatorMotor.getOutputCurrent();
-        inputs.motorTemp = elvatorMotor.getMotorTemperature();
-        inputs.motorSpeed = elevatorIncoder.getVelocity();
+        inputs.motorConnected = !(elevatorMotor.getFault(FaultID.kMotorFault) || elevatorMotor.getFault(FaultID.kCANRX) || elevatorMotor.getFault(FaultID.kCANRX));
+        inputs.motorVolts = elevatorMotor.get()*RobotController.getBatteryVoltage();
+        inputs.motorCurrent = elevatorMotor.getOutputCurrent();
+        inputs.motorTemp = elevatorMotor.getMotorTemperature();
+        inputs.motorPosition = elevatorEncoder.getPosition();
     }
 }

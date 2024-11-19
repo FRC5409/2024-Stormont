@@ -2,6 +2,8 @@ package frc.robot.subsystems.Intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import frc.robot.subsystems.Elevator.ElevatorInputsAutoLogged;
+
 public interface IntakeIO {
     @AutoLog
     public class IntakeInputs{
