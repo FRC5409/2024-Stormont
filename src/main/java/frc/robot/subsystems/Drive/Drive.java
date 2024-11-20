@@ -67,17 +67,20 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
     private final SwerveRequest.FieldCentricFacingAngle m_alignDrive = new SwerveRequest.FieldCentricFacingAngle();
     private final SwerveRequest.ApplyChassisSpeeds m_autoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
-    private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(m_kinematics,
-			m_pigeon2.getRotation2d(), m_modulePositions, new Pose2d(),
-			VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)), // TODO validate STDEVs
-			VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(1)));
+    private final SwerveDrivePoseEstimator m_poseEstimator = 
+        new SwerveDrivePoseEstimator(
+            m_kinematics,
+            m_pigeon2.getRotation2d(),
+            m_modulePositions,
+            new Pose2d()
+        );
 
     private final Pigeon2 m_pigeon;
     private final StatusSignal<Double> pigeonYaw;
     private final StatusSignal<Double> pigeonPitch;
     private final StatusSignal<Double> pigeonRoll;
 
-    private final Vision sys_vision;
+    // private final Vision sys_vision;
 
     private final PIDController autoAlignController;
 
@@ -101,7 +104,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
 			driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
 		}
 
-        sys_vision = Vision.getInstance();
+        // sys_vision = Vision.getInstance();
 
         m_alignDrive.HeadingController.setP(kDrive.kPID.ROTATION_P);
         m_alignDrive.HeadingController.setI(kDrive.kPID.ROTATION_I);
@@ -201,16 +204,16 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
 
     public Command autoAlignSpeed(DoubleSupplier xSpeeds, DoubleSupplier ySpeeds, Supplier<Rotation2d> targetAngle) {
         return this.applyRequest(() -> this.m_alignDrive
-            .withVelocityX(xSpeeds.getAsDouble())
-            .withVelocityY(ySpeeds.getAsDouble())
+            .withVelocityX(-ySpeeds.getAsDouble())
+            .withVelocityY(-xSpeeds.getAsDouble())
             .withTargetDirection(targetAngle.get())
         );
     }
 
     public Command telopDrive(DoubleSupplier xSpeeds, DoubleSupplier ySpeeds, DoubleSupplier rotationalSpeed) {
         return this.applyRequest(() -> this.m_telopDrive
-            .withVelocityX(xSpeeds.getAsDouble())
-            .withVelocityY(ySpeeds.getAsDouble())
+            .withVelocityX(-ySpeeds.getAsDouble())
+            .withVelocityY(-xSpeeds.getAsDouble())
             .withRotationalRate(rotationalSpeed.getAsDouble())
             .withDeadband(kController.kJoystickDeadband)
             .withRotationalDeadband(kController.kTriggerDeadband)
@@ -227,8 +230,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
             );
 
             return this.m_alignDrive
-                .withVelocityX(-ySpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...??
-                .withVelocityY(-xSpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...??
+                .withVelocityX(-ySpeeds.getAsDouble())
+                .withVelocityY(-xSpeeds.getAsDouble())
                 .withTargetDirection(angle);
         });
     }
@@ -286,11 +289,11 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
     public void updateRobotPose() {
         m_poseEstimator.update(m_pigeon2.getRotation2d(), m_modulePositions);
 
-        PoseEstimate poseEstimate = sys_vision.getEstimatedPose();
-        if (poseEstimate == null)
-            return;
+        // PoseEstimate poseEstimate = sys_vision.getEstimatedPose();
+        // if (poseEstimate == null)
+        //     return;
         
-        m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+        // m_poseEstimator.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
     }
 
     @AutoLogOutput(key = "Drive/ModuleStates")
@@ -303,7 +306,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         // This method will be called once per scheduler run
         updateInputs(gyroIO, modulesIO);
         
-        sys_vision.update();
+        // sys_vision.update();
 
         updateRobotPose();
         getModuleState();

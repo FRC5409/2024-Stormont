@@ -44,17 +44,11 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive sys_drivetrain;
-    private final Vision sys_vision;
-    private final Deployment sys_deployment;
+    // private final Vision sys_vision;
+    // private final Deployment sys_deployment;
     // private final Intake sys_intake;
 
     // Commands
-    private final Command cmd_teleopDrive;
-
-    private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.MAX_CHASSIS_SPEED * 0.1)
-            .withRotationalDeadband(kDrive.MAX_ROTATION_SPEED * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
@@ -73,42 +67,39 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
 
         // Subsystems
-        switch (Constants.getMode()) {
-            case REAL -> {
-                sys_deployment = Deployment.createInstance(new DeploymentIOSparkMax(kDeployment.DEPLOYMENT_ID));
-                sys_vision = Vision.createInstance(new VisionIOLimelight(kVision.LIMELIGHT_OFFSET));
-            }
-            case REPLAY -> {
-                sys_deployment = Deployment.createInstance(new DeploymentIO() {});
-                sys_vision = Vision.createInstance(new VisionIO() {});
-            }
-            case SIM -> {
-                sys_deployment = Deployment.createInstance(new DeploymentIOSim());
-                sys_vision = Vision.createInstance(new VisionIO() {});
-            }
-            case DEMO -> {
-                // TODO: Finish this
-                sys_deployment = null;
-                sys_vision = null;
-            }
-            default -> {
-                throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
-            }
-        }
+        // switch (Constants.getMode()) {
+        //     case REAL -> {
+        //         sys_deployment = Deployment.createInstance(new DeploymentIOSparkMax(kDeployment.DEPLOYMENT_ID));
+        //         sys_vision = Vision.createInstance(new VisionIOLimelight(kVision.LIMELIGHT_OFFSET));
+        //     }
+        //     case REPLAY -> {
+        //         sys_deployment = Deployment.createInstance(new DeploymentIO() {});
+        //         sys_vision = Vision.createInstance(new VisionIO() {});
+        //     }
+        //     case SIM -> {
+        //         sys_deployment = Deployment.createInstance(new DeploymentIOSim());
+        //         sys_vision = Vision.createInstance(new VisionIO() {});
+        //     }
+        //     case DEMO -> {
+        //         // TODO: Finish this
+        //         sys_deployment = null;
+        //         sys_vision = null;
+        //     }
+        //     default -> {
+        //         throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
+        //     }
+        // }
 
         sys_drivetrain = Drive.getInstance();
 
         // Commands
-        cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-            return teleopDrive
-                    .withVelocityX(-m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED)
-                    .withVelocityY(-m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED)
-                    .withRotationalRate(
-                            (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                                    * kDrive.MAX_ROTATION_SPEED);
-        }).ignoringDisable(true);
-
-        sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
+        sys_drivetrain.setDefaultCommand(
+            sys_drivetrain.telopDrive(
+                () -> m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED,
+                () -> m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED,
+                () -> (m_primaryController.getRightTriggerAxis() - m_primaryController.getLeftTriggerAxis()) * kDrive.MAX_ROTATION_SPEED
+            )
+        );
 
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
@@ -136,7 +127,7 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        m_primaryController.a().onTrue(sys_deployment.deploy()).onFalse(sys_deployment.retract());
+        // m_primaryController.a().onTrue(sys_deployment.deploy()).onFalse(sys_deployment.retract());
     }
 
     /**
