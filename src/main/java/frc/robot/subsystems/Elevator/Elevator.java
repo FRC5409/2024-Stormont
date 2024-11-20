@@ -17,7 +17,7 @@ public class Elevator extends SubsystemBase {
     private ElevatorIO IO;
     private ElevatorInputAutoLogged inputs;
 
-    private Elevator(ElevatorIO IO) {
+    public Elevator(ElevatorIO IO) {
         this.IO = IO;
         inputs = new ElevatorInputAutoLogged();
         
@@ -26,6 +26,10 @@ public class Elevator extends SubsystemBase {
 
     public Command startElevating() {
         return Commands.runOnce(() -> IO.setVoltage(6), this);
+    }
+
+    public Command Lowering() {
+        return Commands.runOnce(() -> IO.setVoltage(-6), this);
     }
 
     public Command stopElevating() {

@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
 import frc.robot.subsystems.Drive.Drive;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorIOSparkMax;
+import frc.robot.subsystems.Elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOSim;
@@ -40,6 +43,8 @@ public class RobotContainer {
     // Subsystems
     private final Drive sys_drivetrain;
     private final Intake sys_intake;
+    private final Elevator sys_elevator_NEO;
+    private final Elevator sys_elevator_kraken;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -69,12 +74,18 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
+                sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(0));
+                sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(0));
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
+                sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(0));
+                sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(0));
             }
             case SIM -> {
                 sys_intake = new Intake(new IntakeIOSim());
+                sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(0));
+                sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(0));
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -123,6 +134,22 @@ public class RobotContainer {
         m_primaryController.x()
         .onTrue(sys_intake.startIntaking())
         .onFalse(sys_intake.stopIntaking());
+
+        m_primaryController.povUp()
+        .onTrue(sys_elevator_NEO.startElevating())
+        .onFalse(sys_elevator_NEO.stopElevating());
+
+        m_primaryController.povDown()
+        .onTrue(sys_elevator_NEO.Lowering());
+
+        m_primaryController.povLeft()
+        .onTrue(sys_elevator_kraken.startElevating())
+        .onFalse(sys_elevator_kraken.stopElevating());
+
+        m_primaryController.povRight()
+        .onTrue(sys_elevator_kraken.Lowering());
+
+        
     }
 
     /**

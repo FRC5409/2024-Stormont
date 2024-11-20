@@ -9,8 +9,8 @@ public class ElevatorIOSim implements ElevatorIO{
 
     private double volts;
 
-    public ElevatorIOSim() {
-        elevatorSim = new ElevatorSim(DCMotor.getNEO(1), 1, 6, 0.0199, 1.066, 2.286, true, 1.066);
+    public ElevatorIOSim(DCMotor motor) {
+        elevatorSim = new ElevatorSim(motor, 1, 6, 0.0199, 1.066, 2.286, true, 1.066);
     }
 
     @Override
