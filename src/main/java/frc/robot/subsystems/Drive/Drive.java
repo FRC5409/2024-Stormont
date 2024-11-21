@@ -215,7 +215,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
             .withVelocityX(-ySpeeds.getAsDouble())
             .withVelocityY(-xSpeeds.getAsDouble())
             .withRotationalRate(rotationalSpeed.getAsDouble())
-            .withDeadband(kController.kJoystickDeadband)
+            .withDeadband(kController.kJoystickDeadband * kDrive.MAX_CHASSIS_SPEED)
             .withRotationalDeadband(kController.kTriggerDeadband)
         );
     }

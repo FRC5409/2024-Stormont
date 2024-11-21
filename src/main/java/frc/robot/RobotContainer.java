@@ -97,9 +97,9 @@ public class RobotContainer {
         // Commands
         sys_drivetrain.setDefaultCommand(
             sys_drivetrain.telopDrive(
-                () -> m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED,
-                () -> m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED,
-                () -> calculateRotationOutput(m_primaryController.getRightTriggerAxis() - m_primaryController.getLeftTriggerAxis())
+                () ->  m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED,
+                () ->  m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED,
+                () -> calculateRotationOutput(m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
             )
         );
 
