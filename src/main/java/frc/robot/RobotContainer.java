@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -97,7 +99,7 @@ public class RobotContainer {
             sys_drivetrain.telopDrive(
                 () -> m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED,
                 () -> m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED,
-                () -> (m_primaryController.getRightTriggerAxis() - m_primaryController.getLeftTriggerAxis()) * kDrive.MAX_ROTATION_SPEED
+                () -> calculateRotationOutput(m_primaryController.getRightTriggerAxis() - m_primaryController.getLeftTriggerAxis())
             )
         );
 
@@ -110,6 +112,15 @@ public class RobotContainer {
 
         // Configure the trigger bindings
         configureBindings();
+    }
+
+    public double calculateRotationOutput(double input) {
+        // return MathUtil.clamp(Math.abs(input) * input, -1.0, 1.0) * kDrive.MAX_ROTATION_SPEED;
+        return MathUtil.clamp(
+            input * (kDrive.MAX_ROTATION_SPEED * input * input + 1), // 10x^3 + x or x(10x^2 + 1)
+            -kDrive.MAX_ROTATION_SPEED,
+            kDrive.MAX_ROTATION_SPEED
+        );
     }
 
     /**
