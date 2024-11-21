@@ -34,6 +34,10 @@ public class Climber extends SubsystemBase {
         return Commands.runOnce(io::stop, this);
     }
 
+    public Command setVoltage(double voltage) {
+        return Commands.runOnce(() -> io.setVoltage(voltage), this);
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run

@@ -58,6 +58,11 @@ public class ClimberIOSparkMax implements ClimberIO {
     }
 
     @Override
+    public void setVoltage(double voltage) {
+        mot.setVoltage(voltage);
+    }
+
+    @Override
     public String getIOName() {
         return "SparkMax";
     }

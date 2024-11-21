@@ -90,20 +90,36 @@ public class RobotContainer {
         // Button Bindings here
 
         // TODO: edit these numbers for PID tuning
+        // m_primaryController.povUp()
+        //     .onTrue(sys_sparkClimber.setPosition(0))
+        //     .onFalse(sys_sparkClimber.stop());
+
+        // m_primaryController.povDown()
+        //     .onTrue(sys_sparkClimber.setPosition(0))
+        //     .onFalse(sys_sparkClimber.stop());
+
+        // m_primaryController.y()
+        //     .onTrue(sys_talonClimber.setPosition(0))
+        //     .onFalse(sys_talonClimber.stop());
+
+        // m_primaryController.a()
+        //     .onTrue(sys_talonClimber.setPosition(0))
+        //     .onFalse(sys_talonClimber.stop());
+
         m_primaryController.povUp()
-            .onTrue(sys_sparkClimber.setPosition(0))
+            .onTrue(sys_sparkClimber.setVoltage(3))
             .onFalse(sys_sparkClimber.stop());
 
         m_primaryController.povDown()
-            .onTrue(sys_sparkClimber.setPosition(0))
+            .onTrue(sys_sparkClimber.setVoltage(-3))
             .onFalse(sys_sparkClimber.stop());
 
         m_primaryController.y()
-            .onTrue(sys_talonClimber.setPosition(0))
+            .onTrue(sys_talonClimber.setVoltage(3))
             .onFalse(sys_talonClimber.stop());
 
         m_primaryController.a()
-            .onTrue(sys_talonClimber.setPosition(0))
+            .onTrue(sys_talonClimber.setVoltage(-3))
             .onFalse(sys_talonClimber.stop());
     }
 
