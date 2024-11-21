@@ -78,8 +78,8 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevator_Neo = new Elevator(new ElevatorIOSparkMax(0));
-                sys_elevator_Falcon = new Elevator(new ElevatorIOTalonFx(1));
+                sys_elevator_Neo = new Elevator(new ElevatorIOSparkMax(6));
+                sys_elevator_Falcon = new Elevator(new ElevatorIOTalonFx(8));
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
@@ -88,8 +88,8 @@ public class RobotContainer {
             }
             case SIM -> {
                 sys_intake = new Intake(new IntakeIOSim());
-                sys_elevator_Neo = new Elevator(new ElevatorIOSim(DCMotor.getNEO(1)));
-                sys_elevator_Falcon = new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1)));
+                sys_elevator_Neo = new Elevator(new ElevatorIOSim(DCMotor.getNEO(1), "Neo"));
+                sys_elevator_Falcon = new Elevator(new ElevatorIOSim(DCMotor.getFalcon500(1), "Talon"));
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }

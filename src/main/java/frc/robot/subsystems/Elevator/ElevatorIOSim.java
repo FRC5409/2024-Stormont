@@ -6,8 +6,10 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 public class ElevatorIOSim implements ElevatorIO {
     private ElevatorSim elevatorSim;
     private double volts;
+    private String name;
 
-    public ElevatorIOSim(DCMotor motor){
+    public ElevatorIOSim(DCMotor motor, String name){
+        this.name = name;
         elevatorSim = new ElevatorSim(motor, 9, 6, 0.0199, 1.066, 2.286, true, 1.066);
     }
 
@@ -24,6 +26,12 @@ public class ElevatorIOSim implements ElevatorIO {
         inputs.motorVolts = this.volts;
         inputs.motorCurrent = elevatorSim.getCurrentDrawAmps();
         inputs.motorTemp = 0.0;
-        inputs.motorPosition = elevatorSim.getPositionMeters();
+        inputs.motorPositionNeo = elevatorSim.getPositionMeters();
+        inputs.motorPositionTalon = elevatorSim.getPositionMeters();
+    }
+
+    @Override
+    public String getName(){
+        return name;
     }
 }

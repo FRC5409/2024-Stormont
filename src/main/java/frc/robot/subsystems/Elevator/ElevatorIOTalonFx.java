@@ -39,6 +39,11 @@ public class ElevatorIOTalonFx implements ElevatorIO {
         inputs.motorCurrent = elevatorMotor.getSupplyCurrent().getValueAsDouble();
         inputs.motorTemp = elevatorMotor.getDeviceTemp().getValueAsDouble();
 
-        inputs.motorPosition = elevatorMotor.getPosition().getValueAsDouble();
+        inputs.motorPositionTalon = elevatorMotor.getPosition().getValueAsDouble();
+    }
+
+    @Override
+    public String getName(){
+        return "Talon";
     }
 }
