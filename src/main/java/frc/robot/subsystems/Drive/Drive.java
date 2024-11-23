@@ -316,7 +316,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         Logger.processInputs("Drive/Gyro", gyroIO);
         
         for (int i = 0; i < modulesIO.length; i++)
-            Logger.processInputs("Drive/Module[" + kDrive.MODULE_NAMES[i] + "]", modulesIO[i]); // TODO: Validate modules names
+            Logger.processInputs("Drive/Module[" + kDrive.MODULE_NAMES[i] + "]", modulesIO[i]);
     }
 
     @Override
@@ -336,7 +336,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         gyroInputs.roll = Rotation2d.fromDegrees(pigeonRoll.getValueAsDouble());
 
         for (int i = 0; i < ModuleCount; i++) {
-            SwerveModule module = getModule(0);
+            SwerveModule module = getModule(i);
             TalonFX drive = module.getDriveMotor();
             TalonFX steer = module.getSteerMotor();
             CANcoder encoder = module.getCANcoder();

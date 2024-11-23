@@ -115,12 +115,14 @@ public class RobotContainer {
     }
 
     public double calculateRotationOutput(double input) {
-        // return MathUtil.clamp(Math.abs(input) * input, -1.0, 1.0) * kDrive.MAX_ROTATION_SPEED;
-        return MathUtil.clamp(
-            input * (kDrive.MAX_ROTATION_SPEED * input * input + 1), // 10x^3 + x or x(10x^2 + 1)
-            -kDrive.MAX_ROTATION_SPEED,
-            kDrive.MAX_ROTATION_SPEED
-        );
+        double output = 0;
+        if (input > 0) {
+            output = 8 * Math.pow(input, 3) + input + Math.sqrt(input);
+        } else if (input < 0) {
+            output = -(8 * Math.pow(-input, 3) - input + Math.sqrt(-input));
+        }
+        
+        return MathUtil.clamp(output, -kDrive.MAX_ROTATION_SPEED, kDrive.MAX_ROTATION_SPEED);
     }
 
     /**
