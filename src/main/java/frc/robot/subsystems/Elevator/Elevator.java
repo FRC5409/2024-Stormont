@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase{
-    //dsd
     private ElevatorIO io;
     private ElevatorInputsAutoLogged inputs;
 
