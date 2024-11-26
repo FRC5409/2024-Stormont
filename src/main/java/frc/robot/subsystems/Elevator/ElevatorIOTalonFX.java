@@ -1,29 +1,25 @@
 package frc.robot.subsystems.Elevator;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.core.CoreTalonFX;
-import com.revrobotics.CANSparkBase.FaultID;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-
-import edu.wpi.first.wpilibj.RobotController;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
     private TalonFX elevatorMotor;
-    private RelativeEncoder elevatorEncoder;
 
     public ElevatorIOTalonFX(int ID) {
-
-        elevatorMotor = new TalonFX(ID);
-        elevatorMotor.setSmartCurrentLimit(30);
+        elevatorMotor = new TalonFX(ID, "rio");
         
-        // elevatorMotor.setSmartCurrentLimit(30);
-        // elevatorMotor.setIdleMode(IdleMode.kBrake);
-        // elevatorMotor.setInverted(false);
+        var configurator = elevatorMotor.getConfigurator();
+        var limitConfigs = new CurrentLimitsConfigs();
+        // enable stator current limit
+        limitConfigs.StatorCurrentLimit = 30;
+        limitConfigs.StatorCurrentLimitEnable = true;
+        configurator.apply(limitConfigs);
 
-        // elevatorEncoder = elevatorMotor.getEncoder();
+        elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+      
+        elevatorMotor.setInverted(false);
     }
 
     @Override
@@ -33,13 +29,11 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
-        inputs.motorConnected = !(elevatorMotor.getFault(FaultID.kMotorFault) || elevatorMotor.getFault(FaultID.kCANRX) || elevatorMotor.getFault(FaultID.kCANRX));
-        inputs.motorVolts = elevatorMotor.get()*RobotController.getBatteryVoltage();
-
-        // inputs.motorConnected = !(elevatorMotor.getFault(FaultID.kMotorFault) || elevatorMotor.getFault(FaultID.kCANRX) || elevatorMotor.getFault(FaultID.kCANRX));
-        // inputs.motorVolts = elevatorMotor.get()*RobotController.getBatteryVoltage();
-        // inputs.motorCurrent = elevatorMotor.getOutputCurrent();
-        // inputs.motorTemp = elevatorMotor.getMotorTemperature();
-        // inputs.motorPosition = elevatorEncoder.getPosition();
+        inputs.motorConnected = elevatorMotor.getFaultField().getValue()==0;
+        inputs.motorVolts = elevatorMotor.getMotorVoltage().getValue();
+        inputs.motorCurrent = elevatorMotor.getStatorCurrent().getValue();
+        inputs.motorPosition = elevatorMotor.getPosition().getValue();
+        inputs.motorTemp = elevatorMotor.getDeviceTemp().getValue();
+        inputs.motorSpeed = elevatorMotor.getVelocity().getValue();
     }
 }

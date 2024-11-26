@@ -10,6 +10,7 @@ public interface ElevatorIO {
         public double motorCurrent = 0.0;
         public double motorVolts = 0.0;
         public double motorPosition = 0.0;
+        public double motorSpeed = 0.0;
         public double motorTemp = 0.0;
     }
 
