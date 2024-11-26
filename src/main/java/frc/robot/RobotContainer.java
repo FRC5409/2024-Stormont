@@ -76,8 +76,8 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevator1 = new Elevator(new ElevatorIOSparkMax(0));
-                sys_elevator2 = new Elevator(new ElevatorIOTalon(0));
+                sys_elevator1 = new Elevator(new ElevatorIOSparkMax(6));
+                sys_elevator2 = new Elevator(new ElevatorIOTalon(8));
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {
