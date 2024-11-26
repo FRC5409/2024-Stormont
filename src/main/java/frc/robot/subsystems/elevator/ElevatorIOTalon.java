@@ -38,7 +38,7 @@ public class ElevatorIOTalon implements ElevatorIO {
 
     @Override
     public void setPosition(double setpoint, int slot) {
-        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        final PositionVoltage m_request = new PositionVoltage(0).withSlot(slot);
         motor.setControl(m_request.withPosition(setpoint));
     }
 

@@ -39,4 +39,8 @@ public class Elevator extends SubsystemBase {
                 this).withTimeout(seconds);
     }
 
+    public Command moveToUp(boolean up) {
+        return Commands.runOnce(() -> io.setPosition(up ? 1 : 0, 0), this);
+    }
+
 }
