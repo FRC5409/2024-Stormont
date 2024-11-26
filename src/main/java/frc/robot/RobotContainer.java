@@ -46,7 +46,9 @@ public class RobotContainer {
     
     private Intake sys_intake;
 
-    private final Elevator sys_elevator;
+    private Elevator sys_elevator;
+    private ElevatorIOSparkMax sys_elevatorSpark;
+    private ElevatorIOTalonFX sys_elevatorTalon;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -76,8 +78,8 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevator = new Elevator(new ElevatorIOSparkMax(0));
-                // sys_elevator = new Elevator(new ElevatorIOTalonFX(1));
+                sys_elevatorSpark = new ElevatorIOSparkMax(new ElevatorIOSparkMax());
+                //sys_elevatorTalon = new ElevatorIOTalonFX(new ElevatorIOTalonFX());
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
@@ -85,8 +87,8 @@ public class RobotContainer {
             }
             case SIM -> {
                 sys_intake  = new Intake(new IntakeIOSim());
-                sys_elevator = new Elevator(new ElevatorIOSparkMax(0));
-                // sys_elevator = new Elevator(new ElevatorIOTalonFX(0));
+                sys_elevatorSpark = new ElevatorIOSparkMax(new ElevatorIOSparkMax());
+                //sys_elevatorTalon = new ElevatorIOTalonFX(new ElevatorIOTalonFX());
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -99,8 +101,7 @@ public class RobotContainer {
                     .withVelocityX(-m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED)
                     .withVelocityY(-m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED)
                     .withRotationalRate(
-                            (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                                    * kDrive.MAX_ROTATION_SPEED);
+                            (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())* kDrive.MAX_ROTATION_SPEED);
         }).ignoringDisable(true);
 
         sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
@@ -131,8 +132,10 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        m_primaryController.y().onTrue(sys_elevator.startExtendingCommand()).onFalse(sys_elevator.stopCommannd());
-        m_primaryController.a().onTrue(sys_elevator.startRetracktingCommand()).onFalse(sys_elevator.stopCommannd());
+        m_primaryController.y().onTrue(sys_elevatorSpark.startExtendingSparkMax()).onFalse(sys_elevatorSpark.stopSparkMax());
+        //m_primaryController.a().onTrue(sys_elevatorSpark.startRetracktingSparkMax()).onFalse(sys_elevatorSpark.stopSparkMax());
+
+        //m_primaryController.x().onTrue(sys_elevatorSpark.startExtendingCommand().onFalse(sys_elevatorSpark.stopCommannd()));
     }
 
     /**

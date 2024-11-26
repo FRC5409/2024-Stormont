@@ -14,8 +14,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private CANSparkMax elevatorMotor;
     private RelativeEncoder elevatorEncoder;
 
-    public ElevatorIOSparkMax(int ID) {
-        elevatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
+    public ElevatorIOSparkMax(int elevatorIOSparkMax) {
+        elevatorMotor = new CANSparkMax(elevatorIOSparkMax, MotorType.kBrushless);
         
         elevatorMotor.restoreFactoryDefaults();
         elevatorMotor.setSmartCurrentLimit(30);
@@ -28,6 +28,10 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     public ElevatorIOSparkMax() {
+        //TODO Auto-generated constructor stub
+    }
+
+    public ElevatorIOSparkMax(ElevatorIOSparkMax elevatorIOSparkMax) {
         //TODO Auto-generated constructor stub
     }
 

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase{
+    //dsd
     private ElevatorIO io;
     private ElevatorInputsAutoLogged inputs;
 
@@ -18,17 +19,17 @@ public class Elevator extends SubsystemBase{
         Shuffleboard.getTab("elevator").addDouble("elevator position", () -> inputs.motorPosition);
     }
 
-    public Command startExtendingCommand() {
-        return Commands.runOnce(() -> io.setVoltage(6), this);
-    }
+    // public Command startExtendingCommand() {
+    //     return Commands.runOnce(() -> io.setVoltage(6), this);
+    // }
 
-    public Command startRetracktingCommand() {
-        return Commands.runOnce(() -> io.setVoltage(-6), this);
-    }
+    // public Command startRetracktingCommand() {
+    //     return Commands.runOnce(() -> io.setVoltage(-6), this);
+    // }
 
-    public Command stopCommannd() {
-        return Commands.runOnce(() -> io.setVoltage(0), this);
-    }
+    // public Command stopCommannd() {
+    //     return Commands.runOnce(() -> io.setVoltage(0), this);
+    // }
 
     @Override
     public void periodic() {

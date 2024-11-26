@@ -7,8 +7,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public class ElevatorIOTalonFX implements ElevatorIO {
     private TalonFX elevatorMotor;
 
-    public ElevatorIOTalonFX(int ID) {
-        elevatorMotor = new TalonFX(ID, "rio");
+    public ElevatorIOTalonFX(int elevatorIOTalonFX) {
+        elevatorMotor = new TalonFX(elevatorIOTalonFX);
         
         var configurator = elevatorMotor.getConfigurator();
         var limitConfigs = new CurrentLimitsConfigs();
