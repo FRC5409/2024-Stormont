@@ -12,7 +12,12 @@ public interface ElevatorIO {
         public double temp = 0.0;
     }
 
-    public default void setVoltage(double volts) {}
+    public default void setVoltage(double volts) {
+    }
 
-    public default void updateInputs(ElevatorInputs inputs) {} 
+    public default void updateInputs(ElevatorInputs inputs) {
+    }
+
+    public default void setPosition(double setpoint, int slot) {
+    }
 }

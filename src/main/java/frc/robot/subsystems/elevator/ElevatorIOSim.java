@@ -13,7 +13,7 @@ public class ElevatorIOSim implements ElevatorIO {
                 DCMotor.getNEO(1), 0, 0, 0),
                 DCMotor.getNEO(1),
                 0,
-                2,  // this is DEFINITELY not right 😭🙏
+                2, // this is DEFINITELY not right 😭🙏
                 true,
                 0);
     }
@@ -22,6 +22,11 @@ public class ElevatorIOSim implements ElevatorIO {
     public void setVoltage(double volts) {
         sim.setInputVoltage(volts);
         this.volts = volts;
+    }
+
+    @Override
+    public void setPosition(double setpoint, int slot) {
+        sim.setState(setpoint, 0);
     }
 
     @Override

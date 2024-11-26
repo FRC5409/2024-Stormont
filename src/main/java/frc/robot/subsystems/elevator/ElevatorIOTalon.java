@@ -1,6 +1,8 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
@@ -17,14 +19,27 @@ public class ElevatorIOTalon implements ElevatorIO {
 
         config.CurrentLimits.StatorCurrentLimit = 40;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-
         motor.setNeutralMode(NeutralModeValue.Brake);
+
+        // TOOD: PID tuning
+        Slot0Configs pidConfig = new Slot0Configs();
+        pidConfig.kP = 0;
+        pidConfig.kI = 0;
+        pidConfig.kD = 0;
+
         motor.getConfigurator().apply(config);
+        motor.getConfigurator().apply(pidConfig);
     }
 
     @Override
     public void setVoltage(double volts) {
         motor.setVoltage(volts);
+    }
+
+    @Override
+    public void setPosition(double setpoint, int slot) {
+        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        motor.setControl(m_request.withPosition(setpoint));
     }
 
     @Override
