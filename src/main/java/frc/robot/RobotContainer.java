@@ -44,7 +44,7 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive sys_drivetrain;
-    private final Intake sys_intake;
+    // private final Intake sys_intake;
     private final Elevator sys_elevator1;
     private final Elevator sys_elevator2;
 
@@ -75,20 +75,20 @@ public class RobotContainer {
         // Subsystems
         switch (Constants.getMode()) {
             case REAL -> {
-                sys_intake = new Intake(new IntakeIOSparkMax(0));
+                // sys_intake = new Intake(new IntakeIOSparkMax(0));
                 sys_elevator1 = new Elevator(new ElevatorIOSparkMax(6));
                 sys_elevator2 = new Elevator(new ElevatorIOTalon(8));
             }
             case REPLAY -> {
-                sys_intake = new Intake(new IntakeIO() {
-                });
+                // sys_intake = new Intake(new IntakeIO() {
+                // });
                 sys_elevator1 = new Elevator(new ElevatorIO() {
                 });
                 sys_elevator2 = new Elevator(new ElevatorIO() {
                 });
             }
             case SIM -> {
-                sys_intake = new Intake(new IntakeIOSim());
+                // sys_intake = new Intake(new IntakeIOSim());
                 sys_elevator1 = new Elevator(new ElevatorIOSim());
                 sys_elevator2 = new Elevator(new ElevatorIOSim());
             }

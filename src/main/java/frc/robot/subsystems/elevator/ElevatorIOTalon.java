@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.RobotController;
 
 public class ElevatorIOTalon implements ElevatorIO {
     private TalonFX motor;
-    private RelativeEncoder encoder;
 
     public ElevatorIOTalon(int id) {
         motor = new TalonFX(id);
@@ -48,6 +47,6 @@ public class ElevatorIOTalon implements ElevatorIO {
         inputs.voltage = motor.get() * RobotController.getBatteryVoltage();
         inputs.current = motor.getStatorCurrent().getValueAsDouble();
         inputs.temp = motor.getDeviceTemp().getValueAsDouble();
-        inputs.speed = encoder.getVelocity();
+        inputs.speed = motor.getVelocity().getValueAsDouble();
     }
 }
