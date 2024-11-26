@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
         return Commands.runOnce(() -> IO.setVoltage(-6), this);
     }
 
-    public Command stopElevating() {
+    public Command stop() {
         return Commands.runOnce(() ->IO.setVoltage(0), this);
     }
 

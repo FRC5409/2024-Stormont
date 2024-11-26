@@ -120,17 +120,19 @@ public class RobotContainer {
 
         m_primaryController.povUp()
         .onTrue(sys_elevator_NEO.startElevating())
-        .onFalse(sys_elevator_NEO.stopElevating());
+        .onFalse(sys_elevator_NEO.stop());
 
         m_primaryController.povDown()
-        .onTrue(sys_elevator_NEO.Lowering());
+        .onTrue(sys_elevator_NEO.Lowering())
+        .onFalse(sys_elevator_NEO.stop());
 
         m_primaryController.povLeft()
         .onTrue(sys_elevator_kraken.startElevating())
-        .onFalse(sys_elevator_kraken.stopElevating());
+        .onFalse(sys_elevator_kraken.stop());
 
         m_primaryController.povRight()
-        .onTrue(sys_elevator_kraken.Lowering());
+        .onTrue(sys_elevator_kraken.Lowering())
+        .onFalse(sys_elevator_kraken.stop());
 
         
     }
