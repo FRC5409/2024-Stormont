@@ -20,6 +20,7 @@ import frc.robot.subsystems.Drive.Drive;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIO;
 import frc.robot.subsystems.Elevator.ElevatorIOSparkMax;
+import frc.robot.subsystems.Elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOSim;
@@ -76,6 +77,7 @@ public class RobotContainer {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
                 sys_elevator = new Elevator(new ElevatorIOSparkMax(0));
+                // sys_elevator = new Elevator(new ElevatorIOTalonFX(1));
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
@@ -83,7 +85,8 @@ public class RobotContainer {
             }
             case SIM -> {
                 sys_intake  = new Intake(new IntakeIOSim());
-                sys_elevator = new Elevator(new ElevatorIOSparkMax());
+                sys_elevator = new Elevator(new ElevatorIOSparkMax(0));
+                // sys_elevator = new Elevator(new ElevatorIOTalonFX(0));
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
