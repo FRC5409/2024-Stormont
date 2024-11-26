@@ -21,6 +21,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         elevatorMotor.setIdleMode(IdleMode.kBrake);
         elevatorMotor.setInverted(false);
 
+        this.elevatorEncoder = elevatorMotor.getEncoder();
+
         elevatorMotor.burnFlash();
     }
 

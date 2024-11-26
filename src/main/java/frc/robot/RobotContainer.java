@@ -42,7 +42,7 @@ public class RobotContainer {
 
     // Commands
     
-    private final SendableChooser<Command> sb_autoChooser;
+    //private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -82,7 +82,7 @@ public class RobotContainer {
 
         // Shuffleboard
 
-        sb_autoChooser = AutoBuilder.buildAutoChooser();
+        // sb_autoChooser = AutoBuilder.buildAutoChooser();
 
         // Configure the trigger bindings
         configureBindings();
@@ -128,6 +128,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sb_autoChooser.getSelected();
+        //return sb_autoChooser.getSelected();
+        return null;
     }
 }
