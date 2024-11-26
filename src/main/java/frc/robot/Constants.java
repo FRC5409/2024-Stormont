@@ -38,7 +38,7 @@ public final class Constants {
     /**
      * Gets the mode of the robot
      * WARNING: If the robot is booting and REAL_MODE was not set correctly for a comp match
-     * it will return the set REAL_MODE until it connects to a FMS1
+     * it will return the set REAL_MODE until it connects to an FMS
      * @return the given robot mode
      */
     public static kMode getMode() {
@@ -73,10 +73,10 @@ public final class Constants {
 
         public static final int CURRENT_LIMIT = 100;
 
-        public static final double MAX_CHASSIS_SPEED = 4.56;
-        public static final double MAX_CHASSIS_ACCELERATION = 3.0;
-        public static final double MAX_ROTATION_SPEED = 10.0;
-        public static final double MAX_ROTATION_ACCELERATION = Math.toRadians(720.0);
+        public static final double MAX_CHASSIS_SPEED = 4.56 / 3.0;
+        public static final double MAX_CHASSIS_ACCELERATION = 3.0 / 3.0;
+        public static final double MAX_ROTATION_SPEED = 10.0 / 3.0;
+        public static final double MAX_ROTATION_ACCELERATION = Math.toRadians(720.0) / 3.0;
 
         public static class kPID {
             public static final double TRANSLATION_P = 5.0;

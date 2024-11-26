@@ -4,30 +4,15 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
-import frc.robot.Constants.kDeployment;
 import frc.robot.Constants.kDrive;
-import frc.robot.Constants.kVision;
-import frc.robot.subsystems.Deployment.Deployment;
-import frc.robot.subsystems.Deployment.DeploymentIO;
-import frc.robot.subsystems.Deployment.DeploymentIOSim;
-import frc.robot.subsystems.Deployment.DeploymentIOSparkMax;
 import frc.robot.subsystems.Drive.Drive;
-import frc.robot.subsystems.Vision.Vision;
-import frc.robot.subsystems.Vision.VisionIO;
-import frc.robot.subsystems.Vision.VisionIOLimelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,15 +31,11 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive sys_drivetrain;
-    // private final Vision sys_vision;
-    // private final Deployment sys_deployment;
-    // private final Intake sys_intake;
 
     // Commands
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
-    private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -66,7 +47,7 @@ public class RobotContainer {
         // Joysticks
         m_primaryController = new CommandXboxController(kController.kDriverControllerPort);
         // m_secondaryController = new CommandXboxController(kController.kSecondaryController);
-        DriverStation.silenceJoystickConnectionWarning(true);
+        // DriverStation.silenceJoystickConnectionWarning(true);
 
         // Subsystems
         // switch (Constants.getMode()) {
@@ -107,9 +88,6 @@ public class RobotContainer {
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
         sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
 
-        sb_autoChooser = AutoBuilder.buildAutoChooser();
-        sb_driveteamTab.add("Choose auto", sb_autoChooser);
-
         // Configure the trigger bindings
         configureBindings();
     }
@@ -117,9 +95,9 @@ public class RobotContainer {
     public double calculateRotationOutput(double input) {
         double output = 0;
         if (input > 0) {
-            output = 8 * Math.pow(input, 3) + input + Math.sqrt(input);
+            output = (kDrive.MAX_ROTATION_SPEED - 2) * Math.pow(input, 3) + input + Math.sqrt(input);
         } else if (input < 0) {
-            output = -(8 * Math.pow(-input, 3) - input + Math.sqrt(-input));
+            output = -((kDrive.MAX_ROTATION_SPEED - 2) * Math.pow(-input, 3) - input + Math.sqrt(-input));
         }
         
         return MathUtil.clamp(output, -kDrive.MAX_ROTATION_SPEED, kDrive.MAX_ROTATION_SPEED);
@@ -149,6 +127,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sb_autoChooser.getSelected();
+        return null;
     }
 }
