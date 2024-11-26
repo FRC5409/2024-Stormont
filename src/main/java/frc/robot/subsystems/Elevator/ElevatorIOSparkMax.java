@@ -39,7 +39,12 @@ public class ElevatorIOSparkMax implements ElevatorIO{
         inputs.elevatorCurrent = elevatorMotor.getOutputCurrent();
         inputs.elevatorTemp = elevatorMotor.getMotorTemperature();
 
-        inputs.elevatorPosition = elevatorEncoder.getPosition();
+        inputs.elevatorPositionNEO = elevatorEncoder.getPosition();
+     }
+
+     @Override
+     public String getName() {
+        return "NEO";
      }
     
 }

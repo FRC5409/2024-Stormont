@@ -9,7 +9,10 @@ public class ElevatorIOSim implements ElevatorIO{
 
     private double volts;
 
-    public ElevatorIOSim(DCMotor motor) {
+    private String name;
+
+    public ElevatorIOSim(DCMotor motor, String name) {
+        this.name = name;
         elevatorSim = new ElevatorSim(motor, 1, 6, 0.0199, 1.066, 2.286, true, 1.066);
     }
 
@@ -26,7 +29,12 @@ public class ElevatorIOSim implements ElevatorIO{
         inputs.elevatorVolts = this.volts;
         inputs.elevatorCurrent = elevatorSim.getCurrentDrawAmps();
         inputs.elevatorTemp = 0.0;
-        inputs.elevatorPosition = elevatorSim.getPositionMeters();
+        inputs.elevatorPositionTalon = elevatorSim.getPositionMeters();
+        inputs.elevatorPositionNEO = elevatorSim.getPositionMeters();
     }
-    
+ 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

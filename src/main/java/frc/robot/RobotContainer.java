@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
-import frc.robot.subsystems.Drive.Drive;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIOSparkMax;
 import frc.robot.subsystems.Elevator.ElevatorIOTalonFX;
@@ -41,22 +40,19 @@ public class RobotContainer {
     private final CommandXboxController m_secondaryController;
 
     // Subsystems
-    private final Drive sys_drivetrain;
-    private final Intake sys_intake;
+    // private final Intake sys_intake;
     private final Elevator sys_elevator_NEO;
     private final Elevator sys_elevator_kraken;
 
     // Commands
-    private final Command cmd_teleopDrive;
+    // private final Command cmd_teleopDrive;
 
-    private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.MAX_CHASSIS_SPEED * 0.1)
-            .withRotationalDeadband(kDrive.MAX_ROTATION_SPEED * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    // private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
+    //         .withDeadband(kDrive.MAX_CHASSIS_SPEED * 0.1)
+    //         .withRotationalDeadband(kDrive.MAX_ROTATION_SPEED * 0.1)
+    //         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     // Shuffleboard
-    public final ShuffleboardTab sb_driveteamTab;
-    private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -73,43 +69,30 @@ public class RobotContainer {
         // Subsystems
         switch (Constants.getMode()) {
             case REAL -> {
-                sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(0));
-                sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(0));
+                // sys_intake = new Intake(new IntakeIOSparkMax(0));
+                sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(6));
+                sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(8));
             }
             case REPLAY -> {
-                sys_intake = new Intake(new IntakeIO() {});
-                sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(0));
-                sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(0));
+                // sys_intake = new Intake(new IntakeIO() {});
+                sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(6));
+                sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(8));
             }
             case SIM -> {
-                sys_intake = new Intake(new IntakeIOSim());
+                // sys_intake = new Intake(new IntakeIOSim());
                 sys_elevator_NEO = new Elevator(new ElevatorIOSparkMax(0));
                 sys_elevator_kraken = new Elevator(new ElevatorIOTalonFX(0));
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
 
-        sys_drivetrain = Drive.getInstance();
 
         // Commands
-        cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-            return teleopDrive
-                    .withVelocityX(-m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED)
-                    .withVelocityY(-m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED)
-                    .withRotationalRate(
-                            (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                                    * kDrive.MAX_ROTATION_SPEED);
-        }).ignoringDisable(true);
+      
 
-        sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
         // Shuffleboard
-        sb_driveteamTab = Shuffleboard.getTab("Drive team");
-        sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
-
-        sb_autoChooser = AutoBuilder.buildAutoChooser();
-        sb_driveteamTab.add("Choose auto", sb_autoChooser);
+        
 
         // Configure the trigger bindings
         configureBindings();
@@ -117,7 +100,7 @@ public class RobotContainer {
 
     /**
      * Use this method to define your trigger->command mappings. Triggers can be
-     * created via the
+     * created via thep
      * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
      * an arbitrary
      * predicate, or via the named factories in {@link
@@ -131,9 +114,9 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // Button Bindings here
-        m_primaryController.x()
-        .onTrue(sys_intake.startIntaking())
-        .onFalse(sys_intake.stopIntaking());
+        // m_primaryController.x()
+        // .onTrue(sys_intake.startIntaking())
+        // .onFalse(sys_intake.stopIntaking());
 
         m_primaryController.povUp()
         .onTrue(sys_elevator_NEO.startElevating())
@@ -158,6 +141,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sb_autoChooser.getSelected();
+        return null;
     }
 }
