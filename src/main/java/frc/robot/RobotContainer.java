@@ -21,6 +21,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
+import frc.robot.subsystems.elevator.ElevatorIOTalon;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
@@ -44,7 +45,9 @@ public class RobotContainer {
     // Subsystems
     private final Drive sys_drivetrain;
     private final Intake sys_intake;
-    private final Elevator sys_elevator;
+    private final Elevator sys_elevator1;
+    private final Elevator sys_elevator2;
+
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -74,17 +77,21 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevator = new Elevator(new ElevatorIOSparkMax(0));
+                sys_elevator1 = new Elevator(new ElevatorIOSparkMax(0));
+                sys_elevator2 = new Elevator(new ElevatorIOTalon(0));
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {
                 });
-                sys_elevator = new Elevator(new ElevatorIO() {
+                sys_elevator1 = new Elevator(new ElevatorIO() {
+                });
+                sys_elevator2 = new Elevator(new ElevatorIO() {
                 });
             }
             case SIM -> {
                 sys_intake = new Intake(new IntakeIOSim());
-                sys_elevator = new Elevator(new ElevatorIOSim());
+                sys_elevator1 = new Elevator(new ElevatorIOSim());
+                sys_elevator2 = new Elevator(new ElevatorIOSim());
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
