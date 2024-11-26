@@ -10,7 +10,7 @@ public interface IntakeIO {
         public double motorSpeed = 0.0;
         public double motorCurrent = 0.0;
         public double motorTemp = 0.0;
-        public boolean irTripped;
+        // public boolean irTripped;
     }
 
     public default void setVoltage(double volts) {}

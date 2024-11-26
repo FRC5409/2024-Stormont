@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.RobotController;
 public class IntakeIOSparkMax implements IntakeIO {
     private CANSparkMax motor;
     private RelativeEncoder encoder;
-    private DigitalInput irSensor;
+    // private DigitalInput irSensor;
 
     public IntakeIOSparkMax(int id) {
         motor = new CANSparkMax(id, MotorType.kBrushless);
@@ -40,6 +40,6 @@ public class IntakeIOSparkMax implements IntakeIO {
         inputs.motorCurrent = motor.getOutputCurrent();
         inputs.motorTemp = motor.getMotorTemperature();
         inputs.motorSpeed = encoder.getVelocity();
-        inputs.irTripped = !irSensor.get();
+        // inputs.irTripped = !irSensor.get();
     }
 }
