@@ -48,7 +48,6 @@ public class RobotContainer {
     private final Elevator sys_elevator1;
     private final Elevator sys_elevator2;
 
-
     // Commands
     private final Command cmd_teleopDrive;
 
@@ -137,7 +136,14 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // Button Bindings here
-        m_primaryController.a().onTrue(sys_intake.start()).onFalse(sys_intake.stop());
+        // m_primaryController.a().onTrue(sys_intake.start()).onFalse(sys_intake.stop());
+
+        m_primaryController.a().onTrue(sys_elevator1.moveFor(true, 0.5));
+        m_primaryController.y().onTrue(sys_elevator1.moveFor(false, 0.5));
+
+        m_primaryController.x().onTrue(sys_elevator2.moveFor(true, 0.5));
+        m_primaryController.b().onTrue(sys_elevator2.moveFor(false, 0.5));
+
     }
 
     /**
