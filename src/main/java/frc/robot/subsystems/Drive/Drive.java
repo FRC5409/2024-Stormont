@@ -220,8 +220,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
             );
 
             return this.m_alignDrive
-                .withVelocityX(-ySpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...??
-                .withVelocityY(-xSpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...??
+                .withVelocityX(-ySpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...?? TODO who wrote this??
+                .withVelocityY(-xSpeeds.getAsDouble()) // Took so long to debug this only for it to be stupid...?? TODO and this?????
                 .withTargetDirection(angle);
         });
     }
