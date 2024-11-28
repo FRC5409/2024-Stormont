@@ -15,7 +15,7 @@ public class Elevator extends SubsystemBase{
         this.io = io;
         inputs = new ElevatorInputsAutoLogged();
 
-        Shuffleboard.getTab("elevator").addDouble("elevator position", () -> inputs.motorPosition);
+        // Shuffleboard.getTab("elevator").addDouble("elevatorposition", () -> inputs.motorPosition);
     }
 
     public Command startExtendingCommand() {

@@ -126,7 +126,7 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     Drive.getInstance().configNeutralMode(NeutralModeValue.Brake);
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
