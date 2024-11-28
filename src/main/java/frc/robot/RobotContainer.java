@@ -47,8 +47,8 @@ public class RobotContainer {
     private Intake sys_intake;
 
     private Elevator sys_elevator;
-    private ElevatorIOSparkMax sys_elevatorSpark;
-    private ElevatorIOTalonFX sys_elevatorTalon;
+    private Elevator sys_elevatorSpark;
+    private Elevator sys_elevatorTalon;
 
     // Commands
     private final Command cmd_teleopDrive;
@@ -78,8 +78,8 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevatorSpark = new ElevatorIOSparkMax(new ElevatorIOSparkMax());
-                //sys_elevatorTalon = new ElevatorIOTalonFX(new ElevatorIOTalonFX());
+                sys_elevatorSpark = new Elevator(new ElevatorIOSparkMax());
+                sys_elevatorTalon = new Elevator(new ElevatorIOTalonFX());
             }
             case REPLAY -> {
                 sys_intake = new Intake(new IntakeIO() {});
@@ -87,8 +87,8 @@ public class RobotContainer {
             }
             case SIM -> {
                 sys_intake  = new Intake(new IntakeIOSim());
-                sys_elevatorSpark = new ElevatorIOSparkMax(new ElevatorIOSparkMax());
-                //sys_elevatorTalon = new ElevatorIOTalonFX(new ElevatorIOTalonFX());
+                sys_elevatorSpark = new Elevator(new ElevatorIOSparkMax());
+                sys_elevatorTalon = new Elevator(new ElevatorIOTalonFX());
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -132,10 +132,11 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        m_primaryController.y().onTrue(sys_elevatorSpark.startExtendingSparkMax()).onFalse(sys_elevatorSpark.stopSparkMax());
-        //m_primaryController.a().onTrue(sys_elevatorSpark.startRetracktingSparkMax()).onFalse(sys_elevatorSpark.stopSparkMax());
+        m_primaryController.y().onTrue(sys_elevatorSpark.startExtendingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
+        m_primaryController.a().onTrue(sys_elevatorSpark.startRetracktingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
 
-        //m_primaryController.x().onTrue(sys_elevatorSpark.startExtendingCommand().onFalse(sys_elevatorSpark.stopCommannd()));
+        m_primaryController.x().onTrue(sys_elevatorTalon.startExtendingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
+        m_primaryController.b().onTrue(sys_elevatorTalon.startRetracktingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
 
     }
 

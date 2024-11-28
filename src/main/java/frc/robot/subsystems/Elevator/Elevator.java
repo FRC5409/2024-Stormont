@@ -18,17 +18,17 @@ public class Elevator extends SubsystemBase{
         Shuffleboard.getTab("elevator").addDouble("elevator position", () -> inputs.motorPosition);
     }
 
-    // public Command startExtendingCommand() {
-    //     return Commands.runOnce(() -> io.setVoltage(6), this);
-    // }
+    public Command startExtendingCommand() {
+        return Commands.runOnce(() -> io.setVoltage(6), this);
+    }
 
-    // public Command startRetracktingCommand() {
-    //     return Commands.runOnce(() -> io.setVoltage(-6), this);
-    // }
+    public Command startRetracktingCommand() {
+        return Commands.runOnce(() -> io.setVoltage(-6), this);
+    }
 
-    // public Command stopCommannd() {
-    //     return Commands.runOnce(() -> io.setVoltage(0), this);
-    // }
+    public Command stopCommannd() {
+        return Commands.runOnce(() -> io.setVoltage(0), this);
+    }
 
     @Override
     public void periodic() {

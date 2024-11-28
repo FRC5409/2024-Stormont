@@ -22,6 +22,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         elevatorMotor.setInverted(false);
     }
 
+    public ElevatorIOTalonFX(){}
+
     @Override
     public void setVoltage(double volts) {
         elevatorMotor.setVoltage(volts);
