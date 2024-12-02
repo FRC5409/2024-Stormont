@@ -30,6 +30,9 @@ public class Elevator extends SubsystemBase{
         return Commands.runOnce(() -> io.setVoltage(0), this);
     }
 
+    public Command up10(){
+        return Commands.runOnce(() -> io.up10(), this);
+    }
     @Override
     public void periodic() {
         // This method will be called once per scheduler run

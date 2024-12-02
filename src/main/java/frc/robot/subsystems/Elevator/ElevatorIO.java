@@ -18,4 +18,5 @@ public interface ElevatorIO {
 
     public default void updateInputs(ElevatorInputs inputs) {}
 
+    public default void up10(){}
 }

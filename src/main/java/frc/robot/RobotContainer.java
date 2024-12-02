@@ -135,13 +135,14 @@ public class RobotContainer {
         m_primaryController.y().onTrue(sys_elevatorSpark.startExtendingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
         m_primaryController.a().onTrue(sys_elevatorSpark.startRetracktingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
 
-        m_primaryController.x().onTrue(sys_elevatorTalon.startExtendingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
+        //m_primaryController.x().onTrue(sys_elevatorTalon.startExtendingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
+        m_primaryController.x().onTrue(sys_elevatorTalon.up10());
         m_primaryController.b().onTrue(sys_elevatorTalon.startRetracktingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
 
     }
 
     /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
+     * Use this to pass the autonomous command to the main {@lbink Robot} class.
      *
      * @return the command to run in autonomous
      */
