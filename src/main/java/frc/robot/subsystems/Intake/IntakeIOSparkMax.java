@@ -13,6 +13,7 @@ public class IntakeIOSparkMax implements IntakeIO {
 
     private CANSparkMax intakeMotor;
     private RelativeEncoder intakeIncoder;
+    
 
     public IntakeIOSparkMax(int ID) {
         intakeMotor = new CANSparkMax(ID, MotorType.kBrushless);

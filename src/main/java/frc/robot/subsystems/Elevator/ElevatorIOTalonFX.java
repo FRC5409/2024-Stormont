@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
     private TalonFX elevatorMotor;
+    private PositionVoltage pidController;
 
     public ElevatorIOTalonFX(int elevatorIOTalonFX) {
         elevatorMotor = new TalonFX(elevatorIOTalonFX);
@@ -23,16 +24,15 @@ public class ElevatorIOTalonFX implements ElevatorIO {
       
         elevatorMotor.setInverted(false);
 
-        //PID
         var slot0Configs = new Slot0Configs();
-        slot0Configs.kP = 2.4; // An error of 1 rotation results in 2.4 V output
-        slot0Configs.kI = 0; // no output for integrated error
-        slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+        slot0Configs.kP = 0;
+        slot0Configs.kI = 0;
+        slot0Configs.kD = 0;
 
         elevatorMotor.getConfigurator().apply(slot0Configs);
     }
 
-    public ElevatorIOTalonFX(){}
+    public ElevatorIOTalonFX() {}
 
     @Override
     public void setVoltage(double volts) {
@@ -40,16 +40,15 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
 
     @Override 
-    public void up10(){
-        // create a position closed-loop request, voltage output, slot 0 configs
-        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
-        // set position to 10 rotations
+    public void upTenTalon() {
+        //final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        PositionVoltage m_request = new PositionVoltage(0);
         elevatorMotor.setControl(m_request.withPosition(10));
     }
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
-        inputs.motorConnected = elevatorMotor.getFaultField().getValue()==0;
+        inputs.motorConnected = elevatorMotor.getFaultField().getValue() == 0;
         inputs.motorVolts = elevatorMotor.getMotorVoltage().getValue();
         inputs.motorCurrent = elevatorMotor.getStatorCurrent().getValue();
         inputs.motorPosition = elevatorMotor.getPosition().getValue();

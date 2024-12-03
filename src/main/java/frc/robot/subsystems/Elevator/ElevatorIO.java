@@ -18,5 +18,7 @@ public interface ElevatorIO {
 
     public default void updateInputs(ElevatorInputs inputs) {}
 
-    public default void up10(){}
+    public default void upTenSpark() {}
+
+    public default void upTenTalon() {}
 }
