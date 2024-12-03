@@ -6,6 +6,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.RobotController;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -14,7 +15,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private CANSparkMax elevatorMotor;
     private RelativeEncoder elevatorEncoder;
     private SparkPIDController pid;
-    private double kP = 0;
+    private Double kP = 0.0, kI = 0.0, kD = 0.0;
 
     public ElevatorIOSparkMax(int ID) {
         elevatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
@@ -30,13 +31,20 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
         pid = elevatorMotor.getPIDController();
         pid.setP(kP);
+        pid.setI(kI);
+        pid.setD(kD);
+
     }
 
     // Get subsystem
     @Override
     public void setVoltage(double volts){
         elevatorMotor.setVoltage(volts);
-        pid.setReference(kP,com.revrobotics.CANSparkMax.ControlType.kVelocity);
+    }
+
+    @Override
+    public void setPosition(double value){
+    pid.setReference(value,ControlType.kPosition);
     }
 
     public void updateInputs(ElevatorInputs inputs){
@@ -47,6 +55,11 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         inputs.motorTempNEO = elevatorMotor.getMotorTemperature();
 
         inputs.motorPositionNEO = elevatorEncoder.getPosition();
+    }
+
+    @Override
+    public void resetPosition(double resetValue){
+        elevatorEncoder.setPosition(resetValue);
     }
 
     @Override

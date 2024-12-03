@@ -16,6 +16,7 @@ public class Elevator extends SubsystemBase {
     
     private ElevatorIO io;
     private ElevatorInputsAutoLogged inputs;
+    private double value;
     // private Double kP;
     // private Double kI;
     // private Double kD;
@@ -32,17 +33,32 @@ public class Elevator extends SubsystemBase {
 
     //go up
     public Command extend(){
-        return Commands.runOnce(()-> io.setVoltage(6),this);
+        return Commands.runOnce(()-> io.setPosition(value),this);
     }
 
     //go down
     public Command retract(){
-        return Commands.runOnce(()-> io.setVoltage(-6), this);
+        return Commands.runOnce(()-> io.setPosition(0), this);
     }
 
     //stop
     public Command stop(){
         return Commands.runOnce(()->io.setVoltage(0), this);
+    }
+
+    // Go up manually
+    public Command m_extend(){
+        return Commands.runOnce(()->io.setVoltage(6), this);
+    }
+
+    // Go down manually
+    public Command m_retract(){
+        return Commands.runOnce(()->io.setVoltage(-6), this);
+    }
+
+    //reset it to 0
+    public Command reset(){
+        return Commands.runOnce(()->io.resetPosition(0), this);
     }
 
     @Override
