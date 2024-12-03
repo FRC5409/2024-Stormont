@@ -2,6 +2,7 @@ package frc.robot.subsystems.Elevator;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.wpilibj.RobotController;
 
@@ -12,6 +13,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class ElevatorIOSparkMax implements ElevatorIO {
     private CANSparkMax elevatorMotor;
     private RelativeEncoder elevatorEncoder;
+    private SparkMaxPIDController sparkPid;
 
     public ElevatorIOSparkMax(int ID) {
         elevatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
@@ -33,13 +35,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     public void updateInputs(ElevatorInputs inputs){
-        inputs.motorConnected = (!elevatorMotor.getFault(FaultID.kMotorFault) || elevatorMotor.getFault(FaultID.kCANRX) || elevatorMotor.getFault(FaultID.kCANTX));
+        inputs.motorConnectedNEO = (!elevatorMotor.getFault(FaultID.kMotorFault) || elevatorMotor.getFault(FaultID.kCANRX) || elevatorMotor.getFault(FaultID.kCANTX));
 
-        inputs.motorVolts = elevatorMotor.get() * RobotController.getBatteryVoltage();
-        inputs.motorCurrent = elevatorMotor.getOutputCurrent();
-        inputs.motorTemp = elevatorMotor.getMotorTemperature();
+        inputs.motorVoltsNEO = elevatorMotor.get() * RobotController.getBatteryVoltage();
+        inputs.motorCurrentNEO = elevatorMotor.getOutputCurrent();
+        inputs.motorTempNEO = elevatorMotor.getMotorTemperature();
 
-        inputs.motorPositionNeo = elevatorEncoder.getPosition();
+        inputs.motorPositionNEO = elevatorEncoder.getPosition();
     }
 
     @Override

@@ -7,12 +7,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.RobotController;
 
-public class ElevatorIOTalonFX implements ElevatorIO{
+public class ElevatorIOTalonFx implements ElevatorIO{
     private TalonFX elevatorMotor;
     TalonFXConfigurator talonFXConfiguration;
     private CurrentLimitsConfigs currentConfig;
 
-    public ElevatorIOTalonFX(int ID) {
+    public ElevatorIOTalonFx(int ID) {
         elevatorMotor = new TalonFX(ID);
         talonFXConfiguration = elevatorMotor.getConfigurator();
         currentConfig = new CurrentLimitsConfigs();
@@ -31,14 +31,14 @@ public class ElevatorIOTalonFX implements ElevatorIO{
     }
 
     @Override
-    public void updateInputs(ElevatorInput inputs) {
-        inputs.elevatorConnection = elevatorMotor.isAlive();
+    public void updateInputs(ElevatorInputs inputs) {
+        inputs.motorConnectedFalcon = elevatorMotor.isAlive();
 
-        inputs.elevatorVolts = elevatorMotor.get() *RobotController.getBatteryVoltage();
-        inputs.elevatorCurrent = elevatorMotor.getSupplyCurrent().getValueAsDouble();
-        inputs.elevatorTemp = elevatorMotor.getDeviceTemp().getValueAsDouble();
+        inputs.motorVoltsFalcon = elevatorMotor.get() *RobotController.getBatteryVoltage();
+        inputs.motorCurrentFalcon = elevatorMotor.getSupplyCurrent().getValueAsDouble();
+        inputs.motorTempFalcon = elevatorMotor.getDeviceTemp().getValueAsDouble();
 
-        inputs.elevatorPositionTalon = elevatorMotor.getPosition().getValueAsDouble();
+        inputs.motorPositionFalcon = elevatorMotor.getPosition().getValueAsDouble();
     }
 
     @Override 

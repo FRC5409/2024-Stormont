@@ -22,12 +22,17 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorInputs inputs){
-        inputs.motorConnected = true;
-        inputs.motorVolts = this.volts;
-        inputs.motorCurrent = elevatorSim.getCurrentDrawAmps();
-        inputs.motorTemp = 0.0;
-        inputs.motorPositionNeo = elevatorSim.getPositionMeters();
-        inputs.motorPositionTalon = elevatorSim.getPositionMeters();
+        inputs.motorConnectedNEO = true;
+        inputs.motorVoltsNEO = this.volts;
+        inputs.motorCurrentNEO = elevatorSim.getCurrentDrawAmps();
+        inputs.motorTempNEO = 0.0;
+        inputs.motorPositionNEO = elevatorSim.getPositionMeters();
+        inputs.motorConnectedFalcon = true;
+        inputs.motorVoltsFalcon = this.volts;
+        inputs.motorCurrentFalcon = elevatorSim.getCurrentDrawAmps();
+        inputs.motorTempFalcon = 0.0;
+        inputs.motorPositionFalcon = elevatorSim.getPositionMeters();
+
     }
 
     @Override

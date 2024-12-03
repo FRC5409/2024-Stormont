@@ -11,12 +11,16 @@ public interface ElevatorIO {
     // Motor Temp
     @AutoLog
     public class ElevatorInputs{
-        public boolean motorConnected = false;
-        public double motorVolts = 0.0;
-        public double motorCurrent = 0.0;
-        public double motorPositionNeo = 0.0;
-        public double motorPositionTalon = 0.0;
-        public double motorTemp = 0.0;
+        public boolean motorConnectedNEO = false;
+        public double motorVoltsNEO = 0.0;
+        public double motorCurrentNEO = 0.0;
+        public double motorPositionNEO = 0.0;
+        public double motorTempNEO = 0.0;
+        public boolean motorConnectedFalcon = false;
+        public double motorVoltsFalcon = 0.0;
+        public double motorCurrentFalcon = 0.0;
+        public double motorPositionFalcon = 0.0;
+        public double motorTempFalcon = 0.0;
     }
 
     public default void setVoltage(double volts){}
