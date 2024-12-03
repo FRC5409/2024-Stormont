@@ -2,7 +2,7 @@ package frc.robot.subsystems.Elevator;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.RobotController;
 
@@ -13,7 +13,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class ElevatorIOSparkMax implements ElevatorIO {
     private CANSparkMax elevatorMotor;
     private RelativeEncoder elevatorEncoder;
-    private SparkMaxPIDController sparkPid;
+    private SparkPIDController pid;
+    private double kP = 0;
 
     public ElevatorIOSparkMax(int ID) {
         elevatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
@@ -26,12 +27,16 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         this.elevatorEncoder = elevatorMotor.getEncoder();
 
         elevatorMotor.burnFlash();
+
+        pid = elevatorMotor.getPIDController();
+        pid.setP(kP);
     }
 
     // Get subsystem
     @Override
     public void setVoltage(double volts){
         elevatorMotor.setVoltage(volts);
+        pid.setReference(kP,com.revrobotics.CANSparkMax.ControlType.kVelocity);
     }
 
     public void updateInputs(ElevatorInputs inputs){
