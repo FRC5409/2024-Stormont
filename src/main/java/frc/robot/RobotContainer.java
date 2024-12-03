@@ -117,24 +117,34 @@ public class RobotContainer {
         // m_primaryController.x()
         // .onTrue(sys_intake.startIntaking())
         // .onFalse(sys_intake.stopIntaking());
+        m_primaryController.y()
+        .onTrue(sys_elevator_NEO.ElevatingPID())
+        .onTrue(sys_elevator_kraken.ElevatingPID())
+        .onFalse(sys_elevator_NEO.stop())
+        .onFalse(sys_elevator_kraken.stop());
+
+        m_primaryController.a()
+        .onTrue(sys_elevator_NEO.LoweringPID())
+        .onTrue(sys_elevator_kraken.LoweringPID())
+        .onFalse(sys_elevator_NEO.stop())
+        .onFalse(sys_elevator_kraken.stop());
 
         m_primaryController.povUp()
-        .onTrue(sys_elevator_NEO.startElevating())
+        .onTrue(sys_elevator_NEO.ElevatingManual())
         .onFalse(sys_elevator_NEO.stop());
 
         m_primaryController.povDown()
-        .onTrue(sys_elevator_NEO.Lowering())
+        .onTrue(sys_elevator_NEO.LoweringManual())
         .onFalse(sys_elevator_NEO.stop());
 
         m_primaryController.povLeft()
-        .onTrue(sys_elevator_kraken.startElevating())
+        .onTrue(sys_elevator_kraken.ElevatingManual())
         .onFalse(sys_elevator_kraken.stop());
 
         m_primaryController.povRight()
-        .onTrue(sys_elevator_kraken.Lowering())
+        .onTrue(sys_elevator_kraken.LoweringManual())
         .onFalse(sys_elevator_kraken.stop());
 
-        
     }
 
     /**
