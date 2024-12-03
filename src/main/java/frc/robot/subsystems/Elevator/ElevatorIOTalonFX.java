@@ -43,7 +43,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     public void upTenTalon() {
         //final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
         PositionVoltage m_request = new PositionVoltage(0);
-        elevatorMotor.setControl(m_request.withPosition(10));
+        elevatorMotor.setControl(m_request.withPosition(10));//mnjnjhi
     }
 
     @Override
