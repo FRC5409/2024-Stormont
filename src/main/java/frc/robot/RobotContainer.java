@@ -86,7 +86,7 @@ public class RobotContainer {
 
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
-        sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
+        sb_driveteamTab.add("Field", sys_drivetrain.getFieldMap()).withPosition(3, 0).withSize(7, 4);
 
         // Configure the trigger bindings
         configureBindings();

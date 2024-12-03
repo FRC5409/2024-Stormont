@@ -1,51 +1,52 @@
 package frc.robot.subsystems.Deployment;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.FaultID;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.Faults;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.kDeployment;
 
 public class DeploymentIOSparkMax implements DeploymentIO {
-    private final CANSparkMax deploymentMotor;
-    private final SparkPIDController deploymentController;
+    private final SparkMax deploymentMotor;
+    private final SparkClosedLoopController deploymentController;
     private final RelativeEncoder deploymentEncoder;
 
     public DeploymentIOSparkMax(int ID) {
-        deploymentMotor = new CANSparkMax(ID, MotorType.kBrushless);
-        deploymentController = deploymentMotor.getPIDController();
+        deploymentMotor = new SparkMax(ID, MotorType.kBrushless);
+        deploymentController = deploymentMotor.getClosedLoopController();
         deploymentEncoder = deploymentMotor.getEncoder();
 
-        deploymentMotor.restoreFactoryDefaults();
-        deploymentMotor.setSmartCurrentLimit(kDeployment.CURRENT_LIMIT);
-        deploymentMotor.setIdleMode(IdleMode.kBrake);
+        SparkMaxConfig config = new SparkMaxConfig();
+        config.smartCurrentLimit(kDeployment.CURRENT_LIMIT);
+        config.idleMode(IdleMode.kBrake);
+        config.inverted(true);
 
-        deploymentMotor.setInverted(true);
+        config.closedLoop.pidf(
+            kDeployment.kRealGains.KP,
+            kDeployment.kRealGains.KI,
+            kDeployment.kRealGains.KD,
+            kDeployment.kRealGains.KFF
+        );
 
-        deploymentController.setP(kDeployment.kRealGains.KP);
-        deploymentController.setI(kDeployment.kRealGains.KI);
-        deploymentController.setD(kDeployment.kRealGains.KD);
-        deploymentController.setFF(kDeployment.kRealGains.KFF);
+        config.encoder.positionConversionFactor((2 * Math.PI * kDeployment.ELEVATOR_DRUM_RADIUS) / kDeployment.ELEVATOR_GEARING);
 
-        deploymentEncoder.setPositionConversionFactor((2 * Math.PI * kDeployment.ELEVATOR_DRUM_RADIUS) / kDeployment.ELEVATOR_GEARING);
-
-        deploymentMotor.burnFlash();
+        deploymentMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         deploymentEncoder.setPosition(0.0);
     }
 
-    private boolean isConnected(CANSparkMax motor) {
-        // TOOD: Validate
-        return !(motor.getFault(FaultID.kCANRX) || motor.getFault(FaultID.kCANTX) || motor.getFault(FaultID.kMotorFault));
-    }
-
     @Override
     public void updateInputs(DeploymentIOInputs inputs) {
-        inputs.motorConnected = isConnected(deploymentMotor);
+        Faults faults = deploymentMotor.getFaults();
+
+        inputs.motorConnected = !(faults.can || faults.motorType);
         inputs.appliedVoltage = deploymentMotor.get() * RobotController.getBatteryVoltage();
         inputs.appliedCurrent = deploymentMotor.getOutputCurrent();
         inputs.motorTemp = deploymentMotor.getMotorTemperature();

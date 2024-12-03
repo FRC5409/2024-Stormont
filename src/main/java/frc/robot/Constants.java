@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.PIDConstants;
+
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -79,13 +81,9 @@ public final class Constants {
         public static final double MAX_ROTATION_ACCELERATION = Math.toRadians(720.0) / 3.0;
 
         public static class kPID {
-            public static final double TRANSLATION_P = 5.0;
-            public static final double TRANSLATION_I = 0.0;
-            public static final double TRANSLATION_D = 0.0;
+            public static final PIDConstants TRANSLATION = new PIDConstants(5.0, 0.0, 0.0);
 
-            public static final double ROTATION_P = 7.0;
-            public static final double ROTATION_I = 0.0;
-            public static final double ROTATION_D = 0.0;
+            public static final PIDConstants ROTATION = new PIDConstants(7.0, 0.0, 0.0);
         }
     }
 
