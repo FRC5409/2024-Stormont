@@ -2,6 +2,7 @@ package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,6 +16,11 @@ public class Elevator extends SubsystemBase {
     
     private ElevatorIO io;
     private ElevatorInputsAutoLogged inputs;
+     private Double kP;
+    private Double kI;
+    private Double kD;
+
+
 
     public Elevator(ElevatorIO io) {
         this.io = io;
@@ -45,6 +51,7 @@ public class Elevator extends SubsystemBase {
         // This method will be called once per scheduler run
         io.updateInputs(inputs);
         Logger.processInputs("Intake", inputs);        
+
     }
 
     @Override

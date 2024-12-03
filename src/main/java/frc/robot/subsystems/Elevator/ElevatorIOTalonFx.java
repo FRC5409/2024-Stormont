@@ -1,49 +1,49 @@
 package frc.robot.subsystems.Elevator;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj.RobotController;
 
-public class ElevatorIOTalonFx implements ElevatorIO {
+public class ElevatorIOTalonFX implements ElevatorIO{
     private TalonFX elevatorMotor;
+    TalonFXConfigurator talonFXConfiguration;
+    private CurrentLimitsConfigs currentConfig;
 
-    public ElevatorIOTalonFx(int ID) {
+    public ElevatorIOTalonFX(int ID) {
         elevatorMotor = new TalonFX(ID);
-        
-        // elevatorMotor.restoreFactoryDefaults();
-        CurrentLimitsConfigs currentConfig = new CurrentLimitsConfigs();
-        TalonFXConfigurator talonFXConfigurator = elevatorMotor.getConfigurator();
+        talonFXConfiguration = elevatorMotor.getConfigurator();
+        currentConfig = new CurrentLimitsConfigs();
         currentConfig.SupplyCurrentLimit = 30.0;
         currentConfig.SupplyCurrentLimitEnable = true;
 
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        elevatorMotor.setInverted(false);
+        elevatorMotor.setInverted(true); 
 
-        talonFXConfigurator.apply(currentConfig);
-
-        // elevatorMotor.burnFlash();
+        talonFXConfiguration.apply(currentConfig);
     }
 
-    // Get subsystem
     @Override
-    public void setVoltage(double volts){
+    public void setVoltage(double volts) {
         elevatorMotor.setVoltage(volts);
     }
 
-    public void updateInputs(ElevatorInputs inputs){
-        inputs.motorConnected = elevatorMotor.isAlive();
-        inputs.motorVolts = elevatorMotor.get() * RobotController.getBatteryVoltage();
-        inputs.motorCurrent = elevatorMotor.getSupplyCurrent().getValueAsDouble();
-        inputs.motorTemp = elevatorMotor.getDeviceTemp().getValueAsDouble();
-
-        inputs.motorPositionTalon = elevatorMotor.getPosition().getValueAsDouble();
-    }
-
     @Override
-    public String getName(){
-        return "Talon";
+    public void updateInputs(ElevatorInput inputs) {
+        inputs.elevatorConnection = elevatorMotor.isAlive();
+
+        inputs.elevatorVolts = elevatorMotor.get() *RobotController.getBatteryVoltage();
+        inputs.elevatorCurrent = elevatorMotor.getSupplyCurrent().getValueAsDouble();
+        inputs.elevatorTemp = elevatorMotor.getDeviceTemp().getValueAsDouble();
+
+        inputs.elevatorPositionTalon = elevatorMotor.getPosition().getValueAsDouble();
     }
+
+    @Override 
+    public String getName() {
+        return "Talong FX";
+    }
+    
 }
