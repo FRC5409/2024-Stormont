@@ -75,10 +75,10 @@ public final class Constants {
 
         public static final int CURRENT_LIMIT = 100;
 
-        public static final double MAX_CHASSIS_SPEED = 4.56 / 3.0;
-        public static final double MAX_CHASSIS_ACCELERATION = 3.0 / 3.0;
-        public static final double MAX_ROTATION_SPEED = 10.0 / 3.0;
-        public static final double MAX_ROTATION_ACCELERATION = Math.toRadians(720.0) / 3.0;
+        public static final double MAX_CHASSIS_SPEED = 4.56;
+        public static final double MAX_CHASSIS_ACCELERATION = 3.0;
+        public static final double MAX_ROTATION_SPEED = 10.0;
+        public static final double MAX_ROTATION_ACCELERATION = Math.toRadians(720.0);
 
         public static class kPID {
             public static final PIDConstants TRANSLATION = new PIDConstants(5.0, 0.0, 0.0);

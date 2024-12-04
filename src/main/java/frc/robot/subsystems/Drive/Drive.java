@@ -56,12 +56,12 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
 
     // Get subsystem
     public static Drive getInstance() {
-        if (m_instance == null) m_instance = TunerConstants.DriveTrain;
+        if (m_instance == null) m_instance = TunerConstants.createDrivetrain();
 
         return m_instance;
     }
 
-    private Drive(SwerveDrivetrainConstants driveConstants, SwerveModuleConstants... moduleConstants) {
+    public Drive(SwerveDrivetrainConstants driveConstants, SwerveModuleConstants... moduleConstants) {
         super(driveConstants, moduleConstants);
 
         gyroIO = new GyroIOInputsAutoLogged();
@@ -79,31 +79,31 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         RobotConfig config;
         try {
             config = RobotConfig.fromGUISettings();
+            
+            AutoBuilder.configure(
+                () -> this.getState().Pose,
+                this::resetPose,
+                () -> this.getState().Speeds,
+                this::driveFromChassisSpeeds,
+                new PPHolonomicDriveController(
+                    kDrive.kPID.TRANSLATION, 
+                    kDrive.kPID.ROTATION
+                ),
+                config,
+                () -> {
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                this
+            );
+    
         } catch (Exception e) {
             // TODO: FALLBACK
-            config = null;
             e.printStackTrace();
         }
-
-        AutoBuilder.configure(
-            () -> this.getState().Pose,
-            this::resetPose,
-            () -> this.getState().Speeds,
-            this::driveFromChassisSpeeds,
-            new PPHolonomicDriveController(
-                kDrive.kPID.TRANSLATION, 
-                kDrive.kPID.ROTATION
-            ),
-            config,
-            () -> {
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            },
-            this
-        );
 
         m_field = new Field2d();
     }
@@ -117,12 +117,13 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
     }
 
     public Command telopDrive(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotationalRate) {
-        return applyRequest(() -> m_telopDrive
-            .withVelocityX(xSpeed.getAsDouble())
-            .withVelocityY(ySpeed.getAsDouble())
-            .withRotationalRate(rotationalRate.getAsDouble())
-            .withDeadband(kController.kJoystickDeadband * kDrive.MAX_CHASSIS_SPEED)
-            .withRotationalDeadband(kController.kTriggerDeadband * kDrive.MAX_ROTATION_SPEED)
+        return applyRequest(() -> 
+            m_telopDrive
+                .withVelocityX(-ySpeed.getAsDouble())
+                .withVelocityY(-xSpeed.getAsDouble())
+                .withRotationalRate(rotationalRate.getAsDouble())
+                .withDeadband(kController.kJoystickDeadband * kDrive.MAX_CHASSIS_SPEED)
+                .withRotationalDeadband(kController.kTriggerDeadband * kDrive.MAX_ROTATION_SPEED)
         );
     }
 
