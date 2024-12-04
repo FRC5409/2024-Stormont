@@ -1,8 +1,6 @@
 package frc.robot.subsystems.Climber;
 
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -16,14 +14,9 @@ public class Climber extends SubsystemBase {
     private final ClimberIO io;
     private final ClimberInputsAutoLogged inputs;
 
-    private final ShuffleboardTab sb_tab;
-
     public Climber(ClimberIO io) {
         this.io = io;
         this.inputs = new ClimberInputsAutoLogged();
-
-        sb_tab = Shuffleboard.getTab("Climber");
-        sb_tab.addDouble(io.getIOName() + ": Position", () -> inputs.climberPosition);
     }
 
     public Command setPosition(double position) {
@@ -45,8 +38,9 @@ public class Climber extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        io.debugPID();
         io.updateInputs(inputs);
-        Logger.processInputs("climber-" + io.getIOName(), inputs);
+        Logger.processInputs("Climber-" + io.getIOName(), inputs);
     }
 
     @Override

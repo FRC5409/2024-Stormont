@@ -62,8 +62,8 @@ public class RobotContainer {
                 sys_talonClimber = new Climber(new ClimberIO() {});
             }
             case SIM -> {
-                sys_sparkClimber = null;
-                sys_talonClimber = null;
+                sys_sparkClimber = new Climber(new ClimberIOSparkMax(kSpark.ID));
+                sys_talonClimber = new Climber(new ClimberIOTalonFX(kTalon.ID));
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -90,36 +90,37 @@ public class RobotContainer {
         // Button Bindings here
 
         // TODO: edit these numbers for PID tuning
+        // m_primaryController.povUp()
+        //     .onTrue(sys_sparkClimber.setPosition(0))
+        //     .onFalse(sys_sparkClimber.stop());
+
+        // m_primaryController.povDown()
+        //     .onTrue(sys_sparkClimber.setPosition(0))
+        //     .onFalse(sys_sparkClimber.stop());
+
+        // m_primaryController.y()
+        //     .onTrue(sys_talonClimber.setPosition(0))
+        //     .onFalse(sys_talonClimber.stop());
+
+        // m_primaryController.a()
+        //     .onTrue(sys_talonClimber.setPosition(0))
+        //     .onFalse(sys_talonClimber.stop());
+
         m_primaryController.povUp()
-            .onTrue(sys_sparkClimber.setPosition(0))
+            .onTrue(sys_sparkClimber.setVoltage(3))
             .onFalse(sys_sparkClimber.stop());
 
         m_primaryController.povDown()
-            .onTrue(sys_sparkClimber.setPosition(0))
+            .onTrue(sys_sparkClimber.setVoltage(-3))
             .onFalse(sys_sparkClimber.stop());
 
         m_primaryController.y()
-            .onTrue(sys_talonClimber.setPosition(0))
+            .onTrue(sys_talonClimber.setVoltage(3))
             .onFalse(sys_talonClimber.stop());
 
         m_primaryController.a()
-            .onTrue(sys_talonClimber.setPosition(0))
+            .onTrue(sys_talonClimber.setVoltage(-3))
             .onFalse(sys_talonClimber.stop());
-
-        m_primaryController.rightTrigger(0.2)
-            .whileTrue(sys_sparkClimber.setVoltage(-(m_primaryController.getRightTriggerAxis() - 0.2) * 4))
-            .onFalse(sys_sparkClimber.stop());
-
-        m_primaryController.leftTrigger(0.2)
-            .whileTrue(sys_talonClimber.setVoltage(-(m_primaryController.getLeftTriggerAxis() - 0.2) * 4))
-            .onFalse(sys_talonClimber.stop());
-
-        m_primaryController.back()
-            .onTrue(sys_sparkClimber.zero());
-
-        m_primaryController.start()
-            .onTrue(sys_talonClimber.zero());
-
     }
 
     /**

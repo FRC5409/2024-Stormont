@@ -7,6 +7,9 @@ import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.kClimber.kTalon;
 
 public class ClimberIOTalonFX implements ClimberIO {
@@ -18,6 +21,11 @@ public class ClimberIOTalonFX implements ClimberIO {
     private final StatusSignal<Double> motorCurrent;
     private final StatusSignal<Double> motorPosition;
     private final StatusSignal<Double> motorTemp;
+
+    private final ShuffleboardTab sb_talon;
+    private final GenericEntry sb_kp;
+    private final GenericEntry sb_ki;
+    private final GenericEntry sb_kd;
     
     public ClimberIOTalonFX(int ID) {
         mot = new TalonFX(ID);
@@ -60,6 +68,14 @@ public class ClimberIOTalonFX implements ClimberIO {
         
         // Optimize CAN bus. Removes all of the other status signals from updating, saving network data
         mot.optimizeBusUtilization();
+
+        sb_talon = Shuffleboard.getTab("Talon-Climber");
+
+        sb_talon.addDouble("Position", () -> motorPosition.getValueAsDouble());
+
+        sb_kp = sb_talon.add("kP", kTalon.kP).getEntry();
+        sb_ki = sb_talon.add("kI", kTalon.kI).getEntry();
+        sb_kd = sb_talon.add("kD", kTalon.kD).getEntry();
     }
 
     @Override
@@ -94,5 +110,16 @@ public class ClimberIOTalonFX implements ClimberIO {
     @Override
     public String getIOName() {
         return "TalonFX";
+    }
+
+    @Override
+    public void debugPID() {
+        SlotConfigs PIDConfig = new SlotConfigs();
+        
+        PIDConfig.kP = sb_kp.getDouble(0.0);
+        PIDConfig.kI = sb_ki.getDouble(0.0);
+        PIDConfig.kD = sb_kd.getDouble(0.0);
+
+        mot.getConfigurator().apply(PIDConfig);
     }
 }

@@ -26,4 +26,6 @@ public interface ClimberIO {
     public default String getIOName() {
         return "default";
     }
+
+    public default void debugPID() {}
 }
