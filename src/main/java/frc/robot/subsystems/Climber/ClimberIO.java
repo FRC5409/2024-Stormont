@@ -21,6 +21,8 @@ public interface ClimberIO {
 
     public default void stop() {}
 
+    public default void zero() {}
+
     public default String getIOName() {
         return "default";
     }

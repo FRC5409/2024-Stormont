@@ -29,7 +29,6 @@ public class ClimberIOTalonFX implements ClimberIO {
         FeedbackConfigs encoderConfig = new FeedbackConfigs();
         encoderConfig.SensorToMechanismRatio = kTalon.CONVERSION_FACTOR;
 
-        // TODO: Other Gain values present kA, kG, kV, kS
         SlotConfigs PIDConfig = new SlotConfigs();
         PIDConfig.kP = kTalon.kP;
         PIDConfig.kI = kTalon.kI;
@@ -55,9 +54,8 @@ public class ClimberIOTalonFX implements ClimberIO {
         motorTemp = mot.getDeviceTemp();
         motorTemp.setUpdateFrequency(100);
 
-        // TODO: Maybe enable FOC
         PIDControl = new PositionVoltage(0)
-            // .withEnableFOC(true)
+            .withEnableFOC(true)
             .withUpdateFreqHz(50);
         
         // Optimize CAN bus. Removes all of the other status signals from updating, saving network data
@@ -86,6 +84,11 @@ public class ClimberIOTalonFX implements ClimberIO {
     @Override
     public void setVoltage(double voltage) {
         mot.setVoltage(voltage);
+    }
+
+    @Override
+    public void zero() {
+        mot.setPosition(0.0);
     }
 
     @Override

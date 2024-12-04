@@ -46,7 +46,7 @@ public final class Constants {
     /**
      * Gets the mode of the robot
      * WARNING: If the robot is booting and REAL_MODE was not set correctly for a comp match
-     * it will return the set REAL_MODE until it connects to a FMS1
+     * it will return the set REAL_MODE until it connects to a FMS!
      * @return the given robot mode
      */
     public static kMode getMode() {

@@ -22,8 +22,8 @@ public class Climber extends SubsystemBase {
         this.io = io;
         this.inputs = new ClimberInputsAutoLogged();
 
-        sb_tab = Shuffleboard.getTab(io.getIOName() + " Climber");
-        sb_tab.addDouble("Position", () -> inputs.climberPosition);
+        sb_tab = Shuffleboard.getTab("Climber");
+        sb_tab.addDouble(io.getIOName() + ": Position", () -> inputs.climberPosition);
     }
 
     public Command setPosition(double position) {
@@ -38,11 +38,15 @@ public class Climber extends SubsystemBase {
         return Commands.runOnce(() -> io.setVoltage(voltage), this);
     }
 
+    public Command zero() {
+        return Commands.runOnce(io::zero, this);
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         io.updateInputs(inputs);
-        Logger.processInputs("Climber", inputs);
+        Logger.processInputs("climber-" + io.getIOName(), inputs);
     }
 
     @Override

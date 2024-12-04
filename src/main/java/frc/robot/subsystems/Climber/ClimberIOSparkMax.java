@@ -63,6 +63,11 @@ public class ClimberIOSparkMax implements ClimberIO {
     }
 
     @Override
+    public void zero() {
+        encoder.setPosition(0.0);
+    }
+
+    @Override
     public String getIOName() {
         return "SparkMax";
     }
