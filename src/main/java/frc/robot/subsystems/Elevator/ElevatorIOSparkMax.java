@@ -7,8 +7,6 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.RobotController;
 
 public class ElevatorIOSparkMax implements ElevatorIO{
@@ -24,13 +22,13 @@ public class ElevatorIOSparkMax implements ElevatorIO{
         elevatorMotor.setSmartCurrentLimit(30);
         elevatorMotor.setIdleMode(IdleMode.kBrake);
         elevatorMotor.setInverted(false);
-        elevatorMotor.burnFlash();
-        elevatorEncoder = elevatorMotor.getEncoder();
-
         pid = elevatorMotor.getPIDController();
         pid.setP(0);
         pid.setI(0);
         pid.setD(0);
+        elevatorMotor.burnFlash();
+        elevatorEncoder = elevatorMotor.getEncoder();
+
     }
 
     @Override
@@ -43,15 +41,18 @@ public class ElevatorIOSparkMax implements ElevatorIO{
         elevatorMotor.setVoltage(volts);
     }
 
+    @Override 
+    public void resetPosition(double position) {
+        elevatorEncoder.setPosition(position);
+    }
+
     @Override
     public void updateInputs(ElevatorInput inputs) {
         inputs.elevatorConnection = !(elevatorMotor.getFault(FaultID.kMotorFault)|| elevatorMotor.getFault(FaultID.kCANRX)|| elevatorMotor.getFault(FaultID.kCANTX));
-
         inputs.elevatorVolts = elevatorMotor.get() * RobotController.getBatteryVoltage();
         inputs.elevatorCurrent = elevatorMotor.getOutputCurrent();
         inputs.elevatorTemp = elevatorMotor.getMotorTemperature();
-
-        inputs.elevatorPositionNEO = elevatorEncoder.getPosition();
+        inputs.elevatorPosition = elevatorEncoder.getPosition();
      }
 
      @Override

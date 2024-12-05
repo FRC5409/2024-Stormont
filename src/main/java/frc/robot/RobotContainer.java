@@ -118,16 +118,12 @@ public class RobotContainer {
         // .onTrue(sys_intake.startIntaking())
         // .onFalse(sys_intake.stopIntaking());
         m_primaryController.y()
-        .onTrue(sys_elevator_NEO.ElevatingPID())
-        .onTrue(sys_elevator_kraken.ElevatingPID())
-        .onFalse(sys_elevator_NEO.stop())
-        .onFalse(sys_elevator_kraken.stop());
+        .onTrue(sys_elevator_NEO.ElevatingPID().alongWith(sys_elevator_kraken.ElevatingPID()))
+        .onFalse(sys_elevator_NEO.stop().alongWith(sys_elevator_kraken.stop()));
 
         m_primaryController.a()
-        .onTrue(sys_elevator_NEO.LoweringPID())
-        .onTrue(sys_elevator_kraken.LoweringPID())
-        .onFalse(sys_elevator_NEO.stop())
-        .onFalse(sys_elevator_kraken.stop());
+        .onTrue(sys_elevator_NEO.LoweringPID().alongWith(sys_elevator_kraken.LoweringPID()))
+        .onFalse(sys_elevator_NEO.stop().alongWith(sys_elevator_kraken.stop()));
 
         m_primaryController.povUp()
         .onTrue(sys_elevator_NEO.ElevatingManual())

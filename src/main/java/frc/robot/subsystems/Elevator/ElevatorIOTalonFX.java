@@ -2,7 +2,6 @@ package frc.robot.subsystems.Elevator;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -22,12 +21,9 @@ public class ElevatorIOTalonFX implements ElevatorIO{
         currentConfig = new CurrentLimitsConfigs();
         currentConfig.SupplyCurrentLimit = 30.0;
         currentConfig.SupplyCurrentLimitEnable = true;
-
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        elevatorMotor.setInverted(true); 
-
+        elevatorMotor.setInverted(true);
         talonFXConfiguration.apply(currentConfig);
-
         slot0Configs.kP = 0;
         slot0Configs.kI = 0;
         slot0Configs.kD = 0;
@@ -44,14 +40,18 @@ public class ElevatorIOTalonFX implements ElevatorIO{
         elevatorMotor.setControl(m_request.withPosition(value));
     }
 
+    @Override 
+    public void resetPosition(double position) {
+        elevatorMotor.setPosition(position);
+    }
+
     @Override
     public void updateInputs(ElevatorInput inputs) {
         inputs.elevatorConnection = elevatorMotor.isAlive();
         inputs.elevatorVolts = elevatorMotor.get() *RobotController.getBatteryVoltage();
         inputs.elevatorCurrent = elevatorMotor.getSupplyCurrent().getValueAsDouble();
         inputs.elevatorTemp = elevatorMotor.getDeviceTemp().getValueAsDouble();
-
-        inputs.elevatorPositionTalon = elevatorMotor.getPosition().getValueAsDouble();
+        inputs.elevatorPosition = elevatorMotor.getPosition().getValueAsDouble();
     }
 
     @Override 
