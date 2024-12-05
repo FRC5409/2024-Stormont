@@ -18,4 +18,5 @@ public interface ElevatorIO {
     public default void updateInputs(ElevatorInput inputs) {}
     public default String getName() {return "default";}
     public default void resetPosition (double position) {}
+    public default void debugPID () {}
 } 

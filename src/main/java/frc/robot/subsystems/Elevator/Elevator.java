@@ -1,7 +1,6 @@
 package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,17 +14,11 @@ public class Elevator extends SubsystemBase {
     private ElevatorIO IO;
     private ElevatorInputAutoLogged inputs;
 
-    private ShuffleboardTab sb_elevator;
-
     public Elevator(ElevatorIO IO) {
         this.IO = IO;
         inputs = new ElevatorInputAutoLogged();
-
-        sb_elevator = Shuffleboard.getTab("Elevator");
-        sb_elevator.addDouble(IO.getName() + " Position",
-                () -> inputs.elevatorPosition);
     }
-
+    
     public Command ElevatingManual() {
         return Commands.runOnce(()-> IO.setVoltage(6), this);
     }

@@ -121,6 +121,14 @@ public class RobotContainer {
         .onTrue(sys_elevator_NEO.ElevatingPID().alongWith(sys_elevator_kraken.ElevatingPID()))
         .onFalse(sys_elevator_NEO.stop().alongWith(sys_elevator_kraken.stop()));
 
+        m_primaryController.x()
+        .onTrue(sys_elevator_NEO.resetPosition())
+        .onFalse(sys_elevator_NEO.stop());
+
+        m_primaryController.b()
+        .onTrue(sys_elevator_kraken.resetPosition())
+        .onFalse(sys_elevator_kraken.stop());
+
         m_primaryController.a()
         .onTrue(sys_elevator_NEO.LoweringPID().alongWith(sys_elevator_kraken.LoweringPID()))
         .onFalse(sys_elevator_NEO.stop().alongWith(sys_elevator_kraken.stop()));
