@@ -8,7 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ElevatorIOTalonFX implements ElevatorIO {
     private TalonFX elevatorMotor;
-    private PositionVoltage pidController;
+    private final PositionVoltage positionVoltage;
 
     public ElevatorIOTalonFX(int elevatorIOTalonFX) {
         elevatorMotor = new TalonFX(elevatorIOTalonFX);
@@ -30,9 +30,9 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         slot0Configs.kD = 0;
 
         elevatorMotor.getConfigurator().apply(slot0Configs);
-    }
+        positionVoltage = new PositionVoltage(0).withSlot(0);
 
-    public ElevatorIOTalonFX() {}
+    }
 
     @Override
     public void setVoltage(double volts) {
@@ -40,10 +40,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
 
     @Override 
-    public void upTenTalon() {
-        //final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
-        PositionVoltage m_request = new PositionVoltage(0);
-        elevatorMotor.setControl(m_request.withPosition(10));//mnjnjhi
+    public void upTen() {
+        elevatorMotor.setControl(positionVoltage.withPosition(10));
     }
 
     @Override

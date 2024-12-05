@@ -17,6 +17,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     private CANSparkMax elevatorMotor;
     private RelativeEncoder elevatorEncoder;
+    private SparkPIDController pidController;
 
     public ElevatorIOSparkMax(int elevatorIOSparkMax) {
         elevatorMotor = new CANSparkMax(elevatorIOSparkMax, MotorType.kBrushless);
@@ -30,13 +31,10 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
         elevatorEncoder = elevatorMotor.getEncoder();
 
-        SparkPIDController pidController = elevatorMotor.getPIDController();
+        pidController = elevatorMotor.getPIDController();
         pidController.setP(0);
         pidController.setI(0);
-        pidController.setD(0);
-        //pidController.SetIZone(kIz);
-        pidController.setOutputRange(0, 0);
-        // pidController.setFF(0);
+        pidController.setD(0);        
     }
 
     public ElevatorIOSparkMax() {
@@ -53,8 +51,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void upTenSpark() {
-        elevatorMotor.getPIDController().setReference(0, CANSparkBase.ControlType.kPosition);
+    public void upTen() {
+        pidController.setReference(10, CANSparkBase.ControlType.kPosition);
     }
 
     @Override

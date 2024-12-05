@@ -30,12 +30,8 @@ public class Elevator extends SubsystemBase{
         return Commands.runOnce(() -> io.setVoltage(0), this);
     }
 
-    public Command upTenSpark(){
-        return Commands.runOnce(() -> io.upTenSpark(), this);
-    }
-
-    public Command upTenTalon(){
-        return Commands.runOnce(() -> io.upTenTalon(), this);
+    public Command upTen(){
+        return Commands.runOnce(() -> io.upTen(), this);
     }
 
     @Override

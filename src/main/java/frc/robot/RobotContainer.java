@@ -132,13 +132,13 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        m_primaryController.y().onTrue(sys_elevatorSpark.startExtendingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
-        m_primaryController.a().onTrue(sys_elevatorSpark.startRetracktingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
+        // m_primaryController.y().onTrue(sys_elevatorSpark.startExtendingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
+        // m_primaryController.a().onTrue(sys_elevatorSpark.startRetracktingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
 
         //m_primaryController.x().onTrue(sys_elevatorTalon.startExtendingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
-        m_primaryController.x().onTrue(sys_elevatorTalon.upTenTalon()).onFalse(sys_elevatorTalon.stopCommannd());
+        m_primaryController.x().onTrue(sys_elevatorSpark.upTen());
         // m_primaryController.b().onTrue(sys_elevatorTalon.startRetracktingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
-        m_primaryController.b().onTrue(sys_elevatorTalon.upTenSpark()).onFalse(sys_elevatorTalon.stopCommannd());
+        m_primaryController.b().onTrue(sys_elevatorTalon.upTen());//ssss
 
     }
 
