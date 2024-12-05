@@ -27,8 +27,21 @@ public final class Constants {
         SIM
     }
 
+    // hightest value 1.2 meters
+
     public static final kMode REAL_MODE = kMode.REAL;
     public static final kMode SIM_MODE = kMode.SIM;
+
+    // PID variables
+    public static class kPIDConstants {
+        public static final double kPSpark = 0.0;
+        public static final double kISpark = 0.0;
+        public static final double kDSpark = 0.0;
+
+        public static final double kPTalon = 0.0;
+        public static final double kITalon = 0.0;
+        public static final double kDTalon = 0.0;
+    }
 
     /**
      * Gets the mode of the robot

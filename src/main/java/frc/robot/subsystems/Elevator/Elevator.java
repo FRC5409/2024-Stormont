@@ -34,6 +34,10 @@ public class Elevator extends SubsystemBase{
         return Commands.runOnce(() -> io.upTen(), this);
     }
 
+    public Command resetPosition() {
+        return Commands.runOnce(() -> io.resetPosition(), this);
+    }
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run

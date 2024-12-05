@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
+import frc.robot.Constants.kPIDConstants;
 import frc.robot.subsystems.Drive.Drive;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIO;
@@ -49,6 +50,9 @@ public class RobotContainer {
     private Elevator sys_elevator;
     private Elevator sys_elevatorSpark;
     private Elevator sys_elevatorTalon;
+
+    private ShuffleboardTab sparkPIDTab;
+    private ShuffleboardTab talonPIDTab;
 
     // Commands
     // private final Command cmd_teleopDrive;
@@ -93,6 +97,16 @@ public class RobotContainer {
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
 
+        sparkPIDTab = Shuffleboard.getTab(("Spark PID"));
+        sparkPIDTab.add("P = ", kPIDConstants.kPSpark);
+        sparkPIDTab.add(", I = ", kPIDConstants.kISpark);
+        sparkPIDTab.add(", D = ", kPIDConstants.kDSpark);
+
+        talonPIDTab = Shuffleboard.getTab(("Talon PID"));
+        talonPIDTab.add("P = ", kPIDConstants.kPTalon);
+        talonPIDTab.add(", I = ", kPIDConstants.kITalon);
+        talonPIDTab.add(", D = ", kPIDConstants.kDTalon); //fdfdff
+
         //sys_drivetrain = Drive.getInstance();
 
         // Commands
@@ -132,13 +146,13 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        // m_primaryController.y().onTrue(sys_elevatorSpark.startExtendingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
-        // m_primaryController.a().onTrue(sys_elevatorSpark.startRetracktingCommand()).onFalse(sys_elevatorSpark.stopCommannd());
+        // Go up
+        m_primaryController.y().onTrue(sys_elevatorSpark.upTen());
+        m_primaryController.a().onTrue(sys_elevatorTalon.upTen());
 
-        //m_primaryController.x().onTrue(sys_elevatorTalon.startExtendingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
-        m_primaryController.x().onTrue(sys_elevatorSpark.upTen());
-        // m_primaryController.b().onTrue(sys_elevatorTalon.startRetracktingCommand()).onFalse(sys_elevatorTalon.stopCommannd());
-        m_primaryController.b().onTrue(sys_elevatorTalon.upTen());//ssss
+        // Reset pos
+        m_primaryController.x().onTrue(sys_elevatorSpark.resetPosition());
+        m_primaryController.b().onTrue(sys_elevatorTalon.resetPosition());
 
     }
 
