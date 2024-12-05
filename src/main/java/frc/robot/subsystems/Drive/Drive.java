@@ -14,8 +14,10 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
+import com.ctre.phoenix6.swerve.SwerveRequest.Idle;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -48,6 +50,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
 
     private final ApplyRobotSpeeds m_autoRequest = new ApplyRobotSpeeds();
     private final FieldCentric m_telopDrive = new FieldCentric();
+    private final Idle m_idle = new Idle();
 
     // Shuffleboard
     private final Field2d m_field;
@@ -127,6 +130,10 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         );
     }
 
+    public Command idle() {
+        return applyRequest(() -> m_idle).ignoringDisable(true);
+    }
+
     public Field2d getFieldMap() {
         return m_field;
     }
@@ -154,8 +161,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
             moduleInputs[i].driveVolts = drive.get() * RobotController.getBatteryVoltage();
             moduleInputs[i].steerVolts = steer.get() * RobotController.getBatteryVoltage();
 
-            moduleInputs[i].driveCurrent = drive.getStatorCurrent().getValueAsDouble();
-            moduleInputs[i].steerCurrent = steer.getStatorCurrent().getValueAsDouble();
+            moduleInputs[i].driveCurrent = Math.abs(drive.getStatorCurrent().getValueAsDouble());
+            moduleInputs[i].steerCurrent = Math.abs(steer.getStatorCurrent().getValueAsDouble());
 
             moduleInputs[i].driveVelocity = drive.getVelocity().getValueAsDouble();
             moduleInputs[i].steerPosition = Rotation2d.fromRotations(steer.getPosition().getValueAsDouble());

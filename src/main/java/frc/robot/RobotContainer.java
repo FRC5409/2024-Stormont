@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -38,6 +39,7 @@ public class RobotContainer {
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
+    private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -83,11 +85,14 @@ public class RobotContainer {
                 () ->  m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED,
                 () ->  m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED,
                 () -> calculateRotationOutput(m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-            )
+            ).andThen(sys_drivetrain.idle())
         );
 
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
+        sb_autoChooser = AutoBuilder.buildAutoChooser();
+
+        sb_driveteamTab.add("Auto Chooser", sb_autoChooser);
         sb_driveteamTab.add("Field", sys_drivetrain.getFieldMap()).withPosition(3, 0).withSize(7, 4);
 
         // Configure the trigger bindings
@@ -130,7 +135,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         if (AutoBuilder.isConfigured()) {
-            return null;
+            return sb_autoChooser.getSelected();
         } else return null;
     }
 }

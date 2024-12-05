@@ -53,7 +53,7 @@ public final class Constants {
     public static class kController {
         public static final int kDriverControllerPort = 0;
 
-        public static final double kJoystickDeadband = 0.05;
+        public static final double kJoystickDeadband = 0.06;
         public static final double kTriggerDeadband = 0.05;
     }
 
