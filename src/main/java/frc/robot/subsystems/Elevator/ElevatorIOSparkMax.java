@@ -15,7 +15,9 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private CANSparkMax elevatorMotor;
     private RelativeEncoder elevatorEncoder;
     private SparkPIDController pid;
-    private Double kP = 0.0, kI = 0.0, kD = 0.0;
+    private double kP = 0.0, kI = 0.0, kD = 0.0;
+
+    
 
     public ElevatorIOSparkMax(int ID) {
         elevatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
@@ -27,12 +29,16 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
         this.elevatorEncoder = elevatorMotor.getEncoder();
 
-        elevatorMotor.burnFlash();
+        //Change Values Through Shuffleboard
+
 
         pid = elevatorMotor.getPIDController();
         pid.setP(kP);
         pid.setI(kI);
         pid.setD(kD);
+
+        elevatorMotor.burnFlash();
+
 
     }
 
@@ -48,7 +54,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     public void updateInputs(ElevatorInputs inputs){
-        inputs.motorConnectedNEO = (!elevatorMotor.getFault(FaultID.kMotorFault) || elevatorMotor.getFault(FaultID.kCANRX) || elevatorMotor.getFault(FaultID.kCANTX));
+        inputs.motorConnectedNEO = !(elevatorMotor.getFault(FaultID.kMotorFault) || elevatorMotor.getFault(FaultID.kCANRX) || elevatorMotor.getFault(FaultID.kCANTX));
 
         inputs.motorVoltsNEO = elevatorMotor.get() * RobotController.getBatteryVoltage();
         inputs.motorCurrentNEO = elevatorMotor.getOutputCurrent();
@@ -59,7 +65,15 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     @Override
     public void resetPosition(double resetValue){
-        elevatorEncoder.setPosition(resetValue);
+        if(0<=resetValue || resetValue<=1.1){
+            elevatorEncoder.setPosition(resetValue);
+        } else if(resetValue<0){
+            resetValue = 0;
+            elevatorEncoder.setPosition(resetValue);
+        } else if(resetValue>=1.2){
+            resetValue = 1.1;
+            elevatorEncoder.setPosition(resetValue);
+        }
     }
 
     @Override

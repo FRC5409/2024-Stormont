@@ -25,7 +25,6 @@ public class Elevator extends SubsystemBase {
     public Elevator(ElevatorIO io) {
         this.io = io;
         inputs = new ElevatorInputsAutoLogged();
-        System.out.println(io.getName());
         Shuffleboard.getTab("Elevator").addDouble("NeoMotorPosition"+ io.getName(), () -> inputs.motorPositionNEO);
     }
 
@@ -65,7 +64,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         io.updateInputs(inputs);
-        Logger.processInputs("Intake", inputs);        
+        Logger.processInputs("Elevator", inputs);        
 
     }
 

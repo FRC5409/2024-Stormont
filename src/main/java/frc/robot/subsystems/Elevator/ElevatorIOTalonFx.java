@@ -52,7 +52,15 @@ public class ElevatorIOTalonFx implements ElevatorIO{
 
     @Override
     public void resetPosition(double resetValue){
-        elevatorMotor.setPosition(resetValue);
+        if(0<=resetValue || resetValue<=1.1){
+            elevatorMotor.setPosition(resetValue);
+        } else if(resetValue<0){
+            resetValue = 0;
+            elevatorMotor.setPosition(resetValue);
+        } else if(resetValue>=1.2){
+            resetValue = 1.1;
+            elevatorMotor.setPosition(resetValue);
+        }
     }
 
     @Override
