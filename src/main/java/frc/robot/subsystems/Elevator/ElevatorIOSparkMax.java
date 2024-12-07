@@ -4,7 +4,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.FaultID;
@@ -15,7 +18,12 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private CANSparkMax elevatorMotor;
     private RelativeEncoder elevatorEncoder;
     private SparkPIDController pid;
-    private double kP = 0.0, kI = 0.0, kD = 0.0;
+    private double kP = 0.0, kI = 0.0, kD = 0.0, kff = 0;
+    private final ShuffleboardTab sb_spark;
+    private final GenericEntry sb_kp;
+    private final GenericEntry sb_ki;
+    private final GenericEntry sb_kd;
+    private final GenericEntry sb_kff;
 
     
 
@@ -29,13 +37,23 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
         this.elevatorEncoder = elevatorMotor.getEncoder();
 
-        //Change Values Through Shuffleboard
 
 
         pid = elevatorMotor.getPIDController();
         pid.setP(kP);
         pid.setI(kI);
         pid.setD(kD);
+        pid.setFF(kff);
+        
+        sb_spark = Shuffleboard.getTab("Spark-Climber");
+
+        sb_spark.addDouble("Position-Neo", () -> elevatorEncoder.getPosition());
+        
+        //Change Values Through Shuffleboard
+        sb_kp = sb_spark.add("kP", kP).getEntry();
+        sb_ki = sb_spark.add("kI", kI).getEntry();
+        sb_kd = sb_spark.add("kD", kD).getEntry();
+        sb_kff = sb_spark.add("kFF", kff).getEntry();
 
         elevatorMotor.burnFlash();
 

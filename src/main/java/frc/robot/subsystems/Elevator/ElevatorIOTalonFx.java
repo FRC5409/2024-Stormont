@@ -6,7 +6,11 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class ElevatorIOTalonFx implements ElevatorIO{
     private TalonFX elevatorMotor;
@@ -15,6 +19,12 @@ public class ElevatorIOTalonFx implements ElevatorIO{
     Slot0Configs slot0Configs = new Slot0Configs();
     // create a position closed-loop request, voltage output, slot 0 configs
     private PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+    private double kP = 0, kI = 0, kD = 0;
+
+    private final ShuffleboardTab sb_Talon;
+    private final GenericEntry sb_kp;
+    private final GenericEntry sb_ki;
+    private final GenericEntry sb_kd;
 
 
 
@@ -31,11 +41,19 @@ public class ElevatorIOTalonFx implements ElevatorIO{
         talonFXConfiguration.apply(currentConfig);
 
         //PID
-        slot0Configs.kP = 0; 
-        slot0Configs.kI = 0; 
-        slot0Configs.kD = 0; 
+        slot0Configs.kP = 0.0; 
+        slot0Configs.kI = 0.0; 
+        slot0Configs.kD = 0.0; 
 
         elevatorMotor.getConfigurator().apply(slot0Configs);
+
+        sb_Talon = Shuffleboard.getTab("Talon-Climber");
+
+        sb_Talon.addDouble("Position-Talon", () -> elevatorMotor.getPosition().getValueAsDouble());
+
+        sb_kp = sb_Talon.add("kP", kP).getEntry();
+        sb_ki = sb_Talon.add("kI", kI).getEntry();
+        sb_kd = sb_Talon.add("kD", kD).getEntry();
     }
 
     @Override
