@@ -51,6 +51,10 @@ public final class Constants {
         public static final double kTriggerDeadband = 0.05;
     }
 
+    public static class kElevatorSparkMax {
+        
+    }
+
     public static class kDrive {
         public static final String[] MODULE_NAMES = new String[] {
             "Front Left",

@@ -16,7 +16,7 @@ public class Elevator extends SubsystemBase {
     
     private ElevatorIO io;
     private ElevatorInputsAutoLogged inputs;
-    private double value;
+    
     // private Double kP;
     // private Double kI;
     // private Double kD;
@@ -25,19 +25,21 @@ public class Elevator extends SubsystemBase {
     public Elevator(ElevatorIO io) {
         this.io = io;
         inputs = new ElevatorInputsAutoLogged();
-        Shuffleboard.getTab("Elevator").addDouble("NeoMotorPosition"+ io.getName(), () -> inputs.motorPositionNEO);
+        Shuffleboard.getTab("Elevator")
+            .addDouble("NeoMotorPosition"+ io.getName(), () -> inputs.motorPositionNEO);
+        
     }
 
     // Get subsystem
 
     //go up
-    public Command extend(){
+    public Command extend(double value){
         return Commands.runOnce(()-> io.setPosition(value),this);
     }
 
     //go down
-    public Command retract(){
-        return Commands.runOnce(()-> io.setPosition(0), this);
+    public Command retract(double value){
+        return Commands.runOnce(()-> io.setPosition(value), this);
     }
 
     //stop

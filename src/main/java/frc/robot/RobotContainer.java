@@ -106,11 +106,17 @@ public class RobotContainer {
         //     .onTrue(sys_intake.startIntaking())
         //     .onFalse(sys_intake.stopIntaking());
          m_primaryController.povUp()
-            .onTrue(sys_elevator_Neo.extend().alongWith(sys_elevator_Falcon.extend()))
-            .onFalse(sys_elevator_Neo.stop().alongWith(sys_elevator_Falcon.stop()));
+            .onTrue(sys_elevator_Neo.extend(32))
+            .onFalse(sys_elevator_Neo.stop());
          m_primaryController.povDown()
-             .onTrue(sys_elevator_Neo.retract().alongWith(sys_elevator_Falcon.retract()))
-             .onFalse(sys_elevator_Neo.stop().alongWith(sys_elevator_Falcon.stop()));
+             .onTrue(sys_elevator_Neo.retract(10))
+             .onFalse(sys_elevator_Neo.stop());
+         m_primaryController.povRight()
+            .onTrue(sys_elevator_Falcon.extend(47))
+            .onFalse(sys_elevator_Falcon.stop());
+         m_primaryController.povLeft()
+             .onTrue(sys_elevator_Falcon.retract(10))
+             .onFalse(sys_elevator_Falcon.stop());
          m_primaryController.a()
              .onTrue(sys_elevator_Neo.m_extend())
              .onFalse(sys_elevator_Neo.stop());
@@ -123,10 +129,8 @@ public class RobotContainer {
          m_primaryController.y()
              .onTrue(sys_elevator_Falcon.m_retract())
              .onFalse(sys_elevator_Falcon.stop());
-         m_primaryController.rightBumper()
-             .onTrue(sys_elevator_Neo.reset().alongWith(sys_elevator_Falcon.reset()));
-
-         
+          m_primaryController.rightBumper()
+              .onTrue(sys_elevator_Neo.reset().alongWith(sys_elevator_Falcon.reset()));
     }
 
     /**

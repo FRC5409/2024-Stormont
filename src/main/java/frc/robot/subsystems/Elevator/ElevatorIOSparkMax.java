@@ -68,7 +68,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
     @Override
     public void setPosition(double value){
-    pid.setReference(value,ControlType.kPosition);
+        pid.setReference(value,ControlType.kPosition);
     }
 
     public void updateInputs(ElevatorInputs inputs){

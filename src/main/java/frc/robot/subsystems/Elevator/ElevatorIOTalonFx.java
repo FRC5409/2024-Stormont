@@ -36,7 +36,7 @@ public class ElevatorIOTalonFx implements ElevatorIO{
         currentConfig.SupplyCurrentLimitEnable = true;
 
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        elevatorMotor.setInverted(true); 
+        elevatorMotor.setInverted(false); 
 
         talonFXConfiguration.apply(currentConfig);
 
@@ -80,6 +80,7 @@ public class ElevatorIOTalonFx implements ElevatorIO{
             elevatorMotor.setPosition(resetValue);
         }
     }
+
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
