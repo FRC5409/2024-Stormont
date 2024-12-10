@@ -52,12 +52,12 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void upTen() {
-        pidController.setReference(10, CANSparkBase.ControlType.kPosition);
+    public void setPositionUp(double position) {
+        pidController.setReference(position, CANSparkBase.ControlType.kPosition);
     }
 
     @Override
-    public void downTen() {
+    public void setPositionDown() {
         pidController.setReference(-10, CANSparkBase.ControlType.kPosition);
     }
 

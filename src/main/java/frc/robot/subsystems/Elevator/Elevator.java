@@ -30,12 +30,12 @@ public class Elevator extends SubsystemBase{
         return Commands.runOnce(() -> io.setVoltage(0), this);
     }
 
-    public Command upTen(){
-        return Commands.runOnce(() -> io.upTen(), this);
+    public Command setPositionUp(){
+        return Commands.runOnce(() -> io.setPositionUp(), this);
     }
 
-    public Command downTen(){
-        return Commands.runOnce(() -> io.upTen(), this);
+    public Command setPositionDown(){
+        return Commands.runOnce(() -> io.setPositionDown(), this);
     }
 
     @Override

@@ -33,7 +33,6 @@ public class ElevatorIOTalonFX implements ElevatorIO {
 
         elevatorMotor.getConfigurator().apply(slot0Configs);
         positionVoltage = new PositionVoltage(0).withSlot(0);
-
     }
 
     @Override
@@ -42,12 +41,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
 
     @Override 
-    public void upTen() {
-        elevatorMotor.setControl(positionVoltage.withPosition(10));
+    public void setPositionUp(double position) {
+        elevatorMotor.setControl(positionVoltage.withPosition(position));
     }
 
     @Override 
-    public void downTen() {
+    public void setPositionDown() {
         elevatorMotor.setControl(positionVoltage.withPosition(-10));
     }
 

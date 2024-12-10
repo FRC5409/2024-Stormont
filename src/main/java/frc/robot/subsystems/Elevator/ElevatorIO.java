@@ -18,9 +18,11 @@ public interface ElevatorIO {
 
     public default void updateInputs(ElevatorInputs inputs) {}
 
+    public default void setPosition(double position) {}
+
     // Up ten rotations
-    public default void upTen() {}
+    public default void setPositionUp() {}
 
     // Down ten rotations
-    public default void downTen() {}
+    public default void setPositionDown() {}
 }

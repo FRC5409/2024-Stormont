@@ -27,7 +27,6 @@ public final class Constants {
         SIM
     }
 
-    // hightest value 1.2 meters
     public static final kMode REAL_MODE = kMode.REAL;
     public static final kMode SIM_MODE = kMode.SIM;
 

@@ -147,12 +147,12 @@ public class RobotContainer {
      */
     private void configureBindings() {
         // Go up
-        m_primaryController.y().onTrue(sys_elevatorSpark.upTen());
-        m_primaryController.a().onTrue(sys_elevatorTalon.upTen());
+        m_primaryController.y().onTrue(sys_elevatorSpark.setPositionUp());
+        m_primaryController.a().onTrue(sys_elevatorTalon.setPositionUp());
 
         // Reset pos
-        m_primaryController.x().onTrue(sys_elevatorSpark.downTen());
-        m_primaryController.b().onTrue(sys_elevatorTalon.downTen());
+        m_primaryController.x().onTrue(sys_elevatorSpark.setPositionDown());
+        m_primaryController.b().onTrue(sys_elevatorTalon.setPositionDown()); //wwwww
 
     }
 
