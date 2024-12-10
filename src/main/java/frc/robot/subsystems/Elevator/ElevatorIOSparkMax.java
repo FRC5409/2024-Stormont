@@ -31,7 +31,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         pidController.setP(kPIDConstants.kPSpark);
         pidController.setI(kPIDConstants.kISpark);
         pidController.setD(kPIDConstants.kDSpark);   
-        
+        pidController.setOutputRange(0, 10);
+
         elevatorMotor.burnFlash();
 
         elevatorEncoder = elevatorMotor.getEncoder();

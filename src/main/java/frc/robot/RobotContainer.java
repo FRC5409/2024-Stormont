@@ -105,7 +105,7 @@ public class RobotContainer {
         talonPIDTab = Shuffleboard.getTab(("Talon PID"));
         talonPIDTab.add("P = ", kPIDConstants.kPTalon);
         talonPIDTab.add(", I = ", kPIDConstants.kITalon);
-        talonPIDTab.add(", D = ", kPIDConstants.kDTalon); //fdfdff
+        talonPIDTab.add(", D = ", kPIDConstants.kDTalon);
 
         //sys_drivetrain = Drive.getInstance();
 
