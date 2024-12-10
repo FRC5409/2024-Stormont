@@ -11,14 +11,11 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.rlog.RLOGServer;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.drive.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -76,12 +73,7 @@ public class Robot extends LoggedRobot {
     m_robotContainer = new RobotContainer();
 
     // Coast mode after 3 seconds
-    new Trigger(this::isEnabled)
-        .negate()
-        .debounce(5)
-        .onTrue(
-            Commands.runOnce(() -> Drive.getInstance().configNeutralMode(NeutralModeValue.Coast))
-                .ignoringDisable(true));
+   
 
   }
 
@@ -106,7 +98,6 @@ public class Robot extends LoggedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    Drive.getInstance().periodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -124,7 +115,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
-    Drive.getInstance().configNeutralMode(NeutralModeValue.Brake);
+
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -149,7 +140,7 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
-    Drive.getInstance().configNeutralMode(NeutralModeValue.Brake);
+
   }
 
   /** This function is called periodically during operator control. */
