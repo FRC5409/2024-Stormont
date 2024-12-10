@@ -32,7 +32,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
         currentConfig.SupplyCurrentLimit = 30.0;
         currentConfig.SupplyCurrentLimitEnable = true;
         elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
-        elevatorMotor.setInverted(true);
+        elevatorMotor.setInverted(false);
         talonFXConfiguration.apply(currentConfig);
         slot0Configs.kP = 0;
         slot0Configs.kI = 0;
@@ -54,8 +54,8 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
 
     @Override
-    public void setPosition(double value) {
-        elevatorMotor.setControl(m_request.withPosition(value));
+    public void setPosition(double value, int slot) {
+        elevatorMotor.setControl(new PositionVoltage(value).withSlot(slot));
     }
 
     @Override

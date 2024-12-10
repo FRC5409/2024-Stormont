@@ -31,16 +31,16 @@ public class Elevator extends SubsystemBase {
         return Commands.runOnce(() -> IO.setVoltage(0), this);
     }
 
-    public Command ElevatingPID() {
-        return Commands.runOnce(()-> IO.setPosition(10), this);
+    public Command ElevatingPID(double position) {
+        return Commands.runOnce(()-> IO.setPosition(position, 0), this);
     }
 
-    public Command LoweringPID() {
-        return Commands.runOnce(()-> IO.setPosition(0), this);
+    public Command LoweringPID(double position) {
+        return Commands.runOnce(()-> IO.setPosition(position, 0), this);
     }
 
-    public Command resetPosition() {
-        return Commands.runOnce(()-> IO.resetPosition(0), this);
+    public Command resetPosition(double value) {
+        return Commands.runOnce(()-> IO.resetPosition(value), this);
     }
 
     @Override

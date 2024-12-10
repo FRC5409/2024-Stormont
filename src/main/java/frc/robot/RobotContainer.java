@@ -22,7 +22,6 @@ import frc.robot.subsystems.Elevator.ElevatorIOTalonFX;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOSim;
-import frc.robot.subsystems.Intake.IntakeIOSparkMax;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -37,7 +36,6 @@ public class RobotContainer {
 
     // Joysticks
     private final CommandXboxController m_primaryController;
-    private final CommandXboxController m_secondaryController;
 
     // Subsystems
     // private final Intake sys_intake;
@@ -63,7 +61,6 @@ public class RobotContainer {
 
         // Joysticks
         m_primaryController = new CommandXboxController(kController.kDriverControllerPort);
-        m_secondaryController = new CommandXboxController(kController.kSecondaryController);
         DriverStation.silenceJoystickConnectionWarning(true);
 
         // Subsystems
@@ -117,20 +114,25 @@ public class RobotContainer {
         // m_primaryController.x()
         // .onTrue(sys_intake.startIntaking())
         // .onFalse(sys_intake.stopIntaking());
+
+        // m_primaryController.y()
+        // .onTrue(sys_elevator_NEO.ElevatingPID(32).alongWith(sys_elevator_kraken.ElevatingPID(47)))
+        // .onFalse(sys_elevator_NEO.stop().alongWith(sys_elevator_kraken.stop()));
+
         m_primaryController.y()
-        .onTrue(sys_elevator_NEO.ElevatingPID().alongWith(sys_elevator_kraken.ElevatingPID()))
+        .onTrue(sys_elevator_NEO.ElevatingPID(55).alongWith(sys_elevator_kraken.ElevatingPID(60)))
         .onFalse(sys_elevator_NEO.stop().alongWith(sys_elevator_kraken.stop()));
 
         m_primaryController.x()
-        .onTrue(sys_elevator_NEO.resetPosition())
+        .onTrue(sys_elevator_NEO.resetPosition(0))
         .onFalse(sys_elevator_NEO.stop());
 
         m_primaryController.b()
-        .onTrue(sys_elevator_kraken.resetPosition())
+        .onTrue(sys_elevator_kraken.resetPosition(0))
         .onFalse(sys_elevator_kraken.stop());
 
         m_primaryController.a()
-        .onTrue(sys_elevator_NEO.LoweringPID().alongWith(sys_elevator_kraken.LoweringPID()))
+        .onTrue(sys_elevator_NEO.LoweringPID(10).alongWith(sys_elevator_kraken.LoweringPID(10)))
         .onFalse(sys_elevator_NEO.stop().alongWith(sys_elevator_kraken.stop()));
 
         m_primaryController.povUp()
