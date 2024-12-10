@@ -1,5 +1,7 @@
 package frc.robot.subsystems.elevator;
 
+import javax.management.DynamicMBean;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -31,6 +33,11 @@ public class ElevatorIOTalon implements ElevatorIO {
     public void setPosition(double setpoint, int slot) {
         final PositionVoltage m_request = new PositionVoltage(0).withSlot(slot);
         motor.setControl(m_request.withPosition(setpoint));
+    }
+
+    @Override
+    public double getPosition() {
+        return motor.getPosition().getValueAsDouble();
     }
 
     @Override

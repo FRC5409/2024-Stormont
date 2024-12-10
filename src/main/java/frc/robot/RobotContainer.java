@@ -4,12 +4,9 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -44,7 +41,6 @@ public class RobotContainer {
 
     // Shuffleboard
     public final ShuffleboardTab sb_driveteamTab;
-    private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -87,9 +83,6 @@ public class RobotContainer {
         // Shuffleboard
         sb_driveteamTab = Shuffleboard.getTab("Drive team");
 
-        sb_autoChooser = AutoBuilder.buildAutoChooser();
-        sb_driveteamTab.add("Choose auto", sb_autoChooser);
-
         // Configure the trigger bindings
         configureBindings();
     }
@@ -112,11 +105,11 @@ public class RobotContainer {
         // Button Bindings here
         // m_primaryController.a().onTrue(sys_intake.start()).onFalse(sys_intake.stop());
 
-        m_primaryController.a().onTrue(sys_elevator1.moveFor(true, 0.5));
-        m_primaryController.y().onTrue(sys_elevator1.moveFor(false, 0.5));
+        m_primaryController.a().onTrue(sys_elevator1.moveToUp(true));
+        m_primaryController.y().onTrue(sys_elevator1.moveToUp(false ));
 
-        m_primaryController.x().onTrue(sys_elevator2.moveFor(true, 0.5));
-        m_primaryController.b().onTrue(sys_elevator2.moveFor(false, 0.5));
+        m_primaryController.x().onTrue(sys_elevator2.moveToUp(true ));
+        m_primaryController.b().onTrue(sys_elevator2.moveToUp(false));
 
     }
 
@@ -126,6 +119,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sb_autoChooser.getSelected();
+        return null;
     }
 }

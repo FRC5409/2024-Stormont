@@ -41,6 +41,11 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 	}
 
     @Override
+    public double getPosition() {
+        return encoder.getPosition();
+    }
+
+    @Override
     public void updateInputs(ElevatorInputs inputs) {
         inputs.connected = !(motor.getFault(FaultID.kCANRX) || motor.getFault(FaultID.kCANTX)
                 || motor.getFault(FaultID.kMotorFault));

@@ -31,6 +31,7 @@ public class Elevator extends SubsystemBase {
         kP = sb.add("kP", 0).getEntry(); 
         kI = sb.add("kI", 0).getEntry();
         kD = sb.add("kD", 0).getEntry();
+        sb.addDouble("Position", io::getPosition);
 
     }
 
