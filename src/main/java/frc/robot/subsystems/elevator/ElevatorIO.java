@@ -20,4 +20,6 @@ public interface ElevatorIO {
 
     public default void setPosition(double setpoint, int slot) {
     }
+
+    public default void setPID(double kP, double kI, double kD) {}
 }

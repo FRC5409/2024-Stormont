@@ -2,6 +2,9 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -14,15 +17,28 @@ public class Elevator extends SubsystemBase {
     private ElevatorInputsAutoLogged inputs;
     private ElevatorIO io;
 
+    private ShuffleboardTab sb;
+    private GenericEntry kP;
+    private GenericEntry kI;
+    private GenericEntry kD;
+
+
     public Elevator(ElevatorIO io) {
+        this.sb = Shuffleboard.getTab("Elevator " + io.getClass().getName());
         this.io = io;
         inputs = new ElevatorInputsAutoLogged();
+
+        kP = sb.add("kP", 0).getEntry(); 
+        kI = sb.add("kI", 0).getEntry();
+        kD = sb.add("kD", 0).getEntry();
+
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         io.updateInputs(inputs);
+        io.setPID(kP.getDouble(0), kI.getDouble(0), kD.getDouble(0));
         Logger.processInputs("Elevator", inputs);
     }
 
