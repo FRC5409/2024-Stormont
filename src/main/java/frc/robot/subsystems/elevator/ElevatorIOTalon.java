@@ -7,8 +7,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class ElevatorIOTalon implements ElevatorIO {
     private TalonFX motor;
@@ -21,14 +19,7 @@ public class ElevatorIOTalon implements ElevatorIO {
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         motor.setNeutralMode(NeutralModeValue.Brake);
 
-        // TOOD: PID tuning
-        Slot0Configs pidConfig = new Slot0Configs();
-        pidConfig.kP = 0;
-        pidConfig.kI = 0;
-        pidConfig.kD = 0;
-
         motor.getConfigurator().apply(config);
-        motor.getConfigurator().apply(pidConfig);
     }
 
     @Override
@@ -50,4 +41,14 @@ public class ElevatorIOTalon implements ElevatorIO {
         inputs.temp = motor.getDeviceTemp().getValueAsDouble();
         inputs.speed = motor.getVelocity().getValueAsDouble();
     }
+
+    public void setPID(double kP, double kI, double kD) {
+        Slot0Configs pidConfig = new Slot0Configs();
+        pidConfig.kP = kP;
+        pidConfig.kI = kI;
+        pidConfig.kD = kD;
+
+        motor.getConfigurator().apply(pidConfig);
+    }
+
 }
