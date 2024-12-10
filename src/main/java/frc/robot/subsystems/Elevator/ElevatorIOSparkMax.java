@@ -57,8 +57,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void resetPosition() {
-        elevatorMotor.setVoltage(-6);
+    public void downTen() {
+        pidController.setReference(-10, CANSparkBase.ControlType.kPosition);
     }
 
     @Override

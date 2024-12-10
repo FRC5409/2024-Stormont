@@ -76,7 +76,7 @@ public class RobotContainer {
         // Joysticks
         m_primaryController = new CommandXboxController(kController.kDriverControllerPort);
         m_secondaryController = new CommandXboxController(kController.kSecondaryController);
-        DriverStation.silenceJoystickConnectionWarning(true);
+        DriverStation.silenceJoystickConnectionWarning(true);//fddf
 
         // Subsystems
         switch (Constants.getMode()) {
@@ -98,14 +98,14 @@ public class RobotContainer {
         }
 
         sparkPIDTab = Shuffleboard.getTab(("Spark PID"));
-        sparkPIDTab.add("P = ", kPIDConstants.kPSpark);
-        sparkPIDTab.add(", I = ", kPIDConstants.kISpark);
-        sparkPIDTab.add(", D = ", kPIDConstants.kDSpark);
+        sparkPIDTab.add("Spark P", kPIDConstants.kPSpark);
+        sparkPIDTab.add("Spark I", kPIDConstants.kISpark);
+        sparkPIDTab.add("Spark D", kPIDConstants.kDSpark);
 
         talonPIDTab = Shuffleboard.getTab(("Talon PID"));
-        talonPIDTab.add("P = ", kPIDConstants.kPTalon);
-        talonPIDTab.add(", I = ", kPIDConstants.kITalon);
-        talonPIDTab.add(", D = ", kPIDConstants.kDTalon);
+        talonPIDTab.add("Talon P", kPIDConstants.kPTalon);
+        talonPIDTab.add("Talon I", kPIDConstants.kITalon);
+        talonPIDTab.add("Talon D", kPIDConstants.kDTalon);
 
         //sys_drivetrain = Drive.getInstance();
 
@@ -151,8 +151,8 @@ public class RobotContainer {
         m_primaryController.a().onTrue(sys_elevatorTalon.upTen());
 
         // Reset pos
-        m_primaryController.x().onTrue(sys_elevatorSpark.resetPosition());
-        m_primaryController.b().onTrue(sys_elevatorTalon.resetPosition());
+        m_primaryController.x().onTrue(sys_elevatorSpark.downTen());
+        m_primaryController.b().onTrue(sys_elevatorTalon.downTen());
 
     }
 

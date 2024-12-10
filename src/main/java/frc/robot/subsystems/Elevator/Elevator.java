@@ -34,8 +34,8 @@ public class Elevator extends SubsystemBase{
         return Commands.runOnce(() -> io.upTen(), this);
     }
 
-    public Command resetPosition() {
-        return Commands.runOnce(() -> io.resetPosition(), this);
+    public Command downTen(){
+        return Commands.runOnce(() -> io.upTen(), this);
     }
 
     @Override
