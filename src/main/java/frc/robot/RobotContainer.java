@@ -34,8 +34,8 @@ public class RobotContainer {
 
     // Subsystem
     // private final Intake sys_intake;
-    private final Elevator sys_elevator1;
-    private final Elevator sys_elevator2;
+    private final Elevator sys_elevatorMAX;
+    private final Elevator sys_elevatorTalon;
 
     // Commands
 
@@ -57,21 +57,21 @@ public class RobotContainer {
         switch (Constants.getMode()) {
             case REAL -> {
                 // sys_intake = new Intake(new IntakeIOSparkMax(0));
-                sys_elevator1 = new Elevator(new ElevatorIOSparkMax(6));
-                sys_elevator2 = new Elevator(new ElevatorIOTalon(8));
+                sys_elevatorMAX = new Elevator(new ElevatorIOSparkMax(6));
+                sys_elevatorTalon = new Elevator(new ElevatorIOTalon(8));
             }
             case REPLAY -> {
                 // sys_intake = new Intake(new IntakeIO() {
                 // });
-                sys_elevator1 = new Elevator(new ElevatorIO() {
+                sys_elevatorMAX = new Elevator(new ElevatorIO() {
                 });
-                sys_elevator2 = new Elevator(new ElevatorIO() {
+                sys_elevatorTalon = new Elevator(new ElevatorIO() {
                 });
             }
             case SIM -> {
                 // sys_intake = new Intake(new IntakeIOSim());
-                sys_elevator1 = new Elevator(new ElevatorIOSim());
-                sys_elevator2 = new Elevator(new ElevatorIOSim());
+                sys_elevatorMAX = new Elevator(new ElevatorIOSim());
+                sys_elevatorTalon = new Elevator(new ElevatorIOSim());
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
@@ -105,11 +105,11 @@ public class RobotContainer {
         // Button Bindings here
         // m_primaryController.a().onTrue(sys_intake.start()).onFalse(sys_intake.stop());
 
-        m_primaryController.a().onTrue(sys_elevator1.moveToUp(true));
-        m_primaryController.y().onTrue(sys_elevator1.moveToUp(false ));
+        m_primaryController.a().onTrue(sys_elevatorMAX.moveToUp(true));
+        m_primaryController.y().onTrue(sys_elevatorMAX.moveToUp(false ));
 
-        m_primaryController.x().onTrue(sys_elevator2.moveToUp(true ));
-        m_primaryController.b().onTrue(sys_elevator2.moveToUp(false));
+        m_primaryController.x().onTrue(sys_elevatorTalon.moveToUp(true ));
+        m_primaryController.b().onTrue(sys_elevatorTalon.moveToUp(false));
 
     }
 
