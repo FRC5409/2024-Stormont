@@ -15,5 +15,19 @@ public interface ElevatorIO {
 
     public default void setVoltage(double volts) {}
 
+    public default void setSpeed(double speed) {}
+
+    public default void setPosition(double setpoint, int slot) {}
+
+    public default double getP() {return 0.00;}
+
+    public default double getI() {return 0.00;}
+
+    public default double getD() {return 0.00;}
+
+    public default String getMotorName() {return "";}
+    
+    public default double getPos() {return 0.00;}
+
     public default void updateInputs(ElevatorInputs inputs) {}
 }

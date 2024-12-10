@@ -76,4 +76,18 @@ public final class Constants {
             public static final double ROTATION_D = 0.0;
         }
     }
+
+    public static class kElevator {
+        public static final double VOLTAGE = 3;
+
+        public static class kSetpoints {
+            public static final int SPARK_LOW = 10;
+            public static final int SPARK_MID = 32;
+            public static final int SPARK_HIGH = 55;
+
+            public static final int TALON_LOW = 10;
+            public static final int TALON_MID = 47;
+            public static final int TALON_HIGH = 60;
+        }
+    }
 }

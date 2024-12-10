@@ -4,22 +4,16 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.kController;
-import frc.robot.Constants.kDrive;
-import frc.robot.subsystems.Drive.Drive;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIO;
-import frc.robot.subsystems.Intake.IntakeIOSim;
+import frc.robot.Constants.kElevator.kSetpoints;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorIO;
+import frc.robot.subsystems.Elevator.ElevatorIOSparkMax;
+import frc.robot.subsystems.Elevator.ElevatorIOTalonFX;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,23 +28,24 @@ public class RobotContainer {
 
     // Joysticks
     private final CommandXboxController m_primaryController;
-    private final CommandXboxController m_secondaryController;
+    // private final CommandXboxController m_secondaryController;
 
     // Subsystems
-    private final Drive sys_drivetrain;
-    private final Intake sys_intake;
+    // private final Drive sys_drivetrain;
+    private final Elevator sys_elevator_left;
+    private final Elevator sys_elevator_right;
 
     // Commands
-    private final Command cmd_teleopDrive;
+    // private final Command cmd_teleopDrive;
 
-    private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
-            .withDeadband(kDrive.MAX_CHASSIS_SPEED * 0.1)
-            .withRotationalDeadband(kDrive.MAX_ROTATION_SPEED * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    // private final SwerveRequest.FieldCentric teleopDrive = new SwerveRequest.FieldCentric()
+    //         .withDeadband(kDrive.MAX_CHASSIS_SPEED * 0.1)
+    //         .withRotationalDeadband(kDrive.MAX_ROTATION_SPEED * 0.1)
+    //         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     // Shuffleboard
-    public final ShuffleboardTab sb_driveteamTab;
-    private final SendableChooser<Command> sb_autoChooser;
+    // public final ShuffleboardTab sb_driveteamTab;
+    // private final SendableChooser<Command> sb_autoChooser;
 
     // Autonomous
 
@@ -61,43 +56,44 @@ public class RobotContainer {
 
         // Joysticks
         m_primaryController = new CommandXboxController(kController.kDriverControllerPort);
-        m_secondaryController = new CommandXboxController(kController.kSecondaryController);
+        // m_secondaryController = new CommandXboxController(kController.kSecondaryController);
         DriverStation.silenceJoystickConnectionWarning(true);
 
         // Subsystems
         switch (Constants.getMode()) {
             case REAL -> {
-                throw new IllegalArgumentException("No real robot allowed!");
+                sys_elevator_left = new Elevator(new ElevatorIOTalonFX(8));
+                sys_elevator_right = new Elevator(new ElevatorIOSparkMax(6));
             }
             case REPLAY -> {
-                sys_intake = new Intake(new IntakeIO() {});
+                sys_elevator_left = sys_elevator_right = new Elevator(new ElevatorIO() {});
             }
             case SIM -> {
-                sys_intake = new Intake(new IntakeIOSim(0));
+                throw new IllegalArgumentException("No sim");
             }
             default -> throw new IllegalArgumentException("Couldn't find a mode to init subsystems to...");
         }
 
-        sys_drivetrain = Drive.getInstance();
+        // sys_drivetrain = Drive.getInstance();
 
-        // Commands
-        cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
-            return teleopDrive
-                    .withVelocityX(-m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED)
-                    .withVelocityY(-m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED)
-                    .withRotationalRate(
-                            (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
-                                    * kDrive.MAX_ROTATION_SPEED);
-        }).ignoringDisable(true);
+        // // Commands
+        // cmd_teleopDrive = sys_drivetrain.applyRequest(() -> {
+        //     return teleopDrive
+        //             .withVelocityX(-m_primaryController.getLeftY() * kDrive.MAX_CHASSIS_SPEED)
+        //             .withVelocityY(-m_primaryController.getLeftX() * kDrive.MAX_CHASSIS_SPEED)
+        //             .withRotationalRate(
+        //                     (m_primaryController.getLeftTriggerAxis() - m_primaryController.getRightTriggerAxis())
+        //                             * kDrive.MAX_ROTATION_SPEED);
+        // }).ignoringDisable(true);
 
-        sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
+        // sys_drivetrain.setDefaultCommand(cmd_teleopDrive);
 
-        // Shuffleboard
-        sb_driveteamTab = Shuffleboard.getTab("Drive team");
-        sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
+        // // Shuffleboard
+        // sb_driveteamTab = Shuffleboard.getTab("Drive team");
+        // sb_driveteamTab.add("Field", sys_drivetrain.fieldMap).withPosition(3, 0).withSize(7, 4);
 
-        sb_autoChooser = AutoBuilder.buildAutoChooser();
-        sb_driveteamTab.add("Choose auto", sb_autoChooser);
+        // sb_autoChooser = AutoBuilder.buildAutoChooser();
+        // sb_driveteamTab.add("Choose auto", sb_autoChooser);
 
         // Configure the trigger bindings
         configureBindings();
@@ -118,7 +114,15 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
-        // Button Bindings here
+        m_primaryController.a()
+            .onTrue(sys_elevator_left.setSetpoint(kSetpoints.TALON_LOW, 0));
+        m_primaryController.b()
+            .onTrue(sys_elevator_left.setSetpoint(kSetpoints.TALON_HIGH, 0));
+        
+        m_primaryController.povUp()
+            .onTrue(sys_elevator_right.setSetpoint(kSetpoints.SPARK_LOW, 0));
+        m_primaryController.povDown()
+            .onTrue(sys_elevator_right.setSetpoint(kSetpoints.SPARK_HIGH, 0));
     }
 
     /**
@@ -127,6 +131,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return sb_autoChooser.getSelected();
+        return null;
     }
 }
