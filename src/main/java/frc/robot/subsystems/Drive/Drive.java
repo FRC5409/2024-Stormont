@@ -152,12 +152,14 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         gyroInputs.pitch = Rotation2d.fromDegrees(pigeonPitch.getValueAsDouble());
         gyroInputs.roll = Rotation2d.fromDegrees(pigeonRoll.getValueAsDouble());
 
+        SwerveModuleState[] states = getCurrentState();
+
         for (int i = 0; i < getModules().length; i++) {
             SwerveModule module = getModule(i);
             TalonFX drive = module.getDriveMotor();
             TalonFX steer = module.getSteerMotor();
             CANcoder encoder = module.getCANcoder();
-
+            
             moduleInputs[i].driveMotorConnected = BaseStatusSignal.isAllGood(drive.getVelocity(), drive.getStatorCurrent()); 
             moduleInputs[i].steerMotorConnected = BaseStatusSignal.isAllGood(steer.getPosition(), steer.getStatorCurrent());
             moduleInputs[i].encoderConnected = BaseStatusSignal.isAllGood(encoder.getAbsolutePosition());
@@ -171,8 +173,8 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
             moduleInputs[i].driveStalled = moduleInputs[i].driveCurrent >= drive.getMotorStallCurrent().getValueAsDouble();
             moduleInputs[i].steerStalled = moduleInputs[i].steerCurrent >= steer.getMotorStallCurrent().getValueAsDouble();
 
-            moduleInputs[i].driveVelocity = drive.getVelocity().getValueAsDouble();
-            moduleInputs[i].steerPosition = Rotation2d.fromRotations(steer.getPosition().getValueAsDouble());
+            moduleInputs[i].driveVelocity = states[i].speedMetersPerSecond;
+            moduleInputs[i].steerPosition = states[i].angle;
 
             moduleInputs[i].driveTemp = drive.getDeviceTemp().getValueAsDouble();
             moduleInputs[i].steerTemp = steer.getDeviceTemp().getValueAsDouble();
