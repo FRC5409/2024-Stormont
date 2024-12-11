@@ -47,6 +47,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         IO.updateInputs(inputs);
+        IO.debugPID();
         Logger.processInputs("Elevator "+IO.getName(), inputs);
     }
 
