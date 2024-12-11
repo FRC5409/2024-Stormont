@@ -106,16 +106,16 @@ public class RobotContainer {
         //     .onTrue(sys_intake.startIntaking())
         //     .onFalse(sys_intake.stopIntaking());
          m_primaryController.povUp()
-            .onTrue(sys_elevator_Neo.extend(32))
+            .onTrue(sys_elevator_Neo.extend(32,0))
             .onFalse(sys_elevator_Neo.stop());
          m_primaryController.povDown()
-             .onTrue(sys_elevator_Neo.retract(10))
+             .onTrue(sys_elevator_Neo.retract(10,0))
              .onFalse(sys_elevator_Neo.stop());
          m_primaryController.povRight()
-            .onTrue(sys_elevator_Falcon.extend(47))
+            .onTrue(sys_elevator_Falcon.extend(47,0))
             .onFalse(sys_elevator_Falcon.stop());
          m_primaryController.povLeft()
-             .onTrue(sys_elevator_Falcon.retract(10))
+             .onTrue(sys_elevator_Falcon.retract(10,0))
              .onFalse(sys_elevator_Falcon.stop());
          m_primaryController.a()
              .onTrue(sys_elevator_Neo.m_extend())

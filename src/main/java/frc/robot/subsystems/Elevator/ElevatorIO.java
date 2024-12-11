@@ -24,7 +24,7 @@ public interface ElevatorIO {
     }
 
     public default void setVoltage(double volts){}
-    public default void setPosition(double value){}
+    public default void setPosition(double value, int slot){}
     public default void resetPosition(double resetValue){}
     public default void updateInputs(ElevatorInputs inputs){}
     public default String getName( ){return "name";}

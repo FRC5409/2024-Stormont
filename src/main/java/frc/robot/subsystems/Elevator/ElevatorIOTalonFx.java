@@ -62,10 +62,13 @@ public class ElevatorIOTalonFx implements ElevatorIO{
     }
 
     @Override 
-    public void setPosition(double value){
+    public void setPosition(double value, int slot){
         // set position to value rotations
-        elevatorMotor.setControl(m_request.withPosition(value));
-
+        // elevatorMotor.setControl(new PositionVoltage(value)
+        //     .withSlot(slot)
+        // );
+         elevatorMotor.setControl(m_request.withPosition(value));
+        System.out.println(value);
     }
 
     @Override

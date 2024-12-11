@@ -33,13 +33,13 @@ public class Elevator extends SubsystemBase {
     // Get subsystem
 
     //go up
-    public Command extend(double value){
-        return Commands.runOnce(()-> io.setPosition(value),this);
+    public Command extend(double value, int slot){
+        return Commands.runOnce(()-> io.setPosition(value, slot),this);
     }
 
     //go down
-    public Command retract(double value){
-        return Commands.runOnce(()-> io.setPosition(value), this);
+    public Command retract(double value, int slot){
+        return Commands.runOnce(()-> io.setPosition(value, slot), this);
     }
 
     //stop

@@ -33,7 +33,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         elevatorMotor.restoreFactoryDefaults();
         elevatorMotor.setSmartCurrentLimit(30);
         elevatorMotor.setIdleMode(IdleMode.kBrake);
-        elevatorMotor.setInverted(false);
+        elevatorMotor.setInverted(true);
 
         this.elevatorEncoder = elevatorMotor.getEncoder();
 
@@ -67,8 +67,9 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void setPosition(double value){
-        pid.setReference(value,ControlType.kPosition);
+    public void setPosition(double value, int slot){
+        pid.setReference(value,ControlType.kPosition, slot);
+        System.out.println(value);
     }
 
     public void updateInputs(ElevatorInputs inputs){
