@@ -11,11 +11,13 @@ public interface DriveIO {
         public boolean steerMotorConnected = false;
         public boolean encoderConnected = false;
 
+        public boolean driveStalled = false;
         public double driveVolts = 0.0;
         public double driveCurrent = 0.0;
         public double driveVelocity = 0.0;
         public double driveTemp = 0.0;
 
+        public boolean steerStalled = false;
         public double steerVolts = 0.0;
         public double steerCurrent = 0.0;
         public Rotation2d steerPosition = Rotation2d.fromDegrees(0.0);

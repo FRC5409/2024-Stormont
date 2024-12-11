@@ -14,7 +14,6 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.Idle;
@@ -31,6 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.kController;
 import frc.robot.Constants.kDrive;
@@ -119,6 +119,10 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
         setControl(m_autoRequest.withSpeeds(speeds));
     }
 
+    public Command resetFieldRelative() {
+        return Commands.runOnce(this::seedFieldCentric, this);
+    }
+
     public Command telopDrive(DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rotationalRate) {
         return applyRequest(() -> 
             m_telopDrive
@@ -155,7 +159,7 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
             CANcoder encoder = module.getCANcoder();
 
             moduleInputs[i].driveMotorConnected = BaseStatusSignal.isAllGood(drive.getVelocity(), drive.getStatorCurrent()); 
-            moduleInputs[i].steerMotorConnected = BaseStatusSignal.isAllGood(steer.getPosition(), steer.getStatorCurrent()); // TODO: Validate steer position
+            moduleInputs[i].steerMotorConnected = BaseStatusSignal.isAllGood(steer.getPosition(), steer.getStatorCurrent());
             moduleInputs[i].encoderConnected = BaseStatusSignal.isAllGood(encoder.getAbsolutePosition());
 
             moduleInputs[i].driveVolts = drive.get() * RobotController.getBatteryVoltage();
@@ -163,6 +167,9 @@ public class Drive extends SwerveDrivetrain implements Subsystem, DriveIO {
 
             moduleInputs[i].driveCurrent = Math.abs(drive.getStatorCurrent().getValueAsDouble());
             moduleInputs[i].steerCurrent = Math.abs(steer.getStatorCurrent().getValueAsDouble());
+
+            moduleInputs[i].driveStalled = moduleInputs[i].driveCurrent >= drive.getMotorStallCurrent().getValueAsDouble();
+            moduleInputs[i].steerStalled = moduleInputs[i].steerCurrent >= steer.getMotorStallCurrent().getValueAsDouble();
 
             moduleInputs[i].driveVelocity = drive.getVelocity().getValueAsDouble();
             moduleInputs[i].steerPosition = Rotation2d.fromRotations(steer.getPosition().getValueAsDouble());

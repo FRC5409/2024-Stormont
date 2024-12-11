@@ -125,6 +125,7 @@ public class RobotContainer {
      * joysticks}.
      */
     private void configureBindings() {
+        m_primaryController.rightBumper().onTrue(sys_drivetrain.resetFieldRelative());
         // m_primaryController.a().onTrue(sys_deployment.deploy()).onFalse(sys_deployment.retract());
     }
 
