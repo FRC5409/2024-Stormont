@@ -84,6 +84,19 @@ public class ElevatorIOTalonFx implements ElevatorIO{
         }
     }
 
+    @Override
+    public void debugPID(){
+        if(kP != sb_kp.getDouble(0.0)){
+            slot0Configs.kP = sb_kp.getDouble(0.0);
+        }
+        if(kD != sb_kd.getDouble(0.0)){
+            slot0Configs.kD = sb_kd.getDouble(0.0);
+        }
+        if(kI != sb_ki.getDouble(0.0)){
+            slot0Configs.kI = sb_ki.getDouble(0.0);
+        }
+    }
+
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {

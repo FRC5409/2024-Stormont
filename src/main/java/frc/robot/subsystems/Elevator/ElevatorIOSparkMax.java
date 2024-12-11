@@ -25,8 +25,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     private final GenericEntry sb_kd;
     private final GenericEntry sb_kff;
 
-    
-
     public ElevatorIOSparkMax(int ID) {
         elevatorMotor = new CANSparkMax(ID, MotorType.kBrushless);
         
@@ -36,8 +34,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         elevatorMotor.setInverted(true);
 
         this.elevatorEncoder = elevatorMotor.getEncoder();
-
-
 
         pid = elevatorMotor.getPIDController();
         pid.setP(kP);
@@ -56,8 +52,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         sb_kff = sb_spark.add("kFF", kff).getEntry();
 
         elevatorMotor.burnFlash();
-
-
     }
 
     // Get subsystem
@@ -92,6 +86,22 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         } else if(resetValue>=1.2){
             resetValue = 1.1;
             elevatorEncoder.setPosition(resetValue);
+        }
+    }
+
+    @Override
+    public void debugPID(){
+        if(pid.getP() != sb_kp.getDouble(0.0)){
+            pid.setP(sb_kp.getDouble(0.0));
+        }
+        if(pid.getI() != sb_ki.getDouble(0.0)){
+            pid.setI(sb_ki.getDouble(0.0));
+        }
+        if(pid.getD() != sb_kd.getDouble(0.0)){
+            pid.setD(sb_kd.getDouble(0.0));
+        }
+        if(pid.getFF() != sb_kff.getDouble(0.0)){
+            pid.setFF(sb_kff.getDouble(0.0));
         }
     }
 
