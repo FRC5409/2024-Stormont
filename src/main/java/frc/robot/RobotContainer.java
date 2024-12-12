@@ -152,7 +152,7 @@ public class RobotContainer {
 
         // Reset pos
         m_primaryController.x().onTrue(sys_elevatorSpark.setPositionDown());
-        m_primaryController.b().onTrue(sys_elevatorTalon.setPositionDown()); //wwwww
+        m_primaryController.b().onTrue(sys_elevatorTalon.setPositionDown());
 
     }
 

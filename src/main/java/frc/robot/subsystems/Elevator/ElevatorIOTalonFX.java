@@ -46,7 +46,7 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
 
     @Override 
-    public void setPositionDown() {
+    public void setPositionDown(double position) {
         elevatorMotor.setControl(positionVoltage.withPosition(-10));
     }
 

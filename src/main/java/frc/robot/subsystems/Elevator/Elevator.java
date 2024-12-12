@@ -31,11 +31,11 @@ public class Elevator extends SubsystemBase{
     }
 
     public Command setPositionUp(){
-        return Commands.runOnce(() -> io.setPositionUp(), this);
+        return Commands.runOnce(() -> io.setPositionUp(10), this);
     }
 
     public Command setPositionDown(){
-        return Commands.runOnce(() -> io.setPositionDown(), this);
+        return Commands.runOnce(() -> io.setPositionDown(-10), this);
     }
 
     @Override
@@ -49,5 +49,5 @@ public class Elevator extends SubsystemBase{
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
         
-    }
+    }//cccc
 }

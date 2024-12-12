@@ -21,8 +21,8 @@ public interface ElevatorIO {
     public default void setPosition(double position) {}
 
     // Up ten rotations
-    public default void setPositionUp() {}
+    public default void setPositionUp(double position) {}
 
     // Down ten rotations
-    public default void setPositionDown() {}
+    public default void setPositionDown(double position) {}
 }

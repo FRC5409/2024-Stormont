@@ -57,7 +57,7 @@ public class ElevatorIOSparkMax implements ElevatorIO {
     }
 
     @Override
-    public void setPositionDown() {
+    public void setPositionDown(double position) {
         pidController.setReference(-10, CANSparkBase.ControlType.kPosition);
     }
 
